@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.animation import FuncAnimation
 
-print("2D heat equation solver")
+#j'ai trouvé un code en ligne qui marche assez bien! alors on peut se baser la dessus
+#https://levelup.gitconnected.com/solving-2d-heat-equation-numerically-using-python-3334004aa01a
 
 plate_length = 50
 max_iter_time = 750
