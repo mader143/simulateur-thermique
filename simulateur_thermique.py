@@ -9,6 +9,7 @@ import matplotlib.pyplot as mpl
 # dimensions_act = 
 # diffusivity = 
 # dx =
+# dy = dx
 # dt = 0.5*(dx)**2/diffusivity
 
 def plaque(longueur, largeur, T_init, T_act, position_act, dimensions_act, grid_res=0.1e-3):
