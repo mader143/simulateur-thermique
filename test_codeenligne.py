@@ -45,6 +45,8 @@ def calculate(u):
 
     return u
 
+#jsp si cest mieux de faire ca ou de faire une copie de u a chaque itération?
+
 def plotheatmap(u_k, k):
     # Clear the current plot figure
     plt.clf()
