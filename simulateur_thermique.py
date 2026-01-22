@@ -3,8 +3,8 @@ import matplotlib.pyplot as mpl
 import matplotlib.animation as animation
 from matplotlib.animation import FuncAnimation
 
-# longueur =
-# largeur = 
+# longueur (m) = 117.28e-3
+# largeur = 61.57e-3
 # T_init =
 # T_act =
 # position_act =
