@@ -24,11 +24,11 @@ nx, ny, nt = int(longueur / dx), int(largeur / dy), int(t_simulation/dt)
 plaque = np.full((ny, nx, nt), T_init)
 
 thermistance1 = np.zeros(nt)
-therm1_loc = (14.87e-3, ((61.57e-3)/2)) #j'ai mis position en y a mi chemin
+therm1_loc = (14.87e-3, (largeur/2)) #j'ai mis position en y a mi chemin
 thermistance2 = np.zeros(nt)
-therm2_loc = (59.35e-3, ((61.57e-3)/2))
+therm2_loc = (59.35e-3, ((largeur/2)))
 thermistance3 = np.zeros(nt)
-therm3_loc = (104.99e-3, ((61.57e-3)/2))
+therm3_loc = (104.99e-3, (largeur/2))
 
 # for t in range(nt):
 #     for i in range(nx):
