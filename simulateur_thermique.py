@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, FFMpegWriter
 import time
 
+# utilisez pas lui il est ass
 
 longueur = 117.28e-3 #en m
 largeur = 61.57e-3 #en m
