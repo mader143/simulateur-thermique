@@ -1,15 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from matplotlib.animation import FFMpegWriter, FuncAnimation
-from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.animation import FuncAnimation, FFMpegWriter
+import time
 
 
 longueur = 117.28e-3 #en m
 largeur = 61.57e-3 #en m
 T_init = 21 + 273 #T pièce en kelvins
 # T_act = 30 + 273
-t_simulation = 1 #en secondes
+t_simulation = 2 #en secondes
 k = 205
 rho = 2700
 cp = 900
@@ -26,21 +25,17 @@ aire_sides = dx * dz
 aire_top = dx * dy
 volume = dx * dy * dz
 
-nx, ny, nt = int(longueur / dx), int(largeur / dy), int(t_simulation/dt)
+nx, ny, nt = int(longueur / dx), int(largeur / dy), int(round(t_simulation / dt))
 
 #Puissance
-Pin = 1
-Pin_loc_x = 0
-Pin_loc_y = int(round((largeur / 2) / dy))
+Pin = 20
+Pin_loc_y = 0
+Pin_loc_x = int(round((largeur / 2) / dy))
 P = np.zeros((nx, ny))
 P[Pin_loc_x, Pin_loc_y] = Pin
 
-T = np.full((nx, ny, nt), T_init)
-T[0, :, :] = 300
-
-# #mettre la température de l'actuateur
-
-# plaque[:, :1, :] = T_act
+T = np.full((nx, ny), T_init)
+T_new = np.zeros_like(T)
 
 # thermistance1 = np.zeros(nt)
 # therm1_loc = (14.87e-3, largeur/2) #j'ai mis position en y a mi chemin
@@ -49,79 +44,91 @@ T[0, :, :] = 300
 # thermistance3 = np.zeros(nt)
 # therm3_loc = (104.99e-3, largeur/2)
 
-print(T.shape)
-print(T)
+save_interval = 10
+frames = []
 
-for t in range(nt-1):
+print("Calcul de la diffusion en cours...")
+
+for t in range(nt):
     for i in range(nx):
         for j in range(ny):
-            
+            T_new[i, j] = T[i, j]
+                
             # différence centrée pour le milieu et regressive/progressive pour les côtés
             if i == 0 and j != 0 and j != ny-1:
-                T[i, j, t+1] = T[i, j, t] + dt*alpha*(((T[i, j, t] - 2*T[i+1,j,t] + T[i+2,j,t]) / dx**2)) + ((T[i, j+1, t] - 2*T[i,j,t] + T[i,j-1,t])/dy**2)
-                T[i, j, t+1] += dt/(rho*cp) * h_conv * (T_init - T[i, j, t]) * aire_bouts / volume
+                T_new[i, j] += dt*alpha*(((T[i, j] - 2*T[i+1,j] + T[i+2,j]) / dx**2) + ((T[i, j+1] - 2*T[i,j] + T[i,j-1])/dy**2))
+                T_new[i, j] += dt/(rho*cp) * h_conv * (T_init - T[i, j]) * aire_bouts / volume
 
             elif i == nx-1 and j != 0 and j != ny-1:
-                T[i, j, t+1] = T[i, j, t] + dt*alpha*(((T[i, j, t] - 2*T[i-1,j,t] + T[i-2,j,t]) / dx**2)) + ((T[i, j+1, t] - 2*T[i,j,t] + T[i,j-1,t])/dy**2)
-                T[i, j, t+1] += dt/(rho*cp) * h_conv * (T_init - T[i, j, t]) * aire_bouts / volume
+                T_new[i, j] += dt*alpha*((((T[i, j] - 2*T[i-1,j] + T[i-2,j]) / dx**2)) + ((T[i, j+1] - 2*T[i,j] + T[i,j-1])/dy**2))
+                T_new[i, j] += dt/(rho*cp) * h_conv * (T_init - T[i, j]) * aire_bouts / volume
 
             elif j == 0 and i != 0 and i != nx-1:
-                T[i, j, t+1] = T[i, j, t] + dt*alpha*(((T[i+1, j, t] - 2*T[i,j,t] + T[i-1,j,t]) / dx**2)) + ((T[i, j, t] - 2*T[i,j+1,t] + T[i,j+2,t])/dy**2)
-                T[i, j, t+1] += dt/(rho*cp) * h_conv * (T_init - T[i, j, t]) * aire_sides / volume
+                T_new[i, j] += dt*alpha*((((T[i+1, j] - 2*T[i,j] + T[i-1,j]) / dx**2)) + ((T[i, j] - 2*T[i,j+1] + T[i,j+2])/dy**2))
+                T_new[i, j] += dt/(rho*cp) * h_conv * (T_init - T[i, j]) * aire_sides / volume
 
             elif j == ny-1 and i != 0 and i != nx-1:
-                T[i, j, t+1] = T[i, j, t] + dt*alpha*(((T[i+1, j, t] - 2*T[i,j,t] + T[i-1,j,t]) / dx**2)) + ((T[i, j, t] - 2*T[i,j-1,t] + T[i,j-2,t])/dy**2)
-                T[i, j, t+1] += dt/(rho*cp) * h_conv * (T_init - T[i, j, t]) * aire_sides / volume
-            
+                T_new[i, j] += dt*alpha*((((T[i+1, j] - 2*T[i,j] + T[i-1,j]) / dx**2)) + ((T[i, j] - 2*T[i,j-1] + T[i,j-2])/dy**2))
+                T_new[i, j] += dt/(rho*cp) * h_conv * (T_init - T[i, j]) * aire_sides / volume
+                
             # différence regressive/progressive pour les 4 coins
             elif j == 0 and i == 0:
-                T[i, j, t+1] = T[i, j, t] + dt*alpha*(((T[i, j, t] - 2*T[i+1,j,t] + T[i+2,j,t]) / dx**2)) + ((T[i, j, t] - 2*T[i,j+1,t] + T[i,j+2,t])/dy**2)
-                T[i, j, t+1] += dt/(rho*cp) * h_conv * (T_init - T[i, j, t]) * (aire_sides+aire_bouts) / volume
+                T_new[i, j] += dt*alpha*((((T[i, j] - 2*T[i+1,j] + T[i+2,j]) / dx**2)) + ((T[i, j] - 2*T[i,j+1] + T[i,j+2])/dy**2))
+                T_new[i, j] += dt/(rho*cp) * h_conv * (T_init - T[i, j]) * (aire_sides+aire_bouts) / volume
 
             elif j == 0 and i == nx-1:
-                T[i, j, t+1] = T[i, j, t] + dt*alpha*(((T[i, j, t] - 2*T[i-1,j,t] + T[i-2,j,t]) / dx**2)) + ((T[i, j, t] - 2*T[i,j+1,t] + T[i,j+2,t])/dy**2)
-                T[i, j, t+1] += dt/(rho*cp) * h_conv * (T_init - T[i, j, t]) * (aire_sides+aire_bouts) / volume
+                T_new[i, j] += dt*alpha*((((T[i, j] - 2*T[i-1,j] + T[i-2,j]) / dx**2)) + ((T[i, j] - 2*T[i,j+1] + T[i,j+2])/dy**2))
+                T_new[i, j] += dt/(rho*cp) * h_conv * (T_init - T[i, j]) * (aire_sides+aire_bouts) / volume
 
             elif j == ny-1 and i == 0:
-                T[i, j, t+1] = T[i, j, t] + dt*alpha*(((T[i, j, t] - 2*T[i+1,j,t] + T[i+2,j,t]) / dx**2)) + ((T[i, j, t] - 2*T[i,j-1,t] + T[i,j-2,t])/dy**2)
-                T[i, j, t+1] += dt/(rho*cp) * h_conv * (T_init - T[i, j, t]) * (aire_sides+aire_bouts) / volume
+                T_new[i, j] += dt*alpha*((((T[i, j] - 2*T[i+1,j] + T[i+2,j]) / dx**2)) + ((T[i, j] - 2*T[i,j-1] + T[i,j-2])/dy**2))
+                T_new[i, j] += dt/(rho*cp) * h_conv * (T_init - T[i, j]) * (aire_sides+aire_bouts) / volume
 
             elif j == ny-1 and i == nx-1:
-                T[i, j, t+1] = T[i, j, t] + dt*alpha*(((T[i, j, t] - 2*T[i-1,j,t] + T[i-2,j,t]) / dx**2)) + ((T[i, j, t] - 2*T[i,j-1,t] + T[i,j-2,t])/dy**2)
-                T[i, j, t+1] += dt/(rho*cp) * h_conv * (T_init - T[i, j, t]) * (aire_sides+aire_bouts) / volume
+                T_new[i, j] += dt*alpha*((((T[i, j] - 2*T[i-1,j] + T[i-2,j]) / dx**2)) + ((T[i, j] - 2*T[i,j-1] + T[i,j-2])/dy**2))
+                T_new[i, j] += dt/(rho*cp) * h_conv * (T_init - T[i, j]) * (aire_sides+aire_bouts) / volume
 
             else:
-                T[i, j, t+1] = T[i, j, t] + dt*alpha*(((T[i+1, j, t] - 2*T[i,j,t] + T[i-1,j,t]) / dx**2)) + ((T[i, j+1, t] - 2*T[i,j,t] + T[i,j-1,t])/dy**2)
+                T_new[i, j] += dt*alpha*((((T[i+1, j] - 2*T[i,j] + T[i-1,j]) / dx**2)) + ((T[i, j+1] - 2*T[i,j] + T[i,j-1])/dy**2))
 
-            #T[i, j, t+1] += dt/(rho*cp) * P[i, j] / volume # je comprends pas pkoi on divise par le volume tout le temps....
-            T[i, j, t+1] += dt/(rho*cp) * h_conv * (T_init - T[i, j, t]) * 2*aire_top / volume
+            #T[i, j] += dt/(rho*cp) * P[i, j] / volume # je comprends pas pkoi on divise par le volume tout le temps....
+            T_new[i, j] += dt/(rho*cp) * h_conv * (T_init - T[i, j]) * 2*aire_top / volume
     
+    T = T_new.copy()
+    if t % save_interval == 0:
+        frames.append(T.copy())
+
     if t%100 == 0:
         print(t)
-
 # ajout des températures des thermistances pour faire un graphique plus tard
 
 # thermistance1[t] = T[therm1_loc, t]
 # thermistance2[t] = T[therm2_loc, t]
 # thermistance3[t] = T[therm3_loc, t]
 
-print(T[:, :, nt-1])
+#animation
+fig, ax = plt.subplots(figsize=(8, 6))
+im = ax.imshow(frames[0], cmap='hot', origin='lower', extent=[0, longueur, 0, largeur])
+plt.colorbar(im, label='Température (K)')
+ax.set_title("Évolution de la température sur la plaque")
 
-def plotheatmap(u_k, k):
-    # Clear the current plot figure
-    plt.clf()
+def update(i):
+    im.set_array(frames[i])
+    im.set_clim(T_init, 330)
+    return [im]
 
-    plt.title(f"Temperature at t = {k*dt:.3f} unit time")
-    plt.xlabel("x")
-    plt.ylabel("y")
+ani = FuncAnimation(fig, update, frames=len(frames), interval=50, blit=True)
 
-    # This is to plot u_k (u at time-step k)
-    plt.pcolormesh(u_k, cmap=plt.cm.jet, vmin=0, vmax=100)
-    plt.colorbar()
+# save
+filename = "diffusion_plaque.mp4"
+try:
+    writer = FFMpegWriter(fps=20)
+    ani.save(filename, writer=writer)
+    print(f"Vidéo réussie : {filename}")
+except Exception as e:
+    print(f"Erreur MP4 (FFmpeg) : {e}")
+    print("Tentative de sauvegarde en GIF...")
+    ani.save("diffusion_plaque.gif", writer='pillow')
+    print("Fichier sauvegardé : diffusion_plaque.gif")
 
-    return plt
-
-anim = animation.FuncAnimation(plt.figure(), plotheatmap(T), interval=1, frames=nt, repeat=False)
-anim.save("heat_equation_solution.gif")
-
-print("Done!")
+plt.show()
