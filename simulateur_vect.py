@@ -55,14 +55,14 @@ writer = imageio.get_writer(
 
 #make it go faster
 target_frames = save_interval*t_simulation  # nombre total de frames
-step = nt
+step = 10
 
 #fiure
 fig, axs = plt.subplots(1, 3, figsize=(14,4))
 
 line1, = axs[0].plot([], [])
 axs[0].set_title("Température à la thermistance 1")
-axs[0].set_xlabel("Position [mm]")
+axs[0].set_xlabel("Temps [s]")
 axs[0].set_ylabel("Température [°C]")
 axs[0].grid(True)
 
@@ -109,14 +109,16 @@ for t in range(nt):
     # puissance
     T[Pin_loc_y, Pin_loc_x] += (Pin * dt) / (rho * cp * vol)
 
-#update les graphiques des thermistances
+    if t % 100 == 0: print(f"Progression : {100*t/nt:.1f}%")
+
+    #on prends les frames de T pour le graphique de diffusion thermique
+    if t % save_interval == 0:
+            frames.append(T.copy())
+
+    #update les graphiques des thermistances
     thermistance1[t] = T[therm1_locx, therm1_locy]
     thermistance2[t] = T[therm2_locx, therm2_locy]
     thermistance3[t] = T[therm3_locx, therm3_locy]
-
-    if t % save_interval == 0:
-        frames.append(T.copy())
-        if t % 5000 == 0: print(f"Progression : {100*t/nt:.1f}%")
 
     if t % step == 0 or t == nt-1:
         #mise a jour graphique
@@ -145,10 +147,10 @@ for t in range(nt):
 writer.close()
 print("\nVidéo enregistrée : TemperatureDistribution1D_fast.mp4")
 
-#diffusion thermique
+#graphique diffusion thermique
 fig, ax = plt.subplots()
 im = ax.imshow(frames[0].T, cmap='hot', origin='lower', 
-               extent=[0, longueur, 0, largeur], vmin=T_init, vmax=310)
+            extent=[0, longueur, 0, largeur], vmin=T_init, vmax=330)
 plt.colorbar(im, label="Température (K)")
 ax.set_title("Diffusion thermique")
 
@@ -158,4 +160,4 @@ def update(i):
 
 ani = FuncAnimation(fig, update, frames=len(frames), interval=30, blit=True)
 ani.save("diffusion.mp4", writer=FFMpegWriter(fps=30))
-plt.show()
+print("\nVidéo enregistrée : diffusion.mp4")
