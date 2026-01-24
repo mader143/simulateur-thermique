@@ -8,7 +8,7 @@ longueur = 117.28e-3 #en m
 largeur = 61.57e-3 #en m
 T_init = 21 + 273 #T pièce en kelvins
 # T_act = 30 + 273
-t_simulation = 2 #en secondes
+t_simulation = 1 #en secondes
 k = 205
 rho = 2700
 cp = 900
@@ -28,7 +28,7 @@ volume = dx * dy * dz
 nx, ny, nt = int(longueur / dx), int(largeur / dy), int(round(t_simulation / dt))
 
 #Puissance
-Pin = 20
+Pin = 0.5
 Pin_loc_y = 0
 Pin_loc_x = int(round((largeur / 2) / dy))
 P = np.zeros((nx, ny))
@@ -91,7 +91,7 @@ for t in range(nt):
             else:
                 T_new[i, j] += dt*alpha*((((T[i+1, j] - 2*T[i,j] + T[i-1,j]) / dx**2)) + ((T[i, j+1] - 2*T[i,j] + T[i,j-1])/dy**2))
 
-            #T[i, j] += dt/(rho*cp) * P[i, j] / volume # je comprends pas pkoi on divise par le volume tout le temps....
+            T[i, j] += dt/(rho*cp) * P[i, j] / volume # je comprends pas pkoi on divise par le volume tout le temps....
             T_new[i, j] += dt/(rho*cp) * h_conv * (T_init - T[i, j]) * 2*aire_top / volume
     
     T = T_new.copy()
