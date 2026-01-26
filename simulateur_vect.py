@@ -11,7 +11,7 @@ import time
 
 longueur, largeur = 117.28e-3, 61.57e-3
 T_init = 21 + 273
-t_simulation = 10.0
+t_simulation = 100.0
 k, rho, cp = 205, 2700, 900
 alpha = k / (rho * cp) 
 h_conv = 20
