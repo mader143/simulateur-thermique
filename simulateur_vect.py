@@ -54,8 +54,7 @@ writer = imageio.get_writer(
 )
 
 #make it go faster
-target_frames = save_interval*t_simulation  # nombre total de frames
-step = 10
+target_frames = nt/save_interval # nombre total de frames
 
 #fiure
 fig, axs = plt.subplots(1, 3, figsize=(14,4))
@@ -120,7 +119,7 @@ for t in range(nt):
     thermistance2[t] = T[therm2_locx, therm2_locy]
     thermistance3[t] = T[therm3_locx, therm3_locy]
 
-    if t % step == 0 or t == nt-1:
+    if t % save_interval == 0 or t == nt-1:
         #mise a jour graphique
         line1.set_data(Temps[:t+1], thermistance1[:t+1]-273)
         line2.set_data(Temps[:t+1], thermistance2[:t+1]-273)
@@ -150,7 +149,7 @@ print("\nVidéo enregistrée : TemperatureDistribution1D_fast.mp4")
 #graphique diffusion thermique
 fig, ax = plt.subplots()
 im = ax.imshow(frames[0].T, cmap='hot', origin='lower', 
-            extent=[0, longueur, 0, largeur], vmin=T_init, vmax=330)
+            extent=[0, longueur, 0, largeur], vmin=T_init, vmax=440)
 plt.colorbar(im, label="Température (K)")
 ax.set_title("Diffusion thermique")
 
