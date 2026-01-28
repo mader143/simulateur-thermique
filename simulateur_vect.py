@@ -11,13 +11,14 @@ import time
 
 longueur, largeur = 117.28e-3, 61.57e-3
 T_init = 21 + 273
-t_simulation = 50.0
-k, rho, cp = 205, 2700, 900
+t_simulation = 10.0
+k, rho, cp = 205, 2700, 900 #conductivité thermique, masse volumique, chaleur spécifique
 alpha = k / (rho * cp) 
 h_conv = 20
 dx = 1e-3
 dy = dx
 dt = dx**2 / (4 * alpha)
+print(dt)
 
 nx, ny = int(longueur / dx), int(largeur / dy)
 nt = int(t_simulation / dt)
@@ -29,6 +30,7 @@ coeff_conv = (h_conv * dt) / (rho * cp * dx)
 
 T = np.full((nx, ny), T_init, dtype=float)
 Pin = 0.5
+
 
 Pin_loc_y = 0
 Pin_loc_x = int(round((largeur / 2) / dy))
@@ -82,8 +84,6 @@ fig.tight_layout()
 #timer
 start_time = time.time()
 
-print(nt)
-
 for t in range(nt):
 
     T_new = T.copy()
@@ -103,10 +103,10 @@ for t in range(nt):
     T[:, -1] += coeff_conv * (T_init - T[:, -1])
     
     # convection face supérieure et inférieure
-    T += 2 * coeff_conv * (T_init - T) # 2 faces
+    T += 2 * coeff_conv * (T_init - T)# 2 faces
 
     # puissance
-    T[Pin_loc_y, Pin_loc_x] += (Pin * dt) / (rho * cp * vol)
+    T[Pin_loc_y, Pin_loc_x] += (Pin * dt) / (rho * cp) #DEMANDER A SIMON!!!!!
 
     if t % 100 == 0: print(f"Progression : {100*t/nt:.1f}%")
 
