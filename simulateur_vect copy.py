@@ -11,7 +11,7 @@ import time
 
 longueur, largeur = 117.28e-3, 61.57e-3
 T_init = 21 + 273
-t_simulation = 50.0
+t_simulation = 10.0
 k, rho, cp = 205, 2700, 900 #conductivité thermique, masse volumique, chaleur spécifique
 alpha = k / (rho * cp) 
 h_conv = 20
@@ -105,7 +105,7 @@ for t in range(nt):
     T += 2 * coeff_conv * (T_init - T)# 2 faces
 
     # puissance
-    T[Pin_loc_y, Pin_loc_x] += (Pin * dt) / (rho * cp *dx**2*1.61e-3) #DEMANDER A SIMON!!!!!
+    T[Pin_loc_y, Pin_loc_x] += (Pin * dt) / (rho * cp *(dx**2)*1.61e-3) #DEMANDER A SIMON!!!!!
 
     if t % 100 == 0: print(f"Progression : {100*t/nt:.1f}%")
 
