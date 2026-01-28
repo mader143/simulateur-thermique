@@ -17,15 +17,14 @@ alpha = k / (rho * cp)
 h_conv = 20
 dx = 1e-3
 dy = dx
-dt = dx**2 / (4 * alpha)
+dt = dx**2 / (8 * alpha)
 print(dt)
 
 nx, ny = int(longueur / dx), int(largeur / dy)
 nt = int(t_simulation / dt)
+#résolution
 
 vol = dx * dy * dx
-s_top = dx * dy
-s_side = dx * dx
 coeff_conv = (h_conv * dt) / (rho * cp * dx)
 
 T = np.full((nx, ny), T_init, dtype=float)
@@ -106,7 +105,9 @@ for t in range(nt):
     T += 2 * coeff_conv * (T_init - T)# 2 faces
 
     # puissance
-    T[Pin_loc_y, Pin_loc_x] += (Pin * dt) / (rho * cp) #DEMANDER A SIMON!!!!!
+    T[Pin_loc_y, Pin_loc_x] += (Pin * dt) / (rho * cp *dx*(1.61e-3)**2) #DEMANDER A SIMON!!!!!
+
+    print((Pin * dt) / (rho * cp *(dx**2)*1.61e-3))
 
     if t % 100 == 0: print(f"Progression : {100*t/nt:.1f}%")
 

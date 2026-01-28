@@ -38,6 +38,8 @@ Pin_loc_x = int(round((Lx / 4) / dx))
 P = np.zeros(Nx)
 P[Pin_loc_x] = Pin
 
+print(dt/(rho*cp) * P[Pin_loc_x] / volume)
+
 #c.i.
 T_piece = 273 + 25
 T = T_piece * np.ones(Nx)
@@ -150,3 +152,4 @@ for t in range(Nt):
 
 writer.close()
 print("\nVidéo enregistrée : TemperatureDistribution1D_fast.mp4")
+
