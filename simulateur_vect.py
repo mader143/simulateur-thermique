@@ -8,7 +8,7 @@ import time
 
 #La simulation avec les boucles va FREAKING lentement cest insane alors jai regardé comment le faire en vectorisé
 
-
+epaisseur = 1.61e-3
 longueur, largeur = 117.28e-3, 61.57e-3
 T_init = 21 + 273
 t_simulation = 50.0
@@ -18,7 +18,6 @@ h_conv = 20
 dx = 1e-3
 dy = dx
 dt = dx**2 / (4 * alpha)
-print(dt)
 
 nx, ny = int(longueur / dx), int(largeur / dy)
 nt = int(t_simulation / dt)
@@ -26,13 +25,23 @@ nt = int(t_simulation / dt)
 
 vol = dx * dy * dx
 coeff_conv = (h_conv * dt) / (rho * cp * dx)
+coeff_face = 2 * h_conv * dt / (rho * cp * epaisseur)
 
 T = np.full((nx, ny), T_init, dtype=float)
-Pin = 0.5
 
+#puissance
 
-Pin_loc_y = 0
-Pin_loc_x = int(round((largeur / 2) / dy))
+act_size = 5e-3  # 5 mm
+rx = int((act_size/2) / dx)
+ry = int((act_size/2) / dy)
+
+epaisseur = 1.61e-3
+cell_volume = dx * dy * epaisseur
+
+nb_cells = (2*rx + 1) * (2*ry + 1)
+
+Pin = 0.5 # Watts
+P_cell = Pin/nb_cells
 
 save_interval = 10
 frames = []
@@ -43,6 +52,8 @@ thermistance2 = np.zeros(nt)
 therm2_locx, therm2_locy = int(59.35e-3/dx), int((largeur/2)/dx)
 thermistance3 = np.zeros(nt)
 therm3_locx, therm3_locy = int(104.99e-3/dx), int((largeur/2)/dx)
+
+x0, y0 = therm1_locx, therm1_locy
 
 Temps = np.arange(nt) * dt
 
@@ -101,11 +112,12 @@ for t in range(nt):
     T[:, 0]  += coeff_conv * (T_init - T[:, 0])
     T[:, -1] += coeff_conv * (T_init - T[:, -1])
     
-    # convection face supérieure et inférieure
-    T += 2 * coeff_conv * (T_init - T)# 2 faces
+    # convection face supérieure
+    T += coeff_face * (T_init - T)
 
     # puissance
-    T[Pin_loc_y, Pin_loc_x] += (Pin * dt) / (rho * cp *dx**2*1.61e-3) #DEMANDER A SIMON!!!!!
+    # T[Pin_loc_y, Pin_loc_x] += (Pin * dt) / (rho * cp *dx**2*1.61e-3) #DEMANDER A SIMON!!!!!
+    T[ x0-rx:x0+rx+1, y0-ry:y0+ry+1] += (P_cell * dt) / (rho * cp * cell_volume)
 
     if t % 100 == 0: print(f"Progression : {100*t/nt:.1f}%")
 
@@ -143,12 +155,12 @@ for t in range(nt):
         progress = t / nt * 100
 
 writer.close()
-print("\nVidéo enregistrée : TemperatureDistribution1D_fast.mp4")
+print("\nVidéo enregistrée : Temperature_thermistances.mp4")
 
 #graphique diffusion thermique
 fig, ax = plt.subplots()
 im = ax.imshow(frames[0].T, cmap='hot', origin='lower', 
-            extent=[0, longueur, 0, largeur], vmin=T_init, vmax=440)
+            extent=[0, longueur, 0, largeur], vmin=T_init, vmax=300)
 plt.colorbar(im, label="Température (K)")
 ax.set_title("Diffusion thermique")
 
