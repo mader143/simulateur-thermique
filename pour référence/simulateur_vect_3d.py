@@ -6,6 +6,8 @@ from matplotlib.animation import FuncAnimation, FFMpegWriter
 import imageio.v2 as imageio
 import time
 
+#marche pas très bien
+
 # Dimensions plaque
 Lx, Ly, Lz = 117.28e-3, 61.57e-3, 1.61e-3
 

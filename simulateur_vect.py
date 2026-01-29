@@ -5,15 +5,27 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, FFMpegWriter
 import imageio.v2 as imageio
 import time
+import json
 
-epaisseur = 1.61e-3
-longueur, largeur = 117.28e-3, 61.57e-3
-T_init = 21 + 273
-t_simulation = 50.0
-k, rho, cp = 205, 2700, 900 #conductivité thermique, masse volumique, chaleur spécifique
+# ouvrir le fichier et charger les paramètres
+with open("params_sim.json", "r") as f:
+    params = json.load(f)
+
+# extraire les paramètres
+longueur = params["longueur"]
+largeur = params["largeur"]
+epaisseur = params["epaisseur"]
+T_init = params["T_init"]+ 273.15
+t_simulation = params["t_simulation"]
+k = params["k"]
+rho = params["rho"]
+cp = params["cp"]
+h_conv = params["h_conv"]
+dx = params["dx"]
+Pin = params["Pin"]
+
+# quels paramètres doit-on pouvoir lire dans un fichier json?
 alpha = k / (rho * cp) 
-h_conv = 20
-dx = 1e-3
 dy = dx
 dt = dx**2 / (4 * alpha)
 
@@ -29,7 +41,7 @@ T = np.full((nx, ny), T_init, dtype=float)
 
 #puissance
 
-act_size = 5e-3  # 5 mm
+act_size = 200e-3  # 5 mm
 rx = int((act_size/2) / dx)
 ry = int((act_size/2) / dy)
 
@@ -38,7 +50,7 @@ cell_volume = dx * dy * epaisseur
 
 nb_cells = (2*rx + 1) * (2*ry + 1)
 
-Pin = 2 # Watts
+Pin = 5 # Watts
 P_cell = Pin/nb_cells
 
 save_interval = 10
