@@ -38,7 +38,7 @@ T = np.full((nx, ny), T_init, dtype=float)
 
 #puissance
 
-act_size = 5e-3  # 5 mm
+act_size = 20e-3  # 5 mm
 rx = int((act_size/2) / dx)
 ry = int((act_size/2) / dy)
 

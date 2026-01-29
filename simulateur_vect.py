@@ -33,7 +33,6 @@ nx, ny = int(longueur / dx), int(largeur / dy)
 nt = int(t_simulation / dt)
 #résolution
 
-vol = dx * dy * dx
 coeff_conv = (h_conv * dt) / (rho * cp * dx)
 coeff_face = 2 * h_conv * dt / (rho * cp * epaisseur)
 
@@ -41,7 +40,7 @@ T = np.full((nx, ny), T_init, dtype=float)
 
 #puissance
 
-act_size = 200e-3  # 5 mm
+act_size = 20e-3  # 5 mm
 rx = int((act_size/2) / dx)
 ry = int((act_size/2) / dy)
 
@@ -49,8 +48,6 @@ epaisseur = 1.61e-3
 cell_volume = dx * dy * epaisseur
 
 nb_cells = (2*rx + 1) * (2*ry + 1)
-
-Pin = 5 # Watts
 P_cell = Pin/nb_cells
 
 save_interval = 10
@@ -126,7 +123,7 @@ for t in range(nt):
     T += coeff_face * (T_init - T)
 
     # puissance
-    # T[Pin_loc_y, Pin_loc_x] += (Pin * dt) / (rho * cp *dx**2*1.61e-3) #DEMANDER A SIMON!!!!!
+    # T[Pin_loc_y, Pin_loc_x] += (Pin * dt) / (rho * cp *dx**2*1.61e-3)
     T[ x0-rx:x0+rx+1, y0-ry:y0+ry+1] += (P_cell * dt) / (rho * cp * cell_volume)
 
     if t % 100 == 0: print(f"Progression : {100*t/nt:.1f}%")
