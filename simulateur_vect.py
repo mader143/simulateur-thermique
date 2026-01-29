@@ -6,8 +6,6 @@ from matplotlib.animation import FuncAnimation, FFMpegWriter
 import imageio.v2 as imageio
 import time
 
-#La simulation avec les boucles va FREAKING lentement cest insane alors jai regardé comment le faire en vectorisé
-
 epaisseur = 1.61e-3
 longueur, largeur = 117.28e-3, 61.57e-3
 T_init = 21 + 273
@@ -40,7 +38,7 @@ cell_volume = dx * dy * epaisseur
 
 nb_cells = (2*rx + 1) * (2*ry + 1)
 
-Pin = 0.5 # Watts
+Pin = 2 # Watts
 P_cell = Pin/nb_cells
 
 save_interval = 10
