@@ -3,9 +3,17 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import time
 import json
+import os, json
+
+#coefficient de résolution(prend les valeurs entre 1 et 14, mettre 1 pour avoir le code normal)
+res = 4 #4 c'est pas mal le meilleur rapport vitesse/qualité
+
 
 # ouvrir le fichier et charger les paramètres
-with open("params_sim.json", "r") as f:
+base_dir = os.path.dirname(os.path.abspath(__file__))
+json_path = os.path.join(base_dir, "params_sim.json")
+
+with open(json_path, "r") as f:
     params = json.load(f)
 
 # extraire les paramètres
@@ -18,7 +26,7 @@ k = params["k"]
 rho = params["rho"]
 cp = params["cp"]
 h_conv = params["h_conv"]
-dx = params["dx"]
+dx = params["dx"] * res
 Pin = params["Pin"]
 
 # quels paramètres doit-on pouvoir lire dans un fichier json?
@@ -112,16 +120,15 @@ plt.show()
 start_time = time.time()
 
 for t in range(nt):
-
-    t_sim = t * dt
+    t_sim = t * dt  # temps simulé à l'étape t
 
     T_new = T.copy()
     
+    # equation de diffusion sur les points internes
     laplacien = (
         (T_new[2:, 1:-1] - 2*T_new[1:-1, 1:-1] + T_new[:-2, 1:-1]) / dx**2 +
         (T_new[1:-1, 2:] - 2*T_new[1:-1, 1:-1] + T_new[1:-1, :-2]) / dy**2
     )
-    
     T[1:-1, 1:-1] += dt * alpha * laplacien
 
     # convection sur les bords
@@ -130,57 +137,54 @@ for t in range(nt):
     T[:, 0]  += coeff_conv * (T_init - T[:, 0])
     T[:, -1] += coeff_conv * (T_init - T[:, -1])
     
-    # convection face supérieure
+    # convection sur la face supérieure
     T += coeff_face * (T_init - T)
 
-    # puissance
+    # ajout de la puissance sur la zone active
     T[ x0-rx:x0+rx+1, y0-ry:y0+ry+1] += (P_cell * dt) / (rho * cp * cell_volume)
 
-    if t % 100 == 0: print(f"Progression : {100*t/nt:.1f}%")
-
-    # stockage températures thermistances 
+    # stockage des températures aux thermistances
     temps.append(t * dt)
     T1.append(T[therm1_locx, therm1_locy] - 273)
     T2.append(T[therm2_locx, therm2_locy] - 273)
     T3.append(T[therm3_locx, therm3_locy] - 273)
 
-    # mise à jour des graphiques 
+    # mise à jour des graphiques toutes les 200 itérations
     if t % 200 == 0:
-
-        # thermistances
+        # mise à jour graphique des thermistances
         line1.set_data(temps, T1)
         line2.set_data(temps, T2)
         line3.set_data(temps, T3)
-
         axT.set_xlim(0, temps[-1])
-        axT.set_ylim(
-            min(T1 + T2 + T3) - 1,
-            max(T1 + T2 + T3) + 1
-        )
-
+        axT.set_ylim(min(T1 + T2 + T3) - 1, max(T1 + T2 + T3) + 1)
         figT.canvas.draw()
         figT.canvas.flush_events()
 
-        # surface 3D 
+        # mise à jour graphique 3D
         surf.remove()
-
         surf = ax3D.plot_surface(
             X, Y, T - 273,
             cmap='inferno',
             rstride=1, cstride=1,
             linewidth=0
         )
-
         ax3D.set_title(f"Température de la plaque – t = {t*dt:.2f} s")
-
         fig3D.canvas.draw()
         fig3D.canvas.flush_events()
 
-    # synchronisation avec le temps réel
-    elapsed_real = time.time() - start_time
-    wait = t_sim - elapsed_real
+    #timer terminal
+    elapsed = time.time() - start_time
+    progress = 100 * t / nt
+    print(f"Progress: {progress:.1f}% - Durée: {elapsed:.1f}s", end='\r')
+
+    #temps réel
+    wait = t_sim - elapsed
     if wait > 0:
         time.sleep(wait)
+
+#timer reste affiché dans le terminal
+elapsed = time.time() - start_time
+print(f"Progress: 100.0% - Elapsed time: {elapsed:.1f}s")
 
 plt.ioff()
 plt.show()

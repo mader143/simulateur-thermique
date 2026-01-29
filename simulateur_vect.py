@@ -6,9 +6,13 @@ from matplotlib.animation import FuncAnimation, FFMpegWriter
 import imageio.v2 as imageio
 import time
 import json
+import os, json
 
-# ouvrir le fichier et charger les paramètres
-with open("params_sim.json", "r") as f:
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+json_path = os.path.join(base_dir, "params_sim.json")
+
+with open(json_path, "r") as f:
     params = json.load(f)
 
 # extraire les paramètres
