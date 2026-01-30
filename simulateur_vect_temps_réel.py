@@ -54,8 +54,6 @@ epaisseur = 1.61e-3
 cell_volume = dx * dy * epaisseur
 
 nb_cells = (2*rx + 1) * (2*ry + 1)
-
-Pin = 5 # Watts
 P_cell = Pin/nb_cells
 
 save_interval = 10
@@ -129,6 +127,7 @@ for t in range(nt):
         (T_new[2:, 1:-1] - 2*T_new[1:-1, 1:-1] + T_new[:-2, 1:-1]) / dx**2 +
         (T_new[1:-1, 2:] - 2*T_new[1:-1, 1:-1] + T_new[1:-1, :-2]) / dy**2
     )
+    
     T[1:-1, 1:-1] += dt * alpha * laplacien
 
     # convection sur les bords
@@ -141,7 +140,7 @@ for t in range(nt):
     T += coeff_face * (T_init - T)
 
     # ajout de la puissance sur la zone active
-    T[ x0-rx:x0+rx+1, y0-ry:y0+ry+1] += (P_cell * dt) / (rho * cp * cell_volume)
+    T[x0-rx:x0+rx+1, y0-ry:y0+ry+1] += (P_cell * dt) / (rho * cp * cell_volume)
 
     # stockage des températures aux thermistances
     temps.append(t * dt)
@@ -150,7 +149,7 @@ for t in range(nt):
     T3.append(T[therm3_locx, therm3_locy] - 273)
 
     # mise à jour des graphiques toutes les 200 itérations
-    if t % 200 == 0:
+    if t % 10 == 0:
         # mise à jour graphique des thermistances
         line1.set_data(temps, T1)
         line2.set_data(temps, T2)
