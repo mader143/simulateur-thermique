@@ -128,6 +128,7 @@ for t in range(nt):
         (T_new[1:-1, 2:] - 2*T_new[1:-1, 1:-1] + T_new[1:-1, :-2]) / dy**2
     )
     
+
     T[1:-1, 1:-1] += dt * alpha * laplacien
 
     # convection sur les bords
@@ -137,8 +138,8 @@ for t in range(nt):
     T[:, -1] += coeff_conv * (T_init - T[:, -1])
     
     # convection sur la face supérieure
-    #T += coeff_face * (T_init - T)
-    T = (T + coeff_face * T_init) / (1 + coeff_face)
+    T += coeff_face * (T_init - T)
+    #T = (T + coeff_face * T_init) / (1 + coeff_face)
 
 
     # ajout de la puissance sur la zone active

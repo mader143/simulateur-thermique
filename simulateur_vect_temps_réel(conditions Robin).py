@@ -6,7 +6,7 @@ import json
 import os, json
 
 #coefficient de résolution(prend les valeurs entre 1 et 14, mettre 1 pour avoir le code normal)
-res = 2 #4 c'est pas mal le meilleur rapport vitesse/qualité
+res = 4 #4 c'est pas mal le meilleur rapport vitesse/qualité
 
 
 # ouvrir le fichier et charger les paramètres
@@ -130,11 +130,12 @@ for t in range(nt):
     
     T[1:-1, 1:-1] += dt * alpha * laplacien
 
-    # convection sur les bords
-    T[0, :]  += coeff_conv * (T_init - T[0, :])
-    T[-1, :] += coeff_conv * (T_init - T[-1, :])
-    T[:, 0]  += coeff_conv * (T_init - T[:, 0])
-    T[:, -1] += coeff_conv * (T_init - T[:, -1])
+    # 4. Bords de Robin (Convection sur les tranches)
+    factor = (h_conv * dx) / k
+    T[0, :] = (T[1, :] + factor * T_init) / (1 + factor)
+    T[-1, :] = (T[-2, :] + factor * T_init) / (1 + factor)
+    T[:, 0] = (T[:, 1] + factor * T_init) / (1 + factor)
+    T[:, -1] = (T[:, -2] + factor * T_init) / (1 + factor)
     
     # convection sur la face supérieure
     #T += coeff_face * (T_init - T)

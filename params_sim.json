@@ -3,11 +3,11 @@
   "largeur": 61.57e-3,
   "epaisseur": 1.61e-3,
   "T_init": 21,
-  "t_simulation": 50.0,
+  "t_simulation": 100.0,
   "k": 205,
   "rho": 2700,
   "cp": 900,
-  "h_conv": 20,
+  "h_conv": 5,
   "dx": 0.001,
-  "Pin": 1
+  "Pin": 4
 }
