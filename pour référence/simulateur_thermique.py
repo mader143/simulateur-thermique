@@ -4,7 +4,7 @@ from matplotlib.animation import FuncAnimation, FFMpegWriter
 import time
 
 # utilisez pas lui il est ass
-
+epaisseur = 1.61e-3
 longueur = 117.28e-3 #en m
 largeur = 61.57e-3 #en m
 T_init = 21 + 273 #T pièce en kelvins
@@ -29,7 +29,7 @@ volume = dx * dy * dz
 nx, ny, nt = int(longueur / dx), int(largeur / dy), int(round(t_simulation / dt))
 
 #Puissance
-Pin = 0.5
+Pin = 3
 Pin_loc_y = 0
 Pin_loc_x = int(round((largeur / 2) / dy))
 P = np.zeros((nx, ny))
@@ -92,8 +92,8 @@ for t in range(nt):
             else:
                 T_new[i, j] += dt*alpha*((((T[i+1, j] - 2*T[i,j] + T[i-1,j]) / dx**2)) + ((T[i, j+1] - 2*T[i,j] + T[i,j-1])/dy**2))
 
-            T[i, j] += dt/(rho*cp) * P[i, j] / volume # je comprends pas pkoi on divise par le volume tout le temps....
-            T_new[i, j] += dt/(rho*cp) * h_conv * (T_init - T[i, j]) * 2*aire_top / volume
+            T[i, j] += dt/(rho*cp) * P[i, j] / epaisseur # je comprends pas pkoi on divise par le volume tout le temps....
+            T_new[i, j] += dt/(rho*cp) * h_conv * (T_init - T[i, j]) *aire_top / volume
     
     T = T_new.copy()
     if t % save_interval == 0:
@@ -115,7 +115,7 @@ ax.set_title("Évolution de la température sur la plaque")
 
 def update(i):
     im.set_array(frames[i])
-    im.set_clim(T_init, 330)
+    im.set_clim(T_init, 300)
     return [im]
 
 ani = FuncAnimation(fig, update, frames=len(frames), interval=50, blit=True)
