@@ -52,6 +52,7 @@ ry = int((act_size/2) / dy)
 
 epaisseur = 1.61e-3
 cell_volume = dx * dy * epaisseur
+cell_area = dx*dy
 
 nb_cells = (2*rx + 1) * (2*ry + 1)
 P_cell = Pin/nb_cells
@@ -127,22 +128,65 @@ for t in range(nt):
         (T_new[2:, 1:-1] - 2*T_new[1:-1, 1:-1] + T_new[:-2, 1:-1]) / dx**2 +
         (T_new[1:-1, 2:] - 2*T_new[1:-1, 1:-1] + T_new[1:-1, :-2]) / dy**2
     )
+
+    #milieu
+    T[1:-1, 1:-1] += dt*alpha*laplacien
+
+    #MÉTHODE 1 : LAPLACIEN DÉCENTRÉ POUR BORDS/COINS
+
+    # #BORDS
+    # #bord à x=0
+    # T[:1, 1:-1] += dt*alpha*((T_new[:1, 1:-1] - 2*T_new[1:2, 1:-1] + T_new[2:3, 1:-1]) / dx**2 +
+    #     (T_new[:1, 2:] - 2*T_new[:1, 1:-1] + T_new[:1, :-2]) / dy**2)
+    # #bord à x=-1
+    # T[-1:, 1:-1] += dt*alpha*((T_new[-1:, 1:-1] - 2*T_new[-2:-1, 1:-1] + T_new[-3:-2, 1:-1]) / dx**2 +
+    #     (T_new[-1:, 2:] - 2*T_new[-1:, 1:-1] + T_new[-1:, :-2]) / dy**2)
+    # #bord à y=0
+    # T[1:-1, :1] += dt*alpha*((T_new[2:, :1] - 2*T_new[1:-1, :1] + T_new[:-2, :1]) / dx**2 +
+    #     (T_new[1:-1, :1] - 2*T_new[1:-1, 1:2] + T_new[1:-1, 2:3]) / dy**2)
+    # #bord à y=-1
+    # T[1:-1, -1:] += dt*alpha*((T_new[2:, -1:] - 2*T_new[1:-1, -1:] + T_new[:-2, -1:]) / dx**2 +
+    #     (T_new[1:-1, -1:] - 2*T_new[1:-1, -2:-1] + T_new[1:-1, -3:-2]) / dy**2)
     
-    T[1:-1, 1:-1] += dt * alpha * laplacien
+    # #COINS
+    # # x=0, y=0
+    # T[0, 0] += dt*alpha*((T_new[0, 0] - 2*T_new[1, 0] + T_new[2, 0]) / dx**2 +
+    #     (T_new[0, 0] - 2*T_new[0, 1] + T_new[0, 2]) / dy**2)
+    # # x=0, y=-1
+    # T[0, -1] += dt*alpha*((T_new[0, -1] - 2*T_new[1, -1] + T_new[2, -1]) / dx**2 +
+    #     (T_new[0, -1] - 2*T_new[0, -2] + T_new[0, -3]) / dy**2)
+    # # x=-1, y=0
+    # T[-1, 0] += dt*alpha*((T_new[-1, 0] - 2*T_new[-2, 0] + T_new[-3, 0]) / dx**2 +
+    #     (T_new[-1, 0] - 2*T_new[-1, 1] + T_new[-1, 2]) / dy**2)
+    # # x=-1, y=-1
+    # T[-1, -1] += dt*alpha*((T_new[-1, -1] - 2*T_new[-2, -1] + T_new[-3, -1]) / dx**2 +
+    #     (T_new[-1, -1] - 2*T_new[-1, -2] + T_new[-1, -3]) / dy**2)
+
+    #MÉTHODE 2 : MOYENNE DES POINTS AUTOUR
+
+    T[0, 1:-1]  = T[1, 1:-1]  # Bord gauche
+    T[-1, 1:-1] = T[-2, 1:-1] # Bord droit
+    T[1:-1, 0]  = T[1:-1, 1]  # Bord bas
+    T[1:-1, -1] = T[1:-1, -2] # Bord haut
+    
+    # Coins (moyenne des voisins immédiats)
+    T[0, 0]   = T[1, 1]
+    T[0, -1]  = T[1, -2]
+    T[-1, 0]  = T[-2, 1]
+    T[-1, -1] = T[-2, -2]
+
 
     # convection sur les bords
     T[0, :]  += coeff_conv * (T_init - T[0, :])
     T[-1, :] += coeff_conv * (T_init - T[-1, :])
     T[:, 0]  += coeff_conv * (T_init - T[:, 0])
-    T[:, -1] += coeff_conv * (T_init - T[:, -1])
+    T[:, -1] += coeff_conv * (T_init - T[:, -1]) #peut etre un probleme avec ca
     
     # convection sur la face supérieure
-    #T += coeff_face * (T_init - T)
-    T = (T + coeff_face * T_init) / (1 + coeff_face)
-
+    T += coeff_face * (T_init - T)
 
     # ajout de la puissance sur la zone active
-    T[x0-rx:x0+rx+1, y0-ry:y0+ry+1] += (P_cell * dt) / (rho * cp * cell_volume)
+    T[x0-rx:x0+rx+1, y0-ry:y0+ry+1] += (P_cell * dt) / (rho * cp * cell_volume) #essayé avec /cell_area et ça marche pas du tout
 
     # stockage des températures aux thermistances
     temps.append(t * dt)

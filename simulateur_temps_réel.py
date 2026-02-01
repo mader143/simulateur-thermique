@@ -127,32 +127,8 @@ for t in range(nt):
         (T_new[2:, 1:-1] - 2*T_new[1:-1, 1:-1] + T_new[:-2, 1:-1]) / dx**2 +
         (T_new[1:-1, 2:] - 2*T_new[1:-1, 1:-1] + T_new[1:-1, :-2]) / dy**2
     )
-
-
+    
     T[1:-1, 1:-1] += dt * alpha * laplacien
-
-    # --- B. BORDS (Différences Progressives / Régressives) ---
-    
-    # Bord Gauche (i=0) : Progressive
-    # T[0] = (k*T[1] + h*dx*T_init) / (k + h*dx)
-    gamma_x = h_conv*dx/k
-    gamma_y = h_conv*dx/k
-    T[0, :] = (T[1, :] + gamma_x * (T_init-273.15)) / (1 + gamma_x)
-    
-    # Bord Droit (i=-1) : Régressive
-    T[-1, :] = (T[-2, :] + gamma_x * (T_init-273.15)) / (1 + gamma_x)
-    
-    # Bord Bas (j=0) : Progressive
-    T[:, 0] = (T[:, 1] + gamma_y * (T_init-273.15)) / (1 + gamma_y)
-    
-    # Bord Haut (j=-1) : Régressive
-    T[:, -1] = (T[:, -2] + gamma_y * (T_init-273.15)) / (1 + gamma_y)
-
-    # --- C. COINS (Moyenne des deux bords adjacents) ---
-    T[0, 0]   = (T[1, 0] + T[0, 1]) / 2
-    T[-1, 0]  = (T[-2, 0] + T[-1, 1]) / 2
-    T[0, -1]  = (T[1, -1] + T[0, -2]) / 2
-    T[-1, -1] = (T[-2, -1] + T[-1, -2]) / 2
 
     # convection sur les bords
     T[0, :]  += coeff_conv * (T_init - T[0, :])
@@ -162,7 +138,6 @@ for t in range(nt):
     
     # convection sur la face supérieure
     T += coeff_face * (T_init - T)
-    #T = (T + coeff_face * T_init) / (1 + coeff_face)
 
 
     # ajout de la puissance sur la zone active
