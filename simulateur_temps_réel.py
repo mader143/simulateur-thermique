@@ -5,6 +5,10 @@ import time
 import json
 import os, json
 
+
+#!!!Marche et se stabilise mais j'ai l'impression que les conditions aux bords marchent pas 
+#pcq la chaleur se diffuse pas jusqu'aux bords
+
 #coefficient de résolution(prend les valeurs entre 1 et 14, mettre 1 pour avoir le code normal)
 res = 2 #4 c'est pas mal le meilleur rapport vitesse/qualité
 

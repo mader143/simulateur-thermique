@@ -5,10 +5,11 @@ import time
 import json
 import os, json
 
-#Bon clairement il y a un problème soit avec les bords soit avec la puissance
+
+#C'est comme les condiitons de Dirichlet, bords à T constante
 
 #coefficient de résolution(prend les valeurs entre 1 et 14, mettre 1 pour avoir le code normal)
-res = 2 #4 c'est pas mal le meilleur rapport vitesse/qualité
+res = 4 #4 c'est pas mal le meilleur rapport vitesse/qualité
 
 
 # ouvrir le fichier et charger les paramètres
@@ -27,7 +28,7 @@ t_simulation = params["t_simulation"]
 k = params["k"]
 rho = params["rho"]
 cp = params["cp"]
-h_conv = params["h_conv"]
+h_conv = params["h_conv"]/10
 dx = params["dx"] * res
 Pin = params["Pin"]
 
@@ -54,7 +55,6 @@ ry = int((act_size/2) / dy)
 
 epaisseur = 1.61e-3
 cell_volume = dx * dy * epaisseur
-cell_area = dx*dy
 
 nb_cells = (2*rx + 1) * (2*ry + 1)
 P_cell = Pin/nb_cells
@@ -103,7 +103,7 @@ y = np.linspace(0, largeur, ny)
 X, Y = np.meshgrid(x, y, indexing='ij')
 
 surf = ax3D.plot_surface(
-    X, Y, T - 273,
+    X, Y, T - 273.15,
     cmap='inferno',
     rstride=1, cstride=1,
     linewidth=0
@@ -116,9 +116,6 @@ ax3D.set_zlim(20, 30)
 
 plt.show()
 
-gain_par_pas = (P_cell * dt) / (rho * cp * cell_volume)
-print(f"Diagnostic : Chaque itération ajoute +{gain_par_pas:.6f} °C dans la zone active")
-
 
 #timer
 start_time = time.time()
@@ -126,72 +123,22 @@ start_time = time.time()
 for t in range(nt):
     t_sim = t * dt  # temps simulé à l'étape t
 
-    T_new = T.copy()
+    T_ghost = np.pad(T, pad_width=1, mode='constant', constant_values=T_init)
     
     # equation de diffusion sur les points internes
     laplacien = (
-        (T_new[2:, 1:-1] - 2*T_new[1:-1, 1:-1] + T_new[:-2, 1:-1]) / dx**2 +
-        (T_new[1:-1, 2:] - 2*T_new[1:-1, 1:-1] + T_new[1:-1, :-2]) / dy**2
+    (T_ghost[2:, 1:-1] - 2*T_ghost[1:-1, 1:-1] + T_ghost[:-2, 1:-1]) / dx**2 +
+    (T_ghost[1:-1, 2:] - 2*T_ghost[1:-1, 1:-1] + T_ghost[1:-1, :-2]) / dy**2
     )
-
-    #milieu
-    T[1:-1, 1:-1] += dt*alpha*laplacien
-
-    #MÉTHODE 1 : LAPLACIEN DÉCENTRÉ POUR BORDS/COINS
-
-    # #BORDS
-    # #bord à x=0
-    # T[:1, 1:-1] += dt*alpha*((T_new[:1, 1:-1] - 2*T_new[1:2, 1:-1] + T_new[2:3, 1:-1]) / dx**2 +
-    #     (T_new[:1, 2:] - 2*T_new[:1, 1:-1] + T_new[:1, :-2]) / dy**2)
-    # #bord à x=-1
-    # T[-1:, 1:-1] += dt*alpha*((T_new[-1:, 1:-1] - 2*T_new[-2:-1, 1:-1] + T_new[-3:-2, 1:-1]) / dx**2 +
-    #     (T_new[-1:, 2:] - 2*T_new[-1:, 1:-1] + T_new[-1:, :-2]) / dy**2)
-    # #bord à y=0
-    # T[1:-1, :1] += dt*alpha*((T_new[2:, :1] - 2*T_new[1:-1, :1] + T_new[:-2, :1]) / dx**2 +
-    #     (T_new[1:-1, :1] - 2*T_new[1:-1, 1:2] + T_new[1:-1, 2:3]) / dy**2)
-    # #bord à y=-1
-    # T[1:-1, -1:] += dt*alpha*((T_new[2:, -1:] - 2*T_new[1:-1, -1:] + T_new[:-2, -1:]) / dx**2 +
-    #     (T_new[1:-1, -1:] - 2*T_new[1:-1, -2:-1] + T_new[1:-1, -3:-2]) / dy**2)
     
-    # #COINS
-    # # x=0, y=0
-    # T[0, 0] += dt*alpha*((T_new[0, 0] - 2*T_new[1, 0] + T_new[2, 0]) / dx**2 +
-    #     (T_new[0, 0] - 2*T_new[0, 1] + T_new[0, 2]) / dy**2)
-    # # x=0, y=-1
-    # T[0, -1] += dt*alpha*((T_new[0, -1] - 2*T_new[1, -1] + T_new[2, -1]) / dx**2 +
-    #     (T_new[0, -1] - 2*T_new[0, -2] + T_new[0, -3]) / dy**2)
-    # # x=-1, y=0
-    # T[-1, 0] += dt*alpha*((T_new[-1, 0] - 2*T_new[-2, 0] + T_new[-3, 0]) / dx**2 +
-    #     (T_new[-1, 0] - 2*T_new[-1, 1] + T_new[-1, 2]) / dy**2)
-    # # x=-1, y=-1
-    # T[-1, -1] += dt*alpha*((T_new[-1, -1] - 2*T_new[-2, -1] + T_new[-3, -1]) / dx**2 +
-    #     (T_new[-1, -1] - 2*T_new[-1, -2] + T_new[-1, -3]) / dy**2)
-
-    # #MÉTHODE 2 : MOYENNE DES POINTS AUTOUR
-
-    T[0, :] = T[1, :]   # Bord gauche copie la colonne 1
-    T[-1, :] = T[-2, :] # Bord droit copie l'avant-dernière colonne
-    T[:, 0] = T[:, 1]   # Bord bas copie la ligne 1
-    T[:, -1] = T[:, -2] # Bord haut copie l'avant-dernière ligne    
-
-
-    # convection sur les bords
-    T[0, :]  += coeff_conv * (T_init - T[0, :])
-    T[-1, :] += coeff_conv * (T_init - T[-1, :])
-    T[:, 0]  += coeff_conv * (T_init - T[:, 0])
-    T[:, -1] += coeff_conv * (T_init - T[:, -1]) #peut etre un probleme avec ca
+    T += dt * alpha * laplacien
     
     # convection sur la face supérieure
-    T += 2*coeff_face * (T_init - T)
+    T += coeff_face * (T_init - T)
+
 
     # ajout de la puissance sur la zone active
-    T[x0-rx:x0+rx+1, y0-ry:y0+ry+1] += (P_cell * dt) / (rho * cp * cell_volume) #essayé avec /cell_area et ça marche pas du tout
-
-    perte_par_pas = coeff_face * (T[x0, y0] - T_init)
-    
-    if t % 500 == 0: # On affiche le bilan toutes les 500 itérations
-        balance = gain_par_pas - perte_par_pas
-        print(f"T_max: {T[x0, y0]-273.15:.2f}°C | Gain: +{gain_par_pas:.6f} | Perte: -{perte_par_pas:.6f} | Net: {balance:.6f}")
+    T[x0-rx:x0+rx+1, y0-ry:y0+ry+1] += (P_cell * dt) / (rho * cp * cell_volume)
 
     # stockage des températures aux thermistances
     temps.append(t * dt)

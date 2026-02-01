@@ -5,6 +5,8 @@ import time
 import json
 import os, json
 
+#!!!Se stabilise jamais, donc je pense pas que ça marche
+
 #coefficient de résolution(prend les valeurs entre 1 et 14, mettre 1 pour avoir le code normal)
 res = 4 #4 c'est pas mal le meilleur rapport vitesse/qualité
 
