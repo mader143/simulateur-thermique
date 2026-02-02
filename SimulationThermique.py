@@ -130,10 +130,7 @@ class SimulationThermique:
             # T[Pin_loc_y, Pin_loc_x] += (Pin * dt) / (rho * cp *dx**2*1.61e-3)
             T[x0 - rx:x0 + rx + 1, y0 - ry:y0 + ry + 1] += (P_cell * dt) / (self.rho * self.cp * cell_volume)
 
-            if t % 100 == 0:
-                progress = 100 * t / nt
-                print(f"\rProgression : {progress:.1f}%", end="", flush=True)
-
+            if t % 100 == 0: print(f"Progression : {100 * t / nt:.1f}%")
 
             # on prends les frames de T pour le graphique de diffusion thermique
             if t % save_interval == 0:
@@ -165,12 +162,10 @@ class SimulationThermique:
                 writer.append_data(image)
 
                 # timer
-#                elapsed = time.time() - start_time
+                elapsed = time.time() - start_time
                 progress = t / nt * 100
 
         writer.close()
-        total_time = time.time() - start_time
-        print(f"\n  Progression : 100%  |  Temps total : {total_time:.2f}s")
         print("\nVidéo enregistrée : Temperature_thermistances.mp4")
 
         # graphique diffusion thermique
