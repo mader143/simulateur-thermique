@@ -5,10 +5,11 @@ import time
 import json
 import os, json
 
-#!!!Se stabilise jamais, donc je pense pas que ça marche
+
+#C'est comme les condiitons de Dirichlet, bords à T constante
 
 #coefficient de résolution(prend les valeurs entre 1 et 14, mettre 1 pour avoir le code normal)
-res = 4 #4 c'est pas mal le meilleur rapport vitesse/qualité
+res = 1 #4 c'est pas mal le meilleur rapport vitesse/qualité
 
 
 # ouvrir le fichier et charger les paramètres
@@ -27,17 +28,21 @@ t_simulation = params["t_simulation"]
 k = params["k"]
 rho = params["rho"]
 cp = params["cp"]
-h_conv = params["h_conv"]
+h_conv = params["h_conv"]/10
 dx = params["dx"] * res
 Pin = params["Pin"]
 
 # quels paramètres doit-on pouvoir lire dans un fichier json?
 alpha = k / (rho * cp) 
 dy = dx
-dt = dx**2 / (5 * alpha)
+dt = 0.01
+#dt = dx**2 / (5 * alpha)
+
+print(dt)
 
 nx, ny = int(longueur / dx), int(largeur / dy)
 nt = int(t_simulation / dt)
+print(nt)
 #résolution
 
 vol = dx * dy * dx
@@ -73,8 +78,6 @@ x0, y0 = therm1_locx, therm1_locy
 #make it go faster
 target_frames = nt/save_interval # nombre total de frames
 
-plt.ion()
-
 # FIGURE 1 : thermistances
 
 figT, axT = plt.subplots(figsize=(6,4))
@@ -102,7 +105,7 @@ y = np.linspace(0, largeur, ny)
 X, Y = np.meshgrid(x, y, indexing='ij')
 
 surf = ax3D.plot_surface(
-    X, Y, T - 273,
+    X, Y, T - 273.15,
     cmap='inferno',
     rstride=1, cstride=1,
     linewidth=0
@@ -113,7 +116,7 @@ ax3D.set_ylabel("y [m]")
 ax3D.set_zlabel("Température [°C]")
 ax3D.set_zlim(20, 30)
 
-plt.show()
+#plt.show()
 
 
 #timer
@@ -122,26 +125,18 @@ start_time = time.time()
 for t in range(nt):
     t_sim = t * dt  # temps simulé à l'étape t
 
-    T_new = T.copy()
+    T_ghost = np.pad(T, pad_width=1, mode='constant', constant_values=T_init)
     
     # equation de diffusion sur les points internes
     laplacien = (
-        (T_new[2:, 1:-1] - 2*T_new[1:-1, 1:-1] + T_new[:-2, 1:-1]) / dx**2 +
-        (T_new[1:-1, 2:] - 2*T_new[1:-1, 1:-1] + T_new[1:-1, :-2]) / dy**2
+    (T_ghost[2:, 1:-1] - 2*T_ghost[1:-1, 1:-1] + T_ghost[:-2, 1:-1]) / dx**2 +
+    (T_ghost[1:-1, 2:] - 2*T_ghost[1:-1, 1:-1] + T_ghost[1:-1, :-2]) / dy**2
     )
     
-    T[1:-1, 1:-1] += dt * alpha * laplacien
-
-    # 4. Bords de Robin (Convection sur les tranches)
-    factor = (h_conv * dx) / k
-    T[0, :] = (T[1, :] + factor * T_init) / (1 + factor)
-    T[-1, :] = (T[-2, :] + factor * T_init) / (1 + factor)
-    T[:, 0] = (T[:, 1] + factor * T_init) / (1 + factor)
-    T[:, -1] = (T[:, -2] + factor * T_init) / (1 + factor)
+    T += dt * alpha * laplacien
     
     # convection sur la face supérieure
-    #T += coeff_face * (T_init - T)
-    T = (T + coeff_face * T_init) / (1 + coeff_face)
+    T += coeff_face * (T_init - T)
 
 
     # ajout de la puissance sur la zone active
@@ -154,7 +149,7 @@ for t in range(nt):
     T3.append(T[therm3_locx, therm3_locy] - 273)
 
     # mise à jour des graphiques toutes les 200 itérations
-    if t % 20 == 0:
+    if t % 10 == 0:
         # mise à jour graphique des thermistances
         line1.set_data(temps, T1)
         line2.set_data(temps, T2)
@@ -182,9 +177,10 @@ for t in range(nt):
     print(f"Progress: {progress:.1f}% - Durée: {elapsed:.1f}s", end='\r')
 
 
+
 #timer reste affiché dans le terminal
 elapsed = time.time() - start_time
 print(f"Progress: 100.0% - Elapsed time: {elapsed:.1f}s")
 
-plt.ioff()
+#plt.ioff()
 plt.show()

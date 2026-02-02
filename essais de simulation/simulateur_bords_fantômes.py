@@ -12,6 +12,8 @@ import os, json
 res = 4 #4 c'est pas mal le meilleur rapport vitesse/qualité
 
 
+
+
 # ouvrir le fichier et charger les paramètres
 base_dir = os.path.dirname(os.path.abspath(__file__))
 json_path = os.path.join(base_dir, "params_sim.json")
@@ -114,7 +116,7 @@ ax3D.set_ylabel("y [m]")
 ax3D.set_zlabel("Température [°C]")
 ax3D.set_zlim(20, 30)
 
-plt.show()
+#plt.show()
 
 
 #timer
@@ -174,14 +176,10 @@ for t in range(nt):
     progress = 100 * t / nt
     print(f"Progress: {progress:.1f}% - Durée: {elapsed:.1f}s", end='\r')
 
-    #temps réel
-    wait = t_sim - elapsed
-    if wait > 0:
-        time.sleep(wait)
 
 #timer reste affiché dans le terminal
 elapsed = time.time() - start_time
 print(f"Progress: 100.0% - Elapsed time: {elapsed:.1f}s")
 
 plt.ioff()
-plt.show()
+#plt.show()

@@ -8,7 +8,7 @@ import os, json
 #Bon clairement il y a un problème soit avec les bords soit avec la puissance
 
 #coefficient de résolution(prend les valeurs entre 1 et 14, mettre 1 pour avoir le code normal)
-res = 2 #4 c'est pas mal le meilleur rapport vitesse/qualité
+res = 4 #4 c'est pas mal le meilleur rapport vitesse/qualité
 
 
 # ouvrir le fichier et charger les paramètres
@@ -199,6 +199,7 @@ for t in range(nt):
     T2.append(T[therm2_locx, therm2_locy] - 273)
     T3.append(T[therm3_locx, therm3_locy] - 273)
 
+
     # mise à jour des graphiques toutes les 200 itérations
     if t % 10 == 0:
         # mise à jour graphique des thermistances
@@ -227,10 +228,6 @@ for t in range(nt):
     progress = 100 * t / nt
     print(f"Progress: {progress:.1f}% - Durée: {elapsed:.1f}s", end='\r')
 
-    #temps réel
-    wait = t_sim - elapsed
-    if wait > 0:
-        time.sleep(wait)
 
 #timer reste affiché dans le terminal
 elapsed = time.time() - start_time
