@@ -17,7 +17,6 @@ class SimControl(QMainWindow):
 
         self.simulation = SimulationThermique()
 
-
         # Initialiser les boutons ---------------------------------------------------------------------------
 
         # Pour charger les paramètres depuis le fichier json
@@ -25,7 +24,7 @@ class SimControl(QMainWindow):
 
         # Pour changer les paramètres de la simulation depuis les boutons
         self.doubleSpinBox_longueur.valueChanged.connect(
-            lambda : setattr(self.simulation, 'longueur', self.doubleSpinBox_longueur.value()/1000))
+            lambda: setattr(self.simulation, 'longueur', self.doubleSpinBox_longueur.value() / 1000))
         self.doubleSpinBox_largeur.valueChanged.connect(
             lambda: setattr(self.simulation, 'largeur', self.doubleSpinBox_largeur.value() / 1000))
         self.doubleSpinBox_epaisseur.valueChanged.connect(
@@ -50,18 +49,21 @@ class SimControl(QMainWindow):
         # Lancer la simulation thermique
         self.pushButton_start.clicked.connect(self.simulation.simuler_diffusion)
 
+        # Charger les paramètres par défaut au démarrage
+        self.load_json()
+
     def test(self):
         print(self.simulation.longueur,
-        self.simulation.largeur,
-        self.simulation.epaisseur ,
-        self.simulation.T_init,
-        self.simulation.t_simulation,
-        self.simulation.k,
-        self.simulation.rho,
-        self.simulation.cp ,
-        self.simulation.h_conv ,
-        self.simulation.dx ,
-        self.simulation.Pin)
+              self.simulation.largeur,
+              self.simulation.epaisseur,
+              self.simulation.T_init,
+              self.simulation.t_simulation,
+              self.simulation.k,
+              self.simulation.rho,
+              self.simulation.cp,
+              self.simulation.h_conv,
+              self.simulation.dx,
+              self.simulation.Pin)
 
     def load_json(self):
 
@@ -70,6 +72,24 @@ class SimControl(QMainWindow):
 
         with open(json_path, "r") as f:
             params = json.load(f)
+
+        # Bloquer les signaux pendant le chargement
+        widgets = [
+            self.doubleSpinBox_longueur,
+            self.doubleSpinBox_largeur,
+            self.doubleSpinBox_epaisseur,
+            self.doubleSpinBox_ti,
+            self.spinBox_temps,
+            self.doubleSpinBox_k,
+            self.doubleSpinBox_p,
+            self.doubleSpinBox_cp,
+            self.doubleSpinBox_h,
+            self.doubleSpinBox_dx,
+            self.doubleSpinBox_pin
+        ]
+
+        for w in widgets:
+            w.blockSignals(True)
 
         # extraire les paramètres
         self.simulation.longueur = params["longueur"]
@@ -85,14 +105,18 @@ class SimControl(QMainWindow):
         self.simulation.Pin = params["Pin"]
 
         # Placer les valeurs sur l'interface
-        self.doubleSpinBox_longueur.setValue(self.simulation.longueur*1000)
-        self.doubleSpinBox_largeur.setValue(self.simulation.largeur*1000)
-        self.doubleSpinBox_epaisseur.setValue(self.simulation.epaisseur*1000)
+        self.doubleSpinBox_longueur.setValue(self.simulation.longueur * 1000)
+        self.doubleSpinBox_largeur.setValue(self.simulation.largeur * 1000)
+        self.doubleSpinBox_epaisseur.setValue(self.simulation.epaisseur * 1000)
         self.doubleSpinBox_ti.setValue(self.simulation.T_init - 273.15)
         self.spinBox_temps.setValue(int(self.simulation.t_simulation))
         self.doubleSpinBox_k.setValue(self.simulation.k)
         self.doubleSpinBox_p.setValue(self.simulation.rho)
         self.doubleSpinBox_cp.setValue(self.simulation.cp)
         self.doubleSpinBox_h.setValue(self.simulation.h_conv)
-        self.doubleSpinBox_dx.setValue(self.simulation.dx*1000)
+        self.doubleSpinBox_dx.setValue(self.simulation.dx * 1000)
         self.doubleSpinBox_pin.setValue(self.simulation.Pin)
+
+        # Réactiver les signaux
+        for w in widgets:
+            w.blockSignals(False)
