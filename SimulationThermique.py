@@ -1,6 +1,5 @@
 import time
 from matplotlib.animation import FuncAnimation, FFMpegWriter
-import imageio
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -67,14 +66,6 @@ class SimulationThermique:
         x0, y0 = therm1_locx, therm1_locy
 
         Temps = np.arange(nt) * dt
-
-        writer = imageio.get_writer(
-            'Temperature_thermistances.mp4',
-            fps=30,
-            codec='libx264',
-            format='FFMPEG',
-            macro_block_size=1
-        )
 
         # make it go faster
         target_frames = nt / save_interval  # nombre total de frames
@@ -154,19 +145,6 @@ class SimulationThermique:
                 axs[1].set_ylim(min(thermistance2[:t + 1] - 273) - 1, max(thermistance2[:t + 1] - 273) + 1)
                 axs[2].set_xlim(0, max(Temps[t], 1e-8))
                 axs[2].set_ylim(min(thermistance3[:t + 1] - 273) - 1, max(thermistance3[:t + 1] - 273) + 1)
-
-                # to RGB
-                buf, size = fig.canvas.print_to_buffer()
-                width, height = size
-                image = np.frombuffer(buf, dtype=np.uint8).reshape((height, width, 4))[:, :, :3]
-                writer.append_data(image)
-
-                # timer
-                elapsed = time.time() - start_time
-                progress = t / nt * 100
-
-        writer.close()
-        print("\nVidéo enregistrée : Temperature_thermistances.mp4")
 
         # graphique diffusion thermique
         fig, ax = plt.subplots()
