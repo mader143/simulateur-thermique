@@ -9,11 +9,11 @@ const int pwmPin5 = 5;
 const int pwmPin11 = 11; 
 
 // Changement de duty cycle ICI (constante entre 0 et 255)
-const int pwmValue5 = 40;
-const int pwmValue11 = 40;
+const int pwmValue5 = 35;
+const int pwmValue11 = 55;
 
 // DURÉE D'ENREGISTREMENT CSV EN SECONDES
-const unsigned long DUREE_ENREGISTREMENT = 20; // Modifiez cette valeur selon vos besoins
+const unsigned long DUREE_ENREGISTREMENT = 240; // Modifiez cette valeur selon vos besoins
 
 float RT, VR, TX, T0, Rf, R1, Rg, V1, V2;
 float Vout, Vin, VRT;
@@ -26,8 +26,8 @@ void setup() {
   Rf = 5082.4 + 998.88;
   Rg = 5088.6 + 998.2;
   R1 = 1988.1;
-  V1 = 1.901;
-  V2 = 5.0;
+  V1 = 1.900;
+  V2 = 5.01;
   
   pinMode(pwmPin5, OUTPUT);
   pinMode(pwmPin11, OUTPUT);
@@ -77,13 +77,13 @@ void loop() {
     // MODE CSV : pour enregistrement Python
     Serial.print(t_s, 3);
     Serial.print(",");
-    Serial.println(TX, 4);
+    Serial.println(TX, 2);
   } else {
     // MODE NORMAL : affichage lisible avec tabulations
     t_s = (millis() - tempsDebut) / 1000.0;
     Serial.print(t_s, 3);
     Serial.print("\t\t");
-    Serial.println(TX, 4);
+    Serial.println(TX, 2);
   }
   
   delay(500);
