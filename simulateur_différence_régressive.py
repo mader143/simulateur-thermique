@@ -219,10 +219,10 @@ for t in range(1000):
     progress = 100 * t / nt
     print(f"Progress: {progress:.1f}% - Durée: {elapsed:.1f}s", end='\r')
 
-    #temps réel
-    wait = t_sim - elapsed
-    if wait > 0:
-        time.sleep(wait)
+    # #temps réel
+    # wait = t_sim - elapsed
+    # if wait > 0:
+    #     time.sleep(wait)
 
 #timer reste affiché dans le terminal
 elapsed = time.time() - start_time
