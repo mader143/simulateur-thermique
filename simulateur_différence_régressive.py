@@ -120,7 +120,7 @@ print(f"Diagnostic : Chaque itération ajoute +{gain_par_pas:.6f} °C dans la zo
 #timer
 start_time = time.time()
 
-for t in range(nt):
+for t in range(1000):
     t_sim = t * dt  # temps simulé à l'étape t
 
     dT_diff = np.zeros_like(T)
@@ -132,15 +132,16 @@ for t in range(nt):
         (T[1:-1, 2:] - 2*T[1:-1, 1:-1] + T[1:-1, :-2]) / dy**2
     )
 
+
     #BORDS
     #bord à x=0
     dT_diff[0, 1:-1] = dt*alpha*((T[1, 1:-1] - T[0, 1:-1]) / dx**2 +
-        (T[:1, 2:] - 2*T[:1, 1:-1] + T[:1, :-2]) / dy**2)
+        (T[0, 2:] - 2*T[0, 1:-1] + T[0, :-2]) / dy**2)
     #bord à x=-1
     dT_diff[-1, 1:-1] = dt*alpha*((-T[-1, 1:-1] + T[-2, 1:-1]) / dx**2 +
         (T[-1, 2:] - 2*T[-1, 1:-1] + T[-1, :-2]) / dy**2)
     #bord à y=0
-    dT_diff[1:-1, 0] = dt*alpha*((T[2:, 0] - T[1:-1, 0] + T[:-2, 0]) / dx**2 +
+    dT_diff[1:-1, 0] = dt*alpha*((T[2:, 0] - 2*T[1:-1, 0] + T[:-2, 0]) / dx**2 +
         (T[1:-1, 1] - T[1:-1, 0]) / dy**2)
     #bord à y=-1
     dT_diff[1:-1, -1] = dt*alpha*((T[2:, -1] - 2*T[1:-1, -1] + T[:-2, -1]) / dx**2 +
