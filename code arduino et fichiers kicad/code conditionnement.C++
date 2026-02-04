@@ -23,11 +23,11 @@ bool modeCSV = true;
 void setup() {
   Serial.begin(9600);
   T0 = 25.0 + 273.15;
-  Rf = 6100;
-  Rg = 6100;
-  R1 = 2000;
-  V1 = 1.9;
-  V2 = 4.9;
+  Rf = 5082.4 + 998.88;
+  Rg = 5088.6 + 998.2;
+  R1 = 1988.1;
+  V1 = 1.901;
+  V2 = 5.0;
   
   pinMode(pwmPin13, OUTPUT);
   pinMode(pwmPin12, OUTPUT);
