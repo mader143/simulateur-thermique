@@ -15,8 +15,8 @@ const int BROCHE_ADC_TEMP = A0;
 
 // Deux PWM vers ton PCB (pont en H + contrôle Peltier)
 // Règle : si PWM12 > PWM13 => chauffe ; si PWM13 > PWM12 => refroidit
-const int BROCHE_PWM_A = 12; // PWM A
-const int BROCHE_PWM_B = 13; // PWM B
+const int BROCHE_PWM_A = 5; // PWM A
+const int BROCHE_PWM_B = 11; // PWM B
 
 // ============================================================
 //                   PARAMÈTRES DU MONTAGE 

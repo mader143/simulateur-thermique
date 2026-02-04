@@ -5,12 +5,12 @@
 const int adcPin = A0;
 
 // PWM output pins
-const int pwmPin13 = 13;
-const int pwmPin12 = 12; 
+const int pwmPin5 = 5;
+const int pwmPin11 = 11; 
 
 // Changement de duty cycle ICI (constante entre 0 et 255)
-const int pwmValue13 = 40;
-const int pwmValue12 = 40;
+const int pwmValue5 = 40;
+const int pwmValue11 = 40;
 
 // DURÉE D'ENREGISTREMENT CSV EN SECONDES
 const unsigned long DUREE_ENREGISTREMENT = 20; // Modifiez cette valeur selon vos besoins
@@ -29,11 +29,11 @@ void setup() {
   V1 = 1.901;
   V2 = 5.0;
   
-  pinMode(pwmPin13, OUTPUT);
-  pinMode(pwmPin12, OUTPUT);
+  pinMode(pwmPin5, OUTPUT);
+  pinMode(pwmPin11, OUTPUT);
 
-  analogWrite(pwmPin13, pwmValue13);
-  analogWrite(pwmPin12, pwmValue12);
+  analogWrite(pwmPin5, pwmValue5);
+  analogWrite(pwmPin11, pwmValue11);
   
   while (!Serial) {
     ; // Attendre
