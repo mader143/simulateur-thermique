@@ -4,14 +4,15 @@ from datetime import datetime
 import time
 import os
 
+# Pour exécuter le script: pip install pyserial
+
 # ============ CONFIGURATION ============
-PORT = 'COM3'  # Changez selon votre port série (COM3, COM4, etc.)
+PORT = 'COM5'  # Changez au besoin (COM3, COM4, etc.)
 BAUDRATE = 9600
 
-# EMPLACEMENT D'ENREGISTREMENT - Modifiez ce chemin selon vos besoins
-CHEMIN_ENREGISTREMENT = r'C:\Users\VotreNom\Documents'  # Windows
-# CHEMIN_ENREGISTREMENT = '/home/votreuser/Documents'   # Linux
-# CHEMIN_ENREGISTREMENT = '/Users/votreuser/Documents'  # Mac
+# EMPLACEMENT D'ENREGISTREMENT - Modifiez selon la personne, commenter les autres chemins pls
+CHEMIN_ENREGISTREMENT = r'C:\Users\mathi\OneDrive\Bureau\simulateur-thermique\code arduino et fichiers kicad' 
+
 
 # Nom du fichier (avec horodatage automatique)
 NOM_FICHIER = f'temperature_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
