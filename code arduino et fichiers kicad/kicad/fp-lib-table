@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "ampli op")(type "KiCad")(uri "${KIPRJMOD}/ampli op.pretty")(options "")(descr ""))
+)
