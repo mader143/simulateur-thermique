@@ -103,7 +103,7 @@ coeff_face_2 = 2 * h_conv * dt / (rho * cp * epaisseur)
 
 T = np.full((nx, ny), T_init, dtype=float)
 
-act_size = 20e-3
+act_size = 15e-3
 rx = int((act_size/2) / dx)
 ry = int((act_size/2) / dy)
 
