@@ -21,11 +21,11 @@ const int BROCHE_PWM_B = 11; // PWM B
 // ============================================================
 //                   PARAMÈTRES DU MONTAGE 
 // ============================================================
-double rf_ohm  = 6100.0;
-double rg_ohm  = 6100.0;
-double r1_ohm  = 2000.0;
-double v1_volt = 1.9;
-double v2_volt = 4.9;
+const double rf_ohm  = 6100.0;
+const double rg_ohm  = 6100.0;
+const double r1_ohm  = 2000.0;
+const double v1_volt = 1.9;
+const double v2_volt = 4.9;
 
 // ============================================================
 //                     VARIABLES MESURE
