@@ -48,16 +48,16 @@ def compute_timestep_ultra(T, T_init, alpha_dt_dx2, alpha_dt_dy2,
     
     # Face convection (ALL cells) - vectorized calculation
     T_diff = T_init - T
-    for i in range(nx):
-        for j in range(ny):
+    for i in range(nx+1):
+        for j in range(ny+1):
             T_new[i, j] += coeff_face_2 * T_diff[i, j]
     
     # Lateral edge convection
-    for j in range(ny):
+    for j in range(ny+1):
         T_new[0, j] += coeff_conv * T_diff[0, j]
         T_new[nx-1, j] += coeff_conv * T_diff[nx-1, j]
     
-    for i in range(nx):
+    for i in range(nx+1):
         T_new[i, 0] += coeff_conv * T_diff[i, 0]
         T_new[i, ny-1] += coeff_conv * T_diff[i, ny-1]
     
