@@ -1,0 +1,108 @@
+(footprint "trimpot"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 0 -0.5 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "78fb4bea-e009-493a-b5d8-80fbf544c464")
+		(effects
+			(font (size 1 1) (thickness 0.1))
+		)
+	)
+	(property "Value" "trimpot"
+		(at 0 1 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "70b938ba-8221-4676-a266-2284f17fdaa7")
+		(effects
+			(font (size 1 1) (thickness 0.15))
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "d111dbf8-f0b0-4e2a-8375-a0d3e8cea2de")
+		(effects
+			(font (size 1 1) (thickness 0.15))
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "de87472f-eabf-49f7-8eca-88b7257e066f")
+		(effects
+			(font (size 1 1) (thickness 0.15))
+		)
+	)
+	(attr through_hole)
+	(fp_text user "${REFERENCE}"
+		(at 0 2.5 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "9e80326e-ae96-4e66-af29-fcae99c85785")
+		(effects
+			(font (size 1 1) (thickness 0.15))
+		)
+	)
+	(pad "1" thru_hole rect
+		(at -2.54 7.62)
+		(size 2 2)
+		(drill 0.8)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "76fd5c7a-efbc-4e0d-b305-5e09b34eccb6")
+	)
+	(pad "2" thru_hole circle
+		(at 0 7.62)
+		(size 2 2)
+		(drill 0.8)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "608bcabb-60fb-415a-b9cd-bf7f10fdaba4")
+	)
+	(pad "3" thru_hole circle
+		(at 2.54 7.62)
+		(size 2 2)
+		(drill 0.8)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "54b0c0f1-a627-499a-86fe-f4d3b023ad10")
+	)
+	(zone
+		(net 0)
+		(net_name "")
+		(layer "F.SilkS")
+		(uuid "0511cf0f-919d-4772-a1fd-8ab84e0b0f0b")
+		(hatch edge 0.5)
+		(connect_pads
+			(clearance 0)
+		)
+		(min_thickness 0.25)
+		(filled_areas_thickness no)
+		(keepout
+			(tracks allowed)
+			(vias allowed)
+			(pads not_allowed)
+			(copperpour allowed)
+			(footprints not_allowed)
+		)
+		(placement
+			(enabled no)
+			(sheetname "")
+		)
+		(fill (thermal_gap 0.5) (thermal_bridge_width 0.5))
+		(polygon
+			(pts
+				(xy -4.781571 5.1) (xy 4.718429 5.1) (xy 4.718429 10.1) (xy -4.781571 10.1)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
