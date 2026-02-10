@@ -17,26 +17,6 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0" colspan="2">
-       <widget class="QLabel" name="label">
-        <property name="font">
-         <font>
-          <family>Segoe UI Black</family>
-          <pointsize>13</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Simulation de la diffusion de chaleur sur la plaque thermique</string>
-        </property>
-       </widget>
-      </item>
-      <item row="15" column="0" colspan="2">
-       <widget class="Line" name="line_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
       <item row="2" column="0" colspan="2">
        <widget class="QLabel" name="label_2">
         <property name="font">
@@ -50,6 +30,36 @@
         </property>
        </widget>
       </item>
+      <item row="15" column="0" colspan="2">
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QLabel" name="label">
+        <property name="font">
+         <font>
+          <family>Segoe UI Black</family>
+          <pointsize>13</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Simulation de la diffusion de chaleur sur la plaque thermique</string>
+        </property>
+       </widget>
+      </item>
+      <item row="16" column="1">
+       <widget class="QPushButton" name="pushButton">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(218, 0, 0);</string>
+        </property>
+        <property name="text">
+         <string>Arrêter la simulation</string>
+        </property>
+       </widget>
+      </item>
       <item row="9" column="1">
        <widget class="QDoubleSpinBox" name="doubleSpinBox_k">
         <property name="suffix">
@@ -60,10 +70,10 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_3">
+      <item row="3" column="0" colspan="2">
+       <widget class="QPushButton" name="pushButton_load_json">
         <property name="text">
-         <string>Longueur de la plaque</string>
+         <string>Charger les paramètres (json)</string>
         </property>
        </widget>
       </item>
@@ -74,10 +84,10 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0" colspan="2">
-       <widget class="QPushButton" name="pushButton_load_json">
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Charger les paramètres (json)</string>
+         <string>Longueur de la plaque</string>
         </property>
        </widget>
       </item>
@@ -91,17 +101,17 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="0">
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>Température initiale</string>
-        </property>
-       </widget>
-      </item>
       <item row="10" column="0">
        <widget class="QLabel" name="label_9">
         <property name="text">
          <string>Densité de la plaque (p)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Température initiale</string>
         </property>
        </widget>
       </item>
@@ -119,6 +129,13 @@
         </property>
        </widget>
       </item>
+      <item row="12" column="0">
+       <widget class="QLabel" name="label_11">
+        <property name="text">
+         <string>Coefficient de convection (h)</string>
+        </property>
+       </widget>
+      </item>
       <item row="6" column="0">
        <widget class="QLabel" name="label_5">
         <property name="text">
@@ -133,13 +150,6 @@
         </property>
        </widget>
       </item>
-      <item row="13" column="0">
-       <widget class="QLabel" name="label_12">
-        <property name="text">
-         <string>Élément discret (dx)</string>
-        </property>
-       </widget>
-      </item>
       <item row="14" column="0">
        <widget class="QLabel" name="label_13">
         <property name="text">
@@ -147,10 +157,33 @@
         </property>
        </widget>
       </item>
-      <item row="12" column="0">
-       <widget class="QLabel" name="label_11">
+      <item row="13" column="0">
+       <widget class="QLabel" name="label_12">
         <property name="text">
-         <string>Coefficient de convection (h)</string>
+         <string>Élément discret (dx)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QSpinBox" name="spinBox_temps">
+        <property name="suffix">
+         <string> s</string>
+        </property>
+        <property name="maximum">
+         <number>100000</number>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_ti">
+        <property name="suffix">
+         <string> °C</string>
+        </property>
+        <property name="minimum">
+         <double>-100.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>300.000000000000000</double>
         </property>
        </widget>
       </item>
@@ -174,26 +207,17 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="1">
-       <widget class="QDoubleSpinBox" name="doubleSpinBox_ti">
+      <item row="12" column="1">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_h">
         <property name="suffix">
-         <string> °C</string>
-        </property>
-        <property name="minimum">
-         <double>-100.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>300.000000000000000</double>
+         <string> W/m².K</string>
         </property>
        </widget>
       </item>
-      <item row="8" column="1">
-       <widget class="QSpinBox" name="spinBox_temps">
+      <item row="14" column="1">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_pin">
         <property name="suffix">
-         <string> s</string>
-        </property>
-        <property name="maximum">
-         <number>100000</number>
+         <string> W</string>
         </property>
        </widget>
       </item>
@@ -214,20 +238,6 @@
         </property>
         <property name="maximum">
          <double>100000.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="12" column="1">
-       <widget class="QDoubleSpinBox" name="doubleSpinBox_h">
-        <property name="suffix">
-         <string> W/m².K</string>
-        </property>
-       </widget>
-      </item>
-      <item row="14" column="1">
-       <widget class="QDoubleSpinBox" name="doubleSpinBox_pin">
-        <property name="suffix">
-         <string> W</string>
         </property>
        </widget>
       </item>
@@ -254,6 +264,25 @@
          <string>Lancer la simulation</string>
         </property>
        </widget>
+      </item>
+      <item row="16" column="2">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="2" rowspan="15">
+       <layout class="QVBoxLayout" name="graph_layout"/>
       </item>
      </layout>
     </item>
