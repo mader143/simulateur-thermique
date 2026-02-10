@@ -3327,12 +3327,6 @@
 		(uuid "035b02b3-2c73-49b4-a83c-5cd7d1310822")
 	)
 	(junction
-		(at 170.18 22.86)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "049d9902-4efb-4d94-89e0-94b7019545b6")
-	)
-	(junction
 		(at 62.23 41.91)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3381,12 +3375,6 @@
 		(uuid "4c48a86d-03eb-4daf-80e4-f1345087c2d8")
 	)
 	(junction
-		(at 80.01 24.13)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "527700c7-4e40-4abc-9aa7-e226abaf8ad0")
-	)
-	(junction
 		(at 74.93 96.52)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3415,12 +3403,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "6dd57d00-c254-4dde-b3c5-884047d939c6")
-	)
-	(junction
-		(at 162.56 22.86)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "6e5fbe07-6b06-46a6-926e-02e855ae182e")
 	)
 	(junction
 		(at 40.64 99.06)
@@ -3469,12 +3451,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "9e9d929c-114c-4856-b6d9-9aa024fcbe80")
-	)
-	(junction
-		(at 87.63 24.13)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "a25746e5-8ed9-4424-b46f-f1adf03eb9a3")
 	)
 	(junction
 		(at 74.93 30.48)
@@ -3674,16 +3650,6 @@
 	)
 	(wire
 		(pts
-			(xy 86.36 24.13) (xy 87.63 24.13)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0fad756e-5000-4815-89fe-df1ca1d0f026")
-	)
-	(wire
-		(pts
 			(xy 83.82 81.28) (xy 93.98 81.28)
 		)
 		(stroke
@@ -3824,7 +3790,7 @@
 	)
 	(wire
 		(pts
-			(xy 162.56 22.86) (xy 163.83 22.86)
+			(xy 157.48 22.86) (xy 162.56 22.86)
 		)
 		(stroke
 			(width 0)
@@ -3841,6 +3807,16 @@
 			(type default)
 		)
 		(uuid "22baedd1-6b83-4d8d-b272-548eadc75e7c")
+	)
+	(wire
+		(pts
+			(xy 170.18 22.86) (xy 176.53 22.86)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "24757bf3-7bf4-457f-a7b5-0c0b0fba82c4")
 	)
 	(wire
 		(pts
@@ -3891,16 +3867,6 @@
 			(type default)
 		)
 		(uuid "2b430804-534a-4e14-9b23-be237e2a76dd")
-	)
-	(wire
-		(pts
-			(xy 168.91 22.86) (xy 170.18 22.86)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2b944267-1dda-4d6c-af20-5a46bb0cbbb6")
 	)
 	(wire
 		(pts
@@ -4464,16 +4430,6 @@
 	)
 	(wire
 		(pts
-			(xy 157.48 22.86) (xy 162.56 22.86)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "731b03eb-6b99-41bd-abb2-6f55374b05e4")
-	)
-	(wire
-		(pts
 			(xy 220.98 97.79) (xy 220.98 86.36)
 		)
 		(stroke
@@ -4614,6 +4570,16 @@
 	)
 	(wire
 		(pts
+			(xy 74.93 24.13) (xy 80.01 24.13)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7db0b6a8-42e2-4143-a065-fca4843e1e6f")
+	)
+	(wire
+		(pts
 			(xy 118.11 52.07) (xy 118.11 49.53)
 		)
 		(stroke
@@ -4631,16 +4597,6 @@
 			(type default)
 		)
 		(uuid "83f40320-b1d7-4b8b-a314-6d43e5fa17ae")
-	)
-	(wire
-		(pts
-			(xy 74.93 24.13) (xy 80.01 24.13)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "84069eb3-4746-49d0-94d2-eb79845a16ab")
 	)
 	(wire
 		(pts
@@ -4761,16 +4717,6 @@
 			(type default)
 		)
 		(uuid "93d3d267-3372-4fe0-8fd1-915717e3ad28")
-	)
-	(wire
-		(pts
-			(xy 80.01 24.13) (xy 81.28 24.13)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "958946c8-98e1-4656-8e47-db590ade5609")
 	)
 	(wire
 		(pts
@@ -5411,16 +5357,6 @@
 			(type default)
 		)
 		(uuid "f32f2994-dfa5-428d-9c41-e2eaaa298a9d")
-	)
-	(wire
-		(pts
-			(xy 170.18 22.86) (xy 176.53 22.86)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f4283536-8841-4f73-b74c-fee799c6232b")
 	)
 	(wire
 		(pts
@@ -6309,7 +6245,7 @@
 				)
 			)
 		)
-		(property "Value" "2 μF"
+		(property "Value" "1 μF"
 			(at 87.884 75.946 90)
 			(effects
 				(font
@@ -6317,7 +6253,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm"
+		(property "Footprint" "Library:condensateur 1uF"
 			(at 87.63 76.5048 0)
 			(effects
 				(font
@@ -6387,7 +6323,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 124.968 46.99 90)
 			(effects
 				(font
@@ -6864,7 +6800,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 42.418 104.14 90)
 			(effects
 				(font
@@ -6990,7 +6926,7 @@
 				)
 			)
 		)
-		(property "Value" "2 μF"
+		(property "Value" "1 μF"
 			(at 171.45 72.136 90)
 			(effects
 				(font
@@ -6998,7 +6934,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm"
+		(property "Footprint" "Library:condensateur 1uF"
 			(at 170.18 72.6948 0)
 			(effects
 				(font
@@ -7066,7 +7002,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 149.86 94.488 90)
 			(effects
 				(font
@@ -7219,7 +7155,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 119.888 99.06 90)
 			(effects
 				(font
@@ -7565,7 +7501,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 162.56 51.562 90)
 			(effects
 				(font
@@ -7898,25 +7834,25 @@
 			)
 		)
 		(pin "6"
-			(uuid "af33d0b5-7427-4fb1-898e-522d9d6526e2")
+			(uuid "af33d0b5-7427-4fb1-898e-522d9d6526e3")
 		)
 		(pin "3"
 			(uuid "473670fc-d851-42c7-97e7-08281679423c")
 		)
 		(pin "7"
-			(uuid "57911a3c-c213-4a5e-a324-6d9f9c28d993")
+			(uuid "57911a3c-c213-4a5e-a324-6d9f9c28d994")
 		)
 		(pin "2"
 			(uuid "7c4dcc5a-7855-412b-822b-59a313c68cd4")
 		)
 		(pin "8"
-			(uuid "74db3ab3-290f-49ff-83b9-ad10711be86d")
+			(uuid "74db3ab3-290f-49ff-83b9-ad10711be86f")
 		)
 		(pin "5"
-			(uuid "920526d6-8c80-4732-99df-5185b539b97e")
+			(uuid "920526d6-8c80-4732-99df-5185b539b97f")
 		)
 		(pin "4"
-			(uuid "0125bc55-4e01-4e69-b744-96f5bebb4964")
+			(uuid "0125bc55-4e01-4e69-b744-96f5bebb4966")
 		)
 		(pin "1"
 			(uuid "19f1be76-8d03-4068-ae9b-437998128835")
@@ -7947,7 +7883,7 @@
 				)
 			)
 		)
-		(property "Value" "2 μF"
+		(property "Value" "1 μF"
 			(at 166.37 19.05 90)
 			(effects
 				(font
@@ -7955,7 +7891,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm"
+		(property "Footprint" "Library:condensateur 1uF"
 			(at 170.18 21.8948 0)
 			(effects
 				(font
@@ -8025,7 +7961,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 124.968 100.33 90)
 			(effects
 				(font
@@ -8085,7 +8021,7 @@
 				)
 			)
 		)
-		(property "Value" "Thermistor"
+		(property "Value" "Screw_Terminal_01x02"
 			(at 64.77 104.14 90)
 			(effects
 				(font
@@ -8455,25 +8391,25 @@
 			)
 		)
 		(pin "6"
-			(uuid "af33d0b5-7427-4fb1-898e-522d9d6526e3")
+			(uuid "af33d0b5-7427-4fb1-898e-522d9d6526e4")
 		)
 		(pin "3"
 			(uuid "c554e8ca-dbc8-47c9-b26c-e50bc255541b")
 		)
 		(pin "7"
-			(uuid "57911a3c-c213-4a5e-a324-6d9f9c28d994")
+			(uuid "57911a3c-c213-4a5e-a324-6d9f9c28d995")
 		)
 		(pin "2"
 			(uuid "950ea91b-3472-498a-a257-6c8d81a7e052")
 		)
 		(pin "8"
-			(uuid "74db3ab3-290f-49ff-83b9-ad10711be86f")
+			(uuid "74db3ab3-290f-49ff-83b9-ad10711be870")
 		)
 		(pin "5"
-			(uuid "920526d6-8c80-4732-99df-5185b539b97f")
+			(uuid "920526d6-8c80-4732-99df-5185b539b980")
 		)
 		(pin "4"
-			(uuid "0125bc55-4e01-4e69-b744-96f5bebb4966")
+			(uuid "0125bc55-4e01-4e69-b744-96f5bebb4967")
 		)
 		(pin "1"
 			(uuid "4e659ed7-869e-4a74-879d-2597e48190ed")
@@ -8981,7 +8917,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 67.31 98.298 90)
 			(effects
 				(font
@@ -9441,25 +9377,25 @@
 			)
 		)
 		(pin "6"
-			(uuid "af33d0b5-7427-4fb1-898e-522d9d6526e4")
+			(uuid "af33d0b5-7427-4fb1-898e-522d9d6526e5")
 		)
 		(pin "3"
 			(uuid "c554e8ca-dbc8-47c9-b26c-e50bc255541d")
 		)
 		(pin "7"
-			(uuid "57911a3c-c213-4a5e-a324-6d9f9c28d995")
+			(uuid "57911a3c-c213-4a5e-a324-6d9f9c28d996")
 		)
 		(pin "2"
 			(uuid "950ea91b-3472-498a-a257-6c8d81a7e054")
 		)
 		(pin "8"
-			(uuid "74db3ab3-290f-49ff-83b9-ad10711be870")
+			(uuid "74db3ab3-290f-49ff-83b9-ad10711be871")
 		)
 		(pin "5"
-			(uuid "920526d6-8c80-4732-99df-5185b539b980")
+			(uuid "920526d6-8c80-4732-99df-5185b539b981")
 		)
 		(pin "4"
-			(uuid "0125bc55-4e01-4e69-b744-96f5bebb4967")
+			(uuid "0125bc55-4e01-4e69-b744-96f5bebb4968")
 		)
 		(pin "1"
 			(uuid "4e659ed7-869e-4a74-879d-2597e48190ef")
@@ -9499,7 +9435,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 31.75 46.228 90)
 			(effects
 				(font
@@ -9546,7 +9482,7 @@
 		(at 93.98 91.44 270)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -9760,13 +9696,13 @@
 			(uuid "950ea91b-3472-498a-a257-6c8d81a7e055")
 		)
 		(pin "8"
-			(uuid "74db3ab3-290f-49ff-83b9-ad10711be871")
+			(uuid "74db3ab3-290f-49ff-83b9-ad10711be872")
 		)
 		(pin "5"
 			(uuid "828d3dbd-1227-4bf0-8274-e277a9cc4cf4")
 		)
 		(pin "4"
-			(uuid "0125bc55-4e01-4e69-b744-96f5bebb4968")
+			(uuid "0125bc55-4e01-4e69-b744-96f5bebb4969")
 		)
 		(pin "1"
 			(uuid "4e659ed7-869e-4a74-879d-2597e48190f0")
@@ -9875,7 +9811,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 67.31 43.688 90)
 			(effects
 				(font
@@ -9922,7 +9858,7 @@
 		(at 176.53 87.63 270)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -10041,25 +9977,25 @@
 			(uuid "cd086537-80b5-4622-9cff-0d858ea39d29")
 		)
 		(pin "3"
-			(uuid "c554e8ca-dbc8-47c9-b26c-e50bc255541e")
+			(uuid "c554e8ca-dbc8-47c9-b26c-e50bc255541f")
 		)
 		(pin "7"
 			(uuid "d0a7b2c1-8e7d-46ae-bbdc-237e76bea28a")
 		)
 		(pin "2"
-			(uuid "950ea91b-3472-498a-a257-6c8d81a7e055")
+			(uuid "950ea91b-3472-498a-a257-6c8d81a7e056")
 		)
 		(pin "8"
-			(uuid "74db3ab3-290f-49ff-83b9-ad10711be871")
+			(uuid "74db3ab3-290f-49ff-83b9-ad10711be873")
 		)
 		(pin "5"
 			(uuid "f9227d6b-3eb9-4858-97c5-90b35948055d")
 		)
 		(pin "4"
-			(uuid "0125bc55-4e01-4e69-b744-96f5bebb4968")
+			(uuid "0125bc55-4e01-4e69-b744-96f5bebb496a")
 		)
 		(pin "1"
-			(uuid "4e659ed7-869e-4a74-879d-2597e48190f0")
+			(uuid "4e659ed7-869e-4a74-879d-2597e48190f1")
 		)
 		(instances
 			(project "pcb"
@@ -10234,7 +10170,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 80.01 54.102 90)
 			(effects
 				(font
@@ -10303,7 +10239,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 162.56 104.902 90)
 			(effects
 				(font
@@ -10640,7 +10576,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 250.19 36.068 90)
 			(effects
 				(font
@@ -10709,7 +10645,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 80.01 108.712 90)
 			(effects
 				(font
@@ -10834,7 +10770,7 @@
 				)
 			)
 		)
-		(property "Value" "Thermistor"
+		(property "Value" "Screw_Terminal_01x02"
 			(at 147.32 100.33 90)
 			(effects
 				(font
@@ -10956,7 +10892,7 @@
 		(at 93.98 35.56 270)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -11108,7 +11044,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 119.888 45.72 90)
 			(effects
 				(font
@@ -11743,7 +11679,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 31.75 100.838 90)
 			(effects
 				(font
@@ -11813,7 +11749,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 42.418 49.53 90)
 			(effects
 				(font
@@ -11937,7 +11873,7 @@
 				)
 			)
 		)
-		(property "Value" "2 μF"
+		(property "Value" "1 μF"
 			(at 83.82 20.32 90)
 			(effects
 				(font
@@ -11945,7 +11881,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm"
+		(property "Footprint" "Library:condensateur 1uF"
 			(at 87.63 23.1648 0)
 			(effects
 				(font
@@ -11992,7 +11928,7 @@
 		(at 176.53 34.29 270)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -12080,7 +12016,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" "Library:Resistance SMT"
 			(at 149.86 41.148 90)
 			(effects
 				(font
@@ -12140,7 +12076,7 @@
 				)
 			)
 		)
-		(property "Value" "Thermistor"
+		(property "Value" "Screw_Terminal_01x02"
 			(at 64.77 49.53 90)
 			(effects
 				(font
@@ -12208,7 +12144,7 @@
 				)
 			)
 		)
-		(property "Value" "Thermistor"
+		(property "Value" "Screw_Terminal_01x02"
 			(at 147.32 46.99 90)
 			(effects
 				(font
@@ -12340,48 +12276,6 @@
 				(path "/08655c7e-db3e-4a36-827c-446c5903f8cb"
 					(reference "pwm2")
 					(unit 1)
-				)
-			)
-		)
-	)
-	(sheet
-		(at 207.01 16.51)
-		(size 21.59 17.78)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0.0000)
-		)
-		(uuid "2f93a7d0-510e-4ebb-ba34-6a8102f82f77")
-		(property "Sheetname" "arduino"
-			(at 207.01 15.7984 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "untitled.kicad_sch"
-			(at 207.01 34.8746 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "pcb"
-				(path "/08655c7e-db3e-4a36-827c-446c5903f8cb"
-					(page "2")
 				)
 			)
 		)

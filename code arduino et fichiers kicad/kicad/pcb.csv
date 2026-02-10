@@ -1,44 +1,14 @@
-"Reference","Qty","Value","DNP","Exclude from BOM","Exclude from Board","Footprint","Datasheet"
-"ADCH1,ADCL1,COMMUNICATION1,POWER1,PWML1","5","8x1F-H8.5","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_1X08",""
-"analogA0-A7,analogA8-A15,comm1,power2,pwm2","5","Conn_01x08_Pin","","","","Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical","~"
-"C1,C2,C3,C4,C5,C6,C7,C10,C11,C15","10","100n","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_C0603-ROUND",""
-"C8,C13,C14","3","22p","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_C0603-ROUND",""
-"C9,C12","2","1u","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_C0603-ROUND",""
-"D1","1","M7","","","","Arduino_MEGA_2560-Rev3:DIODE_SMB",""
-"D2,D3","2","CD1206-S01575","","","","Arduino_MEGA_2560-Rev3:DIODE_MINIMELF",""
-"digital1,digital2","2","Conn_01x18_Pin","","","","Connector_PinHeader_2.54mm:PinHeader_1x18_P2.54mm_Vertical","~"
-"F1","1","MF-MSMF050-2 500mA","","","","Arduino_MEGA_2560-Rev3:RCL_L1812",""
-"FD1,FD2,FD3,FD4","4","FIDUCIALMOUNT","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_FIDUCIA-MOUNT",""
-"GROUND1,RESET-EN1","2","~","","","","Arduino_MEGA_2560-Rev3:JUMPER_SJ",""
-"IC1","1","NCP1117ST50T3G","","","","Arduino_MEGA_2560-Rev3:LINEAR_SOT223",""
-"IC2","1","LMV358IDGKR","","","","Arduino_MEGA_2560-Rev3:LINEAR_MSOP08",""
-"IC3","1","ATMEGA2560-16AU","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_TQFP100",""
-"IC4","1","LP2985-33DBVR","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_SOT23-DBV",""
-"IC5","1","ATMEGA16U2-MU","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_MLF32",""
-"ICSP1_1,ICSP_1","2","3x2M","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_2X03",""
-"J1,J2","2","Screw_Terminal_01x04","","","","Connector_JST:JST_XH_B4B-XH-A_1x04_P2.50mm_Vertical","~"
-"J3","1","Screw_Terminal_01x02","","","","Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical","~"
-"JP1","1","10x1F-H8.5","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_1X10",""
-"JP2","1","2x2M - NM","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_2X02",""
-"L1,RX1,TX1","3","YELLOW","","","","Arduino_MEGA_2560-Rev3:LED_CHIP-LED0805",""
-"L2","1","BLM21","","","","Arduino_MEGA_2560-Rev3:WUERTH-ELEKTRONIK_0805",""
-"ON1","1","GREEN","","","","Arduino_MEGA_2560-Rev3:LED_CHIP-LED0805",""
-"PC1,PC2","2","47u","","","","Arduino_MEGA_2560-Rev3:RCL_PANASONIC_D",""
-"pwm1","1","Conn_01x10_Pin","","","","Connector_PinHeader_2.54mm:PinHeader_1x10_P2.54mm_Vertical","~"
-"R1,R3,R5,R7,R9,R10,R12,R14,R15","9","6.1K","","","","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"R2,R8,R13","3","2K","","","","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"R4,R6,R11","3","10K","","","","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"R16,R17","2","1M","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_R0603-ROUND",""
-"RESET1","1","TS42031-160R-TR-7260","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_TS42",""
-"RN1,RN4","2","10K","","","","Arduino_MEGA_2560-Rev3:RESISTOR-DIL_CAT16",""
-"RN2,RN5","2","1k","","","","Arduino_MEGA_2560-Rev3:RESISTOR-DIL_CAY16",""
-"RN3","1","22R","","","","Arduino_MEGA_2560-Rev3:RESISTOR-DIL_CAY16",""
-"T1","1","FDN340P","","","","Arduino_MEGA_2560-Rev3:ZETEX_SOT-23",""
-"TH1,TH2,TH3","3","Thermistor","","","","Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical","~"
-"U1,U2,U3","3","LMC6482","","","","ampli op:LMC6482","http://www.ti.com/lit/ds/symlink/lmc6482.pdf"
-"X1","1","POWERSUPPLY_DC21MMX","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_POWERSUPPLY_DC-21MM",""
-"X2","1","USB-B_TH","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_PN61729",""
-"XIO1","1","18x2F-H8.5","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_2X18",""
-"Y1","1","CSTCE16M0V53-R0 16MHZ","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_RESONATOR",""
-"Y2","1","16MHz","","","","Arduino_MEGA_2560-Rev3:SMARTPRJ_QS",""
-"Z1,Z2","2","CG0603MLC-05E","","","","Arduino_MEGA_2560-Rev3:VARISTOR_CT_CN0603",""
+Qty;Reference;Value;Description;Achat
+5;analogA0-A7,analogA8-A15,comm1,power2,pwm2;Conn_01x08_Pin;Generic connector, single row, 01x08, script generated;
+4;C16,C17,C18,C19;1 uF;Unpolarized capacitor;
+1;D4;LED;Light emitting diode;
+1;J1;Screw_Terminal_01x05;Generic screw terminal, single row, 01x05, script generated (kicad-library-utils/schlib/autogen/connector/);
+3;J2,J3,J4;FCR7350R;;
+1;pwm1;Conn_01x10_Pin;Generic connector, single row, 01x10, script generated;
+1;R18;560;Resistor;
+4;R1,R4,R6,R11;10K;Resistor;
+4;R2,R8,R13,R15;2K;Resistor;
+8;R3,R5,R7,R9,R10,R12,R14,R19;6.1K;Resistor;
+4;RV1,RV2,RV3,RV4;R_Potentiometer_Trim;Trim-potentiometer;
+4;TH1,TH2,TH3,TH4;Screw_Terminal_01x02;Temperature dependent resistor;
+4;U1,U2,U3,U4;LMC6482;Dual CMOS Rail-to-Rail Input and Output Operational Amplifier, DIP-8/SOIC-8, SSOP-8;
