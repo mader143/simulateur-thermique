@@ -6245,7 +6245,7 @@
 				)
 			)
 		)
-		(property "Value" "2 μF"
+		(property "Value" "1 μF"
 			(at 87.884 75.946 90)
 			(effects
 				(font
@@ -6926,7 +6926,7 @@
 				)
 			)
 		)
-		(property "Value" "2 μF"
+		(property "Value" "1 μF"
 			(at 171.45 72.136 90)
 			(effects
 				(font
@@ -7883,7 +7883,7 @@
 				)
 			)
 		)
-		(property "Value" "2 μF"
+		(property "Value" "1 μF"
 			(at 166.37 19.05 90)
 			(effects
 				(font
@@ -8021,7 +8021,7 @@
 				)
 			)
 		)
-		(property "Value" "Thermistor"
+		(property "Value" "Screw_Terminal_01x02"
 			(at 64.77 104.14 90)
 			(effects
 				(font
@@ -9482,7 +9482,7 @@
 		(at 93.98 91.44 270)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -9858,7 +9858,7 @@
 		(at 176.53 87.63 270)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -10770,7 +10770,7 @@
 				)
 			)
 		)
-		(property "Value" "Thermistor"
+		(property "Value" "Screw_Terminal_01x02"
 			(at 147.32 100.33 90)
 			(effects
 				(font
@@ -10892,7 +10892,7 @@
 		(at 93.98 35.56 270)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -11873,7 +11873,7 @@
 				)
 			)
 		)
-		(property "Value" "2 μF"
+		(property "Value" "1 μF"
 			(at 83.82 20.32 90)
 			(effects
 				(font
@@ -11928,7 +11928,7 @@
 		(at 176.53 34.29 270)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -12076,7 +12076,7 @@
 				)
 			)
 		)
-		(property "Value" "Thermistor"
+		(property "Value" "Screw_Terminal_01x02"
 			(at 64.77 49.53 90)
 			(effects
 				(font
@@ -12144,7 +12144,7 @@
 				)
 			)
 		)
-		(property "Value" "Thermistor"
+		(property "Value" "Screw_Terminal_01x02"
 			(at 147.32 46.99 90)
 			(effects
 				(font
@@ -12276,48 +12276,6 @@
 				(path "/08655c7e-db3e-4a36-827c-446c5903f8cb"
 					(reference "pwm2")
 					(unit 1)
-				)
-			)
-		)
-	)
-	(sheet
-		(at 207.01 16.51)
-		(size 21.59 17.78)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0.0000)
-		)
-		(uuid "2f93a7d0-510e-4ebb-ba34-6a8102f82f77")
-		(property "Sheetname" "arduino"
-			(at 207.01 15.7984 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "untitled.kicad_sch"
-			(at 207.01 34.8746 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "pcb"
-				(path "/08655c7e-db3e-4a36-827c-446c5903f8cb"
-					(page "2")
 				)
 			)
 		)
