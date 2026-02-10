@@ -1,8 +1,13 @@
 # Classe pour contrôler l'interface graphique
 import json
 import os
+
+from PyQt5.QtCore import QThread, pyqtSignal, QObject
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import uic
+import pyqtgraph as pqg
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
 
 from SimulationThermique import SimulationThermique
 
@@ -16,6 +21,23 @@ class SimControl(QMainWindow):
         uic.loadUi(os.path.join(base_path, "interface_simulateur.ui"), self)
 
         self.simulation = SimulationThermique()
+
+        class MplCanvas(FigureCanvas):
+            """A QWidget that contains a Matplotlib figure."""
+
+            def __init__(self, parent=None, width=5, height=4, dpi=100):
+                fig = Figure(figsize=(width, height), dpi=dpi)
+                self.thermistance = fig.add_subplot(211)
+                self.plaque = fig.add_subplot(212, projection='3d')
+                super().__init__(fig)
+                self.setParent(parent)
+
+        self.graphique = MplCanvas(self)
+        self.graphique.thermistance.set_title('Température des thermistances')
+        self.graphique.plaque.set_title('Température de la plaque')
+
+        self.graph_layout.addWidget(self.graphique)
+
 
 
         # Initialiser les boutons ---------------------------------------------------------------------------
@@ -48,7 +70,38 @@ class SimControl(QMainWindow):
             lambda: setattr(self.simulation, 'Pin', self.doubleSpinBox_pin.value()))
 
         # Lancer la simulation thermique
-        self.pushButton_start.clicked.connect(self.simulation.simuler_diffusion)
+        self.pushButton_start.clicked.connect(self.commencer_simulation)
+
+    def commencer_simulation(self):
+
+        class Simulation_Worker(QObject):
+            finished = pyqtSignal()
+            progress = pyqtSignal(int)
+
+            def run(self, gui):
+                """Long-running task."""
+                gui.simuler_diffusion()
+                self.finished.emit()
+
+
+        try:
+            self.thread = QThread()
+            self.worker = Simulation_Worker()
+            self.worker.moveToThread(self.thread)
+
+            self.thread.started.connect(self.worker.run(self.simulation))
+            self.worker.finished.connect(self.thread.quit)
+            self.worker.finished.connect(self.worker.deleteLater)
+            self.thread.finished.connect(self.thread.deleteLater)
+
+            # Step 6: Start the thread
+            #TODO : Connecter les graphiques aux updates pour pouvoir mettre les points
+            self.thread.start()
+
+
+        #TODO : Figure out c'est quoi l'erreur!
+        except Exception as e:
+            print('euhhhhm', e)
 
     def test(self):
         print(self.simulation.longueur,
@@ -96,3 +149,6 @@ class SimControl(QMainWindow):
         self.doubleSpinBox_h.setValue(self.simulation.h_conv)
         self.doubleSpinBox_dx.setValue(self.simulation.dx*1000)
         self.doubleSpinBox_pin.setValue(self.simulation.Pin)
+
+
+
