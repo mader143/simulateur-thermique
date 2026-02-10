@@ -12,3 +12,8 @@ sys = tfest(data, np, nz, iodelay);
 N = sys.Numerator;
 D = sys.Denominator;
 
+disp(sys);
+
+compare(data, sys);
+
+tfdata(sys); 
