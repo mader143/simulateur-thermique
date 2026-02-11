@@ -1,6 +1,7 @@
 import time
 
 import numba
+from PyQt5.QtCore import pyqtSignal, QObject
 from matplotlib.animation import FuncAnimation, FFMpegWriter
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,10 +10,15 @@ import numpy as np
 # Classe pour faire la simulation thermique depuis l'interface graphique
 
 
-class SimulationThermique:
+class SimulationThermique(QObject):
+    therm_1 = pyqtSignal(object, object, object)
+    therm_2 = pyqtSignal()
+    therm_3 = pyqtSignal()
+    plaque = pyqtSignal()
 
     def __init__(self):
 
+        super().__init__()
         # Initialiser les paramètres de la simulation
         self.longueur = None
         self.largeur = None
@@ -195,6 +201,7 @@ class SimulationThermique:
                 line1.set_data(temps, T1)
                 line2.set_data(temps, T2)
                 line3.set_data(temps, T3)
+                self.therm_1.emit('T1',temps, T1)
 
                 if temps:
                     axT.set_xlim(0, max(temps[-1], 1))

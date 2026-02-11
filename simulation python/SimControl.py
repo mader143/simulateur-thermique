@@ -21,6 +21,7 @@ class SimControl(QMainWindow):
         uic.loadUi(os.path.join(base_path, "interface_simulateur.ui"), self)
 
         self.simulation = SimulationThermique()
+        self.simulation.therm_1.connect(self.update_therm_1)
 
         class MplCanvas(FigureCanvas):
             """A QWidget that contains a Matplotlib figure."""
@@ -102,6 +103,10 @@ class SimControl(QMainWindow):
         #TODO : Figure out c'est quoi l'erreur!
         except Exception as e:
             print('euhhhhm', e)
+
+    def update_therm_1(self,obj, t, T):
+        self.graphique.thermistance.plot(t, T)
+        print('plotted')
 
     def test(self):
         print(self.simulation.longueur,
