@@ -26,7 +26,7 @@ for file in csv_files:
 
     data = pd.read_csv(file)
 
-    # ====== Filtrer pour 0 à 300 secondes ======
+    #300 premières secondes
     data = data[data['temps_s'] <= 300]
 
     label = 'T' + file.stem[-1]
@@ -40,7 +40,8 @@ for file in csv_files:
     # Stocker la dernière température (à 300s max)
     final_temps[file.stem] = data['temperature_C'].iloc[-1]
 
-# ====== TEXTBOX avec valeurs finales ======
+
+
 plt.text(
     0.8, 0.18,
     f" T1f = {final_temps.get('10_30_t1', float('nan')):.2f} °C\n"
