@@ -2976,7 +2976,7 @@
 		(property "Reference" "C17"
 			(at -3.25 3 0)
 			(layer "F.SilkS")
-			(uuid "a50b3ad4-2533-445e-a3a6-d3043ade8db1")
+			(uuid "db53b427-6d69-4a39-95d3-d59f5adbb669")
 			(effects
 				(font
 					(size 1 1)
@@ -2987,7 +2987,7 @@
 		(property "Value" "1 μF"
 			(at 7.475 3.535 0)
 			(layer "F.Fab")
-			(uuid "8607aa00-2595-450c-b98e-344138e41111")
+			(uuid "7259711e-510c-4693-955b-9b32089bb669")
 			(effects
 				(font
 					(size 1 1)
@@ -2999,7 +2999,7 @@
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "f88fc957-6710-4319-a412-9aa2ca2720d3")
+			(uuid "8ea24fe6-bbc4-4a39-bdeb-334db2d5a401")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3011,7 +3011,7 @@
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "8061ab35-297b-481b-9a1f-4e0c20f1604d")
+			(uuid "a053fc13-0a09-4625-822e-3bad0f3212bc")
 			(effects
 				(font
 					(size 1.27 1.27)
