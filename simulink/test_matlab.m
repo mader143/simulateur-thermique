@@ -1,14 +1,14 @@
 % Identification de la fonction de transfert
 % Extraire les données
-t = T135_55{:,1};  % temps
-y = T135_55{:,2};  % température
+t = T210_30{:,1};  % temps
+y = T210_30{:,2};  % température
 
 % Créer un objet iddata (Input-Output Data)
 % échelon unitaire comme entrée
 u = ones(size(t));  % échelon
 data_id = iddata(y, u, t(2)-t(1));
 
-np = 2;    % 1er ordre suffit probablement
+np = 1;    % 1er ordre suffit probablement
 nz = 0;    % pas de zéro
 iodelay = NaN;  % estimation automatique pour delay
 
