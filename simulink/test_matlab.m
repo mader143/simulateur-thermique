@@ -8,7 +8,7 @@ y = T135_55{:,2};  % température
 u = ones(size(t));  % échelon
 data_id = iddata(y, u, t(2)-t(1));
 
-np = 1;    % 1er ordre suffit probablement
+np = 2;    % 1er ordre suffit probablement
 nz = 0;    % pas de zéro
 iodelay = NaN;  % estimation automatique pour delay
 
@@ -20,7 +20,6 @@ disp('Fonction de transfert identifiée:');
 tf(sys_id)
 
 % Calculer les paramètres caractéristiques
-pole = pole(sys_id);
 tau = -1/pole;  % constante de temps
 K = dcgain(sys_id);  % gain statique
 
