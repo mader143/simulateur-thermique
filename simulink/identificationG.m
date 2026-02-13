@@ -22,8 +22,7 @@ disp('G1:');
 tf(G1)
 
 % Calculer les paramètres caractéristiques
-tau = -1/pole;  % constante de temps
-K = dcgain(G1);  % gain statique
+
 
 %fprintf('Gain statique K = %.4f\n', K);
 %fprintf('Constante de temps τ = %.4f s\n', tau);
@@ -68,11 +67,11 @@ tf(G3)
 
 % Comparer la réponse du modèle avec les données
 figure;
-compare(data_id3, G3);
+compare(data_id2, G2);
 title('Validation du modèle identifié');
 
-figure;
-plot(t, y_id1);hold on
-plot(t, y_id2);hold on
-plot(t, y_id3);
-title("Température des thermistances par rapport au PO");
+%figure;
+%plot(t, y_id1);hold on
+%plot(t, y_id2);hold on
+%plot(t, y_id3);
+%title("Température des thermistances par rapport au PO");

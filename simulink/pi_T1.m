@@ -4,7 +4,7 @@ T_p = 83.69;
 
 G_p = (K_p)/(T_p * s + 1);
 
-T_H = T_p; %temps de reponse boucle ferme
+T_H = T_p/2; %temps de reponse boucle ferme
 
 T_i = T_p;
 K_c = (T_i)/(K_p * T_H);
@@ -24,4 +24,5 @@ tf(num)
 disp('den:');
 tf(den)
 
-disp(K_c);
+disp("u");
+G_c
