@@ -1,26 +1,48 @@
 % IDENTIFICATION G1
 opt = tfestOptions;
 opt.InitialCondition = "zero";
+
 % Extraire les données
 t = T1{:,1};  % temps
 y1 = T1{:,2};  % température
-y_id1 = y1- y1(1);
+y_id1 = y1 - y1(1);  % température relative à T0
 
+% Définir l'entrée réelle : échelon de 7.8%
+u = 7.8 * ones(size(t));  % échelon de 7.8%
 
-% Créer un objet iddata (Input-Output Data)
-% échelon unitaire comme entrée
-u = ones(size(t));  % échelon
+% Créer l'objet iddata
 data_id1 = iddata(y_id1, u, 0.5);
 
-np = 1;    % 1er ordre suffit probablement
+np = 1;  % 1er ordre
 
-% Identifier un système du premier ordre avec retard
-G1 = tfest(data_id1, np, opt); %forcer depart a zero
+% Identifier la fonction de transfert
+G1 = tfest(data_id1, np, opt);
 
-% Afficher la fonction de transfert identifiée
-disp('G1:');
-tf(G1)
+% Afficher sous forme normalisée K/(τs + 1)
+disp('G1 sous forme normalisée:');
+G1_normalized = tf(G1);
+G1_normalized.Variable = 's';
 
+% Extraire les paramètres
+num = G1_normalized.Numerator{1};
+den = G1_normalized.Denominator{1};
+
+% Normaliser pour avoir la forme K/(τs + 1)
+K = num(end) / den(end);      % Gain statique
+tau = den(1) / den(end);      % Constante de temps
+
+fprintf('K = %.4f °C/%%\n', K);
+fprintf('τ = %.4f s\n', tau);
+fprintf('\nG1(s) = %.4f / (%.4f s + 1)\n\n', K, tau);
+
+% Recréer la fonction de transfert normalisée
+G1_norm = tf(K, [tau 1]);
+disp('Fonction de transfert normalisée:');
+G1_norm
+
+% Validation visuelle
+figure;
+compare(data_id1, G1_norm);
 % Calculer les paramètres caractéristiques
 
 
