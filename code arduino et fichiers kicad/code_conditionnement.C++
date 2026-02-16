@@ -1,16 +1,16 @@
 #define RT0 10000
-#define B   3984
+#define B   3980
 #define R   10000
 
-const int adcPin = A0;
+const int adcPin = A3;
 
 // PWM output pins
-const int pwmPin5 = 5;
+const int pwmPin2 = 2;
 const int pwmPin11 = 11; 
 
 // Changement de duty cycle ICI (constante entre 0 et 255)
-const int pwmValue5 = 35;
-const int pwmValue11 = 55;
+const int pwmValue2 = 128;
+const int pwmValue11 = 128;
 
 // DURÉE D'ENREGISTREMENT CSV EN SECONDES
 const unsigned long DUREE_ENREGISTREMENT = 240; // Modifiez cette valeur selon vos besoins
@@ -23,16 +23,16 @@ bool modeCSV = true;
 void setup() {
   Serial.begin(9600);
   T0 = 25.0 + 273.15;
-  Rf = 5082.4 + 998.88;
-  Rg = 5088.6 + 998.2;
-  R1 = 1988.1;
-  V1 = 1.900;
-  V2 = 5.01;
+  Rf = 3300;
+  Rg = 5600;
+  R1 = 6300;
+  V1 = 1.795;
+  V2 = 5.0;
   
-  pinMode(pwmPin5, OUTPUT);
+  pinMode(pwmPin2, OUTPUT);
   pinMode(pwmPin11, OUTPUT);
 
-  analogWrite(pwmPin5, pwmValue5);
+  analogWrite(pwmPin2, pwmValue2);
   analogWrite(pwmPin11, pwmValue11);
   
   while (!Serial) {
