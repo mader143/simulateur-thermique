@@ -13,9 +13,9 @@ const int pwmValue2 = 128;
 const int pwmValue11 = 128;
 
 // DURÉE D'ENREGISTREMENT CSV EN SECONDES
-const unsigned long DUREE_ENREGISTREMENT = 240; // Modifiez cette valeur selon vos besoins
+const unsigned long DUREE_ENREGISTREMENT = 1000; // Modifiez cette valeur selon vos besoins
 
-float RT, VR, TX, T0, Rf, R1, Rg, V1, V2;
+float RT, VR, TX, T0, Rc, Re, Rd, V1, V2;
 float Vout, Vin, VRT;
 unsigned long tempsDebut;
 bool modeCSV = true;
@@ -23,9 +23,9 @@ bool modeCSV = true;
 void setup() {
   Serial.begin(9600);
   T0 = 25.0 + 273.15;
-  Rf = 3300;
-  Rg = 5600;
-  R1 = 6300;
+  Rc = 3300;
+  Rd = 5600;
+  Re = 6300;
   V1 = 1.795;
   V2 = 5.0;
   
@@ -55,7 +55,7 @@ void loop() {
   Vout = (5.0 / 1023.0) * analogRead(adcPin);
   
   // Calculer la résistance
-  RT = ((Rf + R1) * Rg * V2) / (R1 * Vout + Rf * V1) - Rg;
+  RT = ((Rc + Re) * Rd * V2) / (Re * Vout + Rc * V1) - Rd;
   
   // Calculer la température
   TX = 1.0 / ((log(RT / RT0) / B) + (1.0 / T0));
