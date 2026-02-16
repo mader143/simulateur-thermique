@@ -1,26 +1,45 @@
 #define RT0 10000
 #define B   3984
-#define R   10000
 
-// === PINS ADC ===
-const int adcPin1 = A0;
-const int adcPin2 = A1;
-const int adcPin3 = A2;
+// =====================================================
+// STRUCTURE THERMISTANCE
+// =====================================================
+struct Thermistance {
+  int pin;
+  float Rf;
+  float Rg;
+  float R1;
+  float V1;
+  float V2;
+};
+
+// =====================================================
+// >>>>>>> PARAMÈTRES DES THERMISTANCES <<<<<<<
+// ⭐ CHANGE SEULEMENT ICI ⭐
+// =====================================================
+Thermistance therm[3] = {
+
+  // Thermistance 1 (A0)
+  {A0, 5082.4 + 998.88, 5088.6 + 998.2, 1988.1, 1.900, 5.01},
+
+  // Thermistance 2 (A1)
+  {A1, 5082.4 + 998.88, 5088.6 + 998.2, 1988.1, 1.900, 5.01},
+
+  // Thermistance 3 (A2)
+  {A2, 5082.4 + 998.88, 5088.6 + 998.2, 1988.1, 1.900, 5.01}
+};
+
 
 // PWM output pins
 const int pwmPin5 = 5;
 const int pwmPin11 = 11;
 
-// Duty cycles
 const int pwmValue5 = 35;
 const int pwmValue11 = 55;
 
-// DURÉE D'ENREGISTREMENT CSV (s)
 const unsigned long DUREE_ENREGISTREMENT = 240;
 
-float RT, TX, T0, Rf, R1, Rg, V1, V2;
-float Vout;
-
+float T0;
 unsigned long tempsDebut;
 bool modeCSV = true;
 
@@ -28,19 +47,16 @@ bool modeCSV = true;
 // =====================================================
 // FONCTION MESURE TEMPERATURE
 // =====================================================
-float mesureTemperature(int adcPin)
+float mesureTemperature(Thermistance t)
 {
-  // Lecture ADC
-  Vout = (5.0 / 1023.0) * analogRead(adcPin);
+  float Vout = (5.0 / 1023.0) * analogRead(t.pin);
 
-  // Calcul résistance thermistance
-  RT = ((Rf + R1) * Rg * V2) / (R1 * Vout + Rf * V1) - Rg;
+  float RT = ((t.Rf + t.R1) * t.Rg * t.V2) /
+             (t.R1 * Vout + t.Rf * t.V1) - t.Rg;
 
-  // Loi Beta
   float T = 1.0 / ((log(RT / RT0) / B) + (1.0 / T0));
-  T = T - 273.15;
 
-  return T;
+  return T - 273.15;
 }
 
 
@@ -50,11 +66,6 @@ void setup() {
   Serial.begin(9600);
 
   T0 = 25.0 + 273.15;
-  Rf = 5082.4 + 998.88;
-  Rg = 5088.6 + 998.2;
-  R1 = 1988.1;
-  V1 = 1.900;
-  V2 = 5.01;
 
   pinMode(pwmPin5, OUTPUT);
   pinMode(pwmPin11, OUTPUT);
@@ -66,7 +77,6 @@ void setup() {
 
   delay(2000);
 
-  // Header CSV
   Serial.println("temps_s,T1_C,T2_C,T3_C");
 
   tempsDebut = millis();
@@ -76,15 +86,16 @@ void setup() {
 // =====================================================
 void loop() {
 
-  unsigned long t_ms = millis();
-  double t_s = (t_ms - tempsDebut) / 1000.0;
+  double t_s = (millis() - tempsDebut) / 1000.0;
 
-  // === MESURES ===
-  float T1 = mesureTemperature(adcPin1);
-  float T2 = mesureTemperature(adcPin2);
-  float T3 = mesureTemperature(adcPin3);
+  // ===== Lecture automatique des 3 thermistances =====
+  float T[3];
 
-  // Passage mode affichage
+  for (int i = 0; i < 3; i++) {
+    T[i] = mesureTemperature(therm[i]);
+  }
+
+  // ===== Changement de mode =====
   if (modeCSV && t_s >= DUREE_ENREGISTREMENT) {
     Serial.println("FIN");
     delay(500);
@@ -95,27 +106,27 @@ void loop() {
     tempsDebut = millis();
   }
 
-  // === AFFICHAGE ===
+  // ===== Affichage =====
   if (modeCSV) {
-    // CSV pour Python
+
     Serial.print(t_s, 3);
-    Serial.print(",");
-    Serial.print(T1, 2);
-    Serial.print(",");
-    Serial.print(T2, 2);
-    Serial.print(",");
-    Serial.println(T3, 2);
-  }
-  else {
+    for (int i = 0; i < 3; i++) {
+      Serial.print(",");
+      Serial.print(T[i], 2);
+    }
+    Serial.println();
+
+  } else {
+
     t_s = (millis() - tempsDebut) / 1000.0;
 
     Serial.print(t_s, 3);
     Serial.print("\t");
-    Serial.print(T1, 2);
+    Serial.print(T[0], 2);
     Serial.print("\t");
-    Serial.print(T2, 2);
+    Serial.print(T[1], 2);
     Serial.print("\t");
-    Serial.println(T3, 2);
+    Serial.println(T[2], 2);
   }
 
   delay(500);
