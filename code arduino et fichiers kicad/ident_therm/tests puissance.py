@@ -6,27 +6,31 @@ import matplotlib.pyplot as plt
 import os
 import numba
 
+# À FAIRE POUR TESTER LA PUISSANCE :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 # Choisir le numéro de thermistance à utiliser
 thermistance = 1
 
-
 # Loader le fichier désiré
 base_dir = os.path.dirname(os.path.abspath(__file__))
-csv_path = os.path.join(base_dir, "T1/chauf/35_55.t1.csv")
-
+csv_path = os.path.join(base_dir, "T1/chauf/10_40.csv")
 
 # Modifier les paramètres pour qu'ils match avec les données expérimentales --------------------------------------
+t_simulation = 800
+essais_puissance = [2.2, 2.3, 2.4, 2.5]
+
+
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 longueur = 117.28e-3
 largeur = 61.57e-3
 epaisseur = 1.61e-3
-T_init = 21.75 + 273.15
-t_simulation = 240
-k = 205
+T_init = 24.31 + 273.15
+k = 167
 rho = 2700
 cp = 900
-h_conv = 20
+h_conv = 13.65
 dx = 0.001
-essais_puissance = [2.4, 2.5, 2.6, 2.7, 2.8]
+
 
 # Si on veut éventuellement tester d'autres paramètres, on ara juste à changer le 'essais_puissance' par
 # une autre donnée (et il faudra changer la boucle for à la fin).
@@ -185,15 +189,22 @@ def simuler_puissance(puissance):
                                    x0, rx, y0, ry, nx, ny)
 
         temps.append(t * dt)
-        T1.append(T[therm1_locx, therm1_locy] - 273.15)
+        if thermistance == 1:
+            T1.append(T[therm1_locx, therm1_locy] - 273.15)
+        if thermistance == 2:
+            T2.append(T[therm2_locx, therm2_locy] - 273.15)
+        if thermistance == 3:
+            T3.append(T[therm3_locx, therm3_locy] - 273.15)
 
 
 
     if thermistance == 1:
+
         return temps, T1
     elif thermistance ==2:
         return temps, T2
     elif thermistance ==3:
+
         return temps, T3
     else:
         print('Pas de thermistance choisie, erreur')
