@@ -12,9 +12,9 @@ i = 0
 for line in file:
     i += 1
     if i > 1:
-        words = line.split(",")
-        temps.append(float(words[0]))
-        Temp.append(float(words[1]))
+        data = line.split(",")
+        temps.append(float(data[0]))
+        Temp.append(float(data[1]))
 
 t = np.array(temps)
 T = np.array(Temp)
