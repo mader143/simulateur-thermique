@@ -9,11 +9,11 @@ import pandas as pd
 # Pour exécuter le script: pip install pyserial pandas matplotlib
 
 # ============ CONFIGURATION ============
-PORT = 'COM5'  # Changez au besoin (COM3, COM4, etc.)
+PORT = 'COM6'  # Changez au besoin (COM3, COM4, etc.)
 BAUDRATE = 9600
 
 # EMPLACEMENT D'ENREGISTREMENT
-CHEMIN_ENREGISTREMENT = r'C:\Users\alext\OneDrive\Bureau' 
+CHEMIN_ENREGISTREMENT = r'C:\Users\sabri\OneDrive\Desktop\uni\design\simulateur-thermique\code arduino et fichiers kicad\ident_power\T1' 
 
 
 # Nom du fichier (avec horodatage automatique)
