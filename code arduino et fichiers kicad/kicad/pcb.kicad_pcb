@@ -1286,7 +1286,7 @@
 				)
 			)
 		)
-		(property "Value" "6.1K"
+		(property "Value" "5.6K"
 			(at 1.34 1.27 0)
 			(layer "F.Fab")
 			(uuid "7b7cfdeb-62f8-4fec-9a7a-4b049a34e888")
@@ -1599,7 +1599,7 @@
 				)
 			)
 		)
-		(property "Value" "6.1K"
+		(property "Value" "5.6K"
 			(at 1.34 1.27 0)
 			(layer "F.Fab")
 			(uuid "61d8c594-5373-45b6-b7f1-aca68d5dc65c")
@@ -3574,7 +3574,7 @@
 				)
 			)
 		)
-		(property "Value" "6.1K"
+		(property "Value" "5.6K"
 			(at 1.34 1.27 0)
 			(layer "F.Fab")
 			(uuid "8e64efdf-e2fe-4fa5-9450-e3b7e05756f0")
@@ -4284,7 +4284,7 @@
 				)
 			)
 		)
-		(property "Value" "2K"
+		(property "Value" "3.3K"
 			(at 1.34 1.27 0)
 			(layer "F.Fab")
 			(uuid "2055f9b2-5b5b-427d-bff6-111674452a6b")
@@ -5386,7 +5386,7 @@
 				)
 			)
 		)
-		(property "Value" "2K"
+		(property "Value" "3.3K"
 			(at 1.34 1.27 0)
 			(layer "F.Fab")
 			(uuid "5ce0f931-1df3-4c8b-a9a6-c0d79acdd5d1")
@@ -5561,7 +5561,7 @@
 				)
 			)
 		)
-		(property "Value" "6.1K"
+		(property "Value" "5.6K"
 			(at 1.34 1.27 0)
 			(layer "F.Fab")
 			(uuid "9eec726c-5e87-4bcf-843b-6a5c7a1b9660")
@@ -5737,7 +5737,7 @@
 				)
 			)
 		)
-		(property "Value" "2K"
+		(property "Value" "3.3K"
 			(at 1.34 1.27 0)
 			(layer "F.Fab")
 			(uuid "ffd7503d-925e-48ed-8b7e-c67cc5c1778d")
@@ -5912,7 +5912,7 @@
 				)
 			)
 		)
-		(property "Value" "6.1K"
+		(property "Value" "5.6K"
 			(at 1.34 1.27 0)
 			(layer "F.Fab")
 			(uuid "ab5362ca-60d0-4a93-accc-4881fd4448b0")
@@ -6087,7 +6087,7 @@
 				)
 			)
 		)
-		(property "Value" "6.1K"
+		(property "Value" "5.6K"
 			(at 1.34 1.27 0)
 			(layer "F.Fab")
 			(uuid "93a005d5-d053-49d1-b2c3-bcb6f24877ed")
@@ -7165,7 +7165,7 @@
 				)
 			)
 		)
-		(property "Value" "6.1K"
+		(property "Value" "5.6K"
 			(at 1.34 1.27 0)
 			(layer "F.Fab")
 			(uuid "1b611f72-7649-45d4-84be-b7bc49ee4170")
@@ -8054,7 +8054,7 @@
 				)
 			)
 		)
-		(property "Value" "2K"
+		(property "Value" "3.3K"
 			(at 1.34 1.27 0)
 			(layer "F.Fab")
 			(uuid "f749ce31-b7af-4f30-800c-14e223609b61")
@@ -8229,7 +8229,7 @@
 				)
 			)
 		)
-		(property "Value" "6.1K"
+		(property "Value" "5.6K"
 			(at 1.34 1.27 0)
 			(layer "F.Fab")
 			(uuid "18ab37ea-578a-4c8a-b3fa-c2a588606fca")

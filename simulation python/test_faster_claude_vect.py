@@ -207,3 +207,15 @@ ax3D.set_title(f"Température de la plaque – t = {t_simulation:.2f} s")
 ax3D.legend()
 
 plt.show()
+
+derniers_100s = int(100 / dt)  # Nombre de points correspondant aux 100 dernières secondes
+
+# Pour trois thermistances
+T1_moyenne = np.mean(T1[-derniers_100s:])
+T2_moyenne = np.mean(T2[-derniers_100s:])
+T3_moyenne = np.mean(T3[-derniers_100s:])
+
+print(f"\nTempératures moyennes sur les 100 dernières secondes pour h = {h_conv} et p = {Pin}:")
+print(f"Thermistance 1: {T1_moyenne:.2f} ")
+print(f"Thermistance 2: {T2_moyenne:.2f} ")
+print(f"Thermistance 3: {T3_moyenne:.2f} ")

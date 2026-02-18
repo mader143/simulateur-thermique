@@ -6109,7 +6109,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "6.1K"
+		(property "Value" "5.6K"
 			(at 125.73 48.2599 0)
 			(effects
 				(font
@@ -6519,7 +6519,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "6.1K"
+		(property "Value" "5.6K"
 			(at 43.18 105.4099 0)
 			(effects
 				(font
@@ -6722,7 +6722,7 @@
 				)
 			)
 		)
-		(property "Value" "2K"
+		(property "Value" "3.3K"
 			(at 149.86 88.9 90)
 			(effects
 				(font
@@ -7073,7 +7073,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "6.1K"
+		(property "Value" "5.6K"
 			(at 164.846 56.134 90)
 			(effects
 				(font
@@ -7533,7 +7533,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "6.1K"
+		(property "Value" "5.6K"
 			(at 125.73 101.5999 0)
 			(effects
 				(font
@@ -8499,7 +8499,7 @@
 				)
 			)
 		)
-		(property "Value" "2K"
+		(property "Value" "3.3K"
 			(at 67.31 92.71 90)
 			(effects
 				(font
@@ -9320,7 +9320,7 @@
 				)
 			)
 		)
-		(property "Value" "2K"
+		(property "Value" "3.3K"
 			(at 67.31 38.1 90)
 			(effects
 				(font
@@ -9678,7 +9678,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "6.1K"
+		(property "Value" "5.6K"
 			(at 82.042 58.674 90)
 			(effects
 				(font
@@ -9747,7 +9747,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "6.1K"
+		(property "Value" "5.6K"
 			(at 164.592 109.474 90)
 			(effects
 				(font
@@ -10151,7 +10151,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "6.1K"
+		(property "Value" "5.6K"
 			(at 82.042 113.284 90)
 			(effects
 				(font
@@ -11188,7 +11188,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "6.1K"
+		(property "Value" "5.6K"
 			(at 43.18 50.7999 0)
 			(effects
 				(font
@@ -11379,7 +11379,6 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "f779ddb0-c537-4f23-867d-c3e15367f134")
 		(property "Reference" "TP2"
 			(at 181.61 33.0199 90)
@@ -11456,7 +11455,7 @@
 				)
 			)
 		)
-		(property "Value" "2K"
+		(property "Value" "3.3K"
 			(at 149.86 35.56 90)
 			(effects
 				(font
