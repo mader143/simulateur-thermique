@@ -13,18 +13,18 @@ thermistance = 1
 
 # Loader le fichier désiré
 base_dir = os.path.dirname(os.path.abspath(__file__))
-csv_path = os.path.join(base_dir, "T1/chauf/10_40.csv")
+csv_path = os.path.join(base_dir, "T1v2/10_30_t1.csv")
 
 # Modifier les paramètres pour qu'ils match avec les données expérimentales --------------------------------------
 t_simulation = 800
-essais_puissance = [2.2, 2.3, 2.4, 2.5]
+essais_puissance = [1.67, 1.68]  # Puissances à tester (en watts)
 
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 longueur = 117.28e-3
 largeur = 61.57e-3
 epaisseur = 1.61e-3
-T_init = 24.31 + 273.15
+T_init = 23.37 + 273.15
 k = 167
 rho = 2700
 cp = 900
