@@ -7,18 +7,14 @@ import os
 import numba
 import pandas as pd
 
-
 dossier_script = os.path.dirname(os.path.abspath(__file__))
 fichier_xlsx = os.path.join(dossier_script, "rechau+refroi.xlsx")
 
 # --- Lecture des données ---
 # Expérience A
 pol = pd.read_excel(fichier_xlsx, sheet_name=0)
-t = pol["temps"].to_numpy()
-T = pol["temperature_C"].to_numpy()
-
-plt.plot(t, T)
-plt.show()
+t_exp = pol["temps"].to_numpy()
+T_exp = pol["temperature_C"].to_numpy()
 
 # ULTRA-OPTIMIZED VERSION - Vectorized operations where possible
 @numba.jit(nopython=True)
@@ -94,7 +90,7 @@ longueur = params["longueur"]
 largeur = params["largeur"]
 epaisseur = params["epaisseur"]
 T_init = params["T_init"] + 273.15
-t_simulation = 2000
+t_simulation = 2050
 k = params["k"]
 rho = params["rho"]
 cp = params["cp"]
@@ -113,42 +109,76 @@ nt = int(t_simulation / dt)
 alpha_dt_dx2 = alpha * dt / (dx**2)
 alpha_dt_dy2 = alpha * dt / (dy**2)
 coeff_conv = (h_conv * dt) / (rho * cp * dx)
-coeff_face_2 = 2 * h_conv * dt / (rho * cp * epaisseur)
+coeff_face_2 = 2 * h_conv * dt / (rho * cp * epaisseur)  # Pre-multiply by 2
 
 T = np.full((nx, ny), T_init, dtype=float)
 
-act_size = 15e-3
+act_size = 20e-3
 rx = int((act_size/2) / dx)
 ry = int((act_size/2) / dy)
+
+echelon = 800
 
 cell_volume = dx * dy * epaisseur
 nb_cells = (2*rx + 1) * (2*ry + 1)
 
-echelon = 800
-
 therm1_locx, therm1_locy = int(14.87e-3/dx), int((largeur/2)/dx)
-# therm2_locx, therm2_locy = int(59.35e-3/dx), int((largeur/2)/dx)
-# therm3_locx, therm3_locy = int(104.99e-3/dx), int((largeur/2)/dx)
 
 x0, y0 = therm1_locx, therm1_locy
 
 temps = []
 T1, T2, T3 = [], [], []
 
-# ============ REAL-TIME PLOTTING SETUP ============
-PLOT_2D_INTERVAL = 10000   # Update 2D plot every N iterations
-PLOT_3D_INTERVAL = 10000  # Update 3D plot every N iterations (heavier)
+print(f"Grid size: {nx} x {ny} = {nx*ny} cells")
+print(f"Time steps: {nt}")
+print(f"Simulation time: {t_simulation} seconds")
+print(f"dt: {dt:.6f} seconds")
+print("\nStarting ULTRA-OPTIMIZED simulation...")
+print("(First iteration will be slow due to JIT compilation)\n")
 
-plt.ion()  # Enable interactive mode
+start_time = time.time()
+
+for t in range(nt):
+
+    if t < echelon/dt:
+        P_cell = Pin / nb_cells
+        P_cell_dt_vol = (P_cell * dt) / (rho * cp * cell_volume)
+
+    else:
+        P_cell = 0
+        T_init = 22.70 + 273.15
+        P_cell_dt_vol = (P_cell * dt) / (rho * cp * cell_volume)
+
+    T = compute_timestep_ultra(T, T_init, alpha_dt_dx2, alpha_dt_dy2,
+                               coeff_conv, coeff_face_2, P_cell_dt_vol,
+                               x0, rx, y0, ry, nx, ny)
+    
+    temps.append(t * dt)
+    T1.append(T[therm1_locx, therm1_locy] - 273)
+    
+    if t % 500 == 0:
+        elapsed = time.time() - start_time
+        progress = 100 * t / nt
+        if t > 0:
+            est_total = elapsed / (t / nt)
+            est_remaining = est_total - elapsed
+            print(f"Progress: {progress:.1f}% | Elapsed: {elapsed:.1f}s | Est. remaining: {est_remaining:.1f}s", end='\r')
+        else:
+            print(f"Progress: {progress:.1f}% | Compiling...", end='\r')
+
+elapsed = time.time() - start_time
+print(f"\n\nSimulation complete!")
+print(f"Total time: {elapsed:.1f}s")
+print(f"Average time per step: {elapsed/nt*1000:.2f}ms")
+
+print("\nGenerating plots...\n")
 
 # Figure 1: Thermistors
 figT, axT = plt.subplots(figsize=(6, 4))
-line1, = axT.plot([], [], label="Thermistance 1", linewidth=2)
-# line2, = axT.plot([], [], label="Thermistance 2", linewidth=2)
-# line3, = axT.plot([], [], label="Thermistance 3", linewidth=2)
+line1, = axT.plot(temps, T1, label="Thermistance 1")
+line2 = axT.plot(t_exp, T_exp, label='Données expérimentales')
 axT.set_xlabel("Temps [s]")
 axT.set_ylabel("Température [°C]")
-axT.set_title("Température des thermistances")
 axT.grid(True)
 axT.legend()
 
@@ -165,108 +195,35 @@ surf = ax3D.plot_surface(
     cmap='inferno',
     rstride=1, cstride=1,
     linewidth=0,
-    antialiased=False
+    alpha=0.9
 )
+
+therm_temps = [T[therm1_locx, therm1_locy]-273]
+therm_x = [therm1_locx*dx]
+therm_y = [therm1_locy*dy]
+
+for i in range(1):
+    ax3D.plot([therm_x[i], therm_x[i]], 
+              [therm_y[i], therm_y[i]], 
+              [T_init-273, therm_temps[i]], 
+              'k--', linewidth=2, alpha=0.7)
+
+ax3D.scatter(therm_x, therm_y, therm_temps,
+             color='yellow', s=200, marker='o', edgecolors='black', linewidths=3,
+             label='Thermistances', zorder=1000)
 
 ax3D.set_xlabel("x [m]")
 ax3D.set_ylabel("y [m]")
 ax3D.set_zlabel("Température [°C]")
-ax3D.set_zlim(T_init - 273 - 1, T_init - 273 + 15)
+ax3D.set_title(f"Température de la plaque – t = {t_simulation:.2f} s")
+ax3D.legend()
 
-plt.show(block=False)
-
-print(f"Grid size: {nx} x {ny} = {nx*ny} cells")
-print(f"Time steps: {nt}")
-print(f"Simulation time: {t_simulation} seconds")
-print(f"dt: {dt:.6f} seconds")
-print("\nStarting REAL-TIME simulation...")
-print("(First iteration will be slow due to JIT compilation)\n")
-
-start_time = time.time()
-last_2d_update = start_time
-last_3d_update = start_time
-
-for t in range(nt):
-
-    if t < echelon/dt:
-        P_cell = Pin / nb_cells
-        P_cell_dt_vol = (P_cell * dt) / (rho * cp * cell_volume)
-
-    else:
-        P_cell = 0
-        P_cell_dt_vol = (P_cell * dt) / (rho * cp * cell_volume)
-
-    T = compute_timestep_ultra(T, T_init, alpha_dt_dx2, alpha_dt_dy2,
-                               coeff_conv, coeff_face_2, P_cell_dt_vol,
-                               x0, rx, y0, ry, nx, ny)
-    
-    temps.append(t * dt)
-    T1.append(T[therm1_locx, therm1_locy] - 273)
-    # T2.append(T[therm2_locx, therm2_locy] - 273)
-    # T3.append(T[therm3_locx, therm3_locy] - 273)
-    
-    current_time = time.time()
-    
-    # Update 2D plot
-    if t % PLOT_2D_INTERVAL == 0 and (current_time - last_2d_update) > 0.05:
-        line1.set_data(temps, T1)
-        # line2.set_data(temps, T2)
-        # line3.set_data(temps, T3)
-        
-        if temps:
-            axT.set_xlim(0, max(temps[-1], 1))
-            all_temps = T1 + T2 + T3
-            if all_temps:
-                axT.set_ylim(min(all_temps) - 1, max(all_temps) + 1)
-        
-        figT.canvas.draw()
-        figT.canvas.flush_events()
-        last_2d_update = current_time
-    
-    # Update 3D plot
-    if t % PLOT_3D_INTERVAL == 0 and (current_time - last_3d_update) > 0.1:
-        surf.remove()
-        surf = ax3D.plot_surface(
-            X, Y, T - 273,
-            cmap='inferno',
-            rstride=1, cstride=1,
-            linewidth=0,
-            antialiased=False
-        )
-        ax3D.set_title(f"Température de la plaque – t = {t*dt:.2f} s")
-        fig3D.canvas.draw()
-        fig3D.canvas.flush_events()
-        last_3d_update = current_time
-    
-    # Progress indicator
-    if t % 500 == 0:
-        elapsed = time.time() - start_time
-        progress = 100 * t / nt
-        if t > 0:
-            est_total = elapsed / (t / nt)
-            est_remaining = est_total - elapsed
-            speed = (t * dt) / elapsed if elapsed > 0 else 0
-            print(f"Progress: {progress:.1f}% | Elapsed: {elapsed:.1f}s | ETA: {est_remaining:.1f}s | Speed: {speed:.1f}x", end='\r')
-        else:
-            print(f"Progress: {progress:.1f}% | Compiling...", end='\r')
-
-elapsed = time.time() - start_time
-print(f"\n\nSimulation complete!")
-print(f"Total time: {elapsed:.1f}s")
-print(f"Average time per step: {elapsed/nt*1000:.2f}ms")
-print(f"Speed factor: {t_simulation/elapsed:.1f}x real-time")
-
-# Final update to make sure we show the end state
-surf.remove()
-surf = ax3D.plot_surface(
-    X, Y, T - 273,
-    cmap='inferno',
-    rstride=1, cstride=1,
-    linewidth=0,
-    antialiased=False
-)
-ax3D.set_title(f"Température finale – t = {t_simulation:.2f} s")
-fig3D.canvas.draw()
-
-plt.ioff()
 plt.show()
+
+derniers_100s = int(100 / dt)  # Nombre de points correspondant aux 100 dernières secondes
+
+# Pour trois thermistances
+T1_moyenne = np.mean(T1[-derniers_100s:])
+
+print(f"\nTempératures moyennes sur les 100 dernières secondes pour h = {h_conv} et p = {Pin}:")
+print(f"Thermistance 1: {T1_moyenne:.2f} ")
