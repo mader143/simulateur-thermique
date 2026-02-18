@@ -2,12 +2,12 @@
   "longueur": 117.28e-3,
   "largeur": 61.57e-3,
   "epaisseur": 1.61e-3,
-  "T_init": 23.4,
-  "t_simulation": 800.0,
-  "k": 205,
+  "T_init": 24.31,
+  "t_simulation": 240.0,
+  "k": 167,
   "rho": 2700,
   "cp": 900,
-  "h_conv": 20,
+  "h_conv": 13.65,
   "dx": 0.001,
-  "Pin": 2.2
+  "Pin": 1.68
 }
