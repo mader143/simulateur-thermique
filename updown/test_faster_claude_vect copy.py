@@ -13,8 +13,8 @@ fichier_xlsx = os.path.join(dossier_script, "rechau+refroi.xlsx")
 # --- Lecture des données ---
 # Expérience A
 pol = pd.read_excel(fichier_xlsx, sheet_name=0)
-t = pol["temps"].to_numpy()
-T = pol["temperature_C"].to_numpy()
+t_exp = pol["temps"].to_numpy()
+T_exp = pol["temperature_C"].to_numpy()
 
 # ULTRA-OPTIMIZED VERSION - Vectorized operations where possible
 @numba.jit(nopython=True)
@@ -90,7 +90,7 @@ longueur = params["longueur"]
 largeur = params["largeur"]
 epaisseur = params["epaisseur"]
 T_init = params["T_init"] + 273.15
-t_simulation = 2000
+t_simulation = 2050
 k = params["k"]
 rho = params["rho"]
 cp = params["cp"]
@@ -146,6 +146,7 @@ for t in range(nt):
 
     else:
         P_cell = 0
+        T_init = 22.70 + 273.15
         P_cell_dt_vol = (P_cell * dt) / (rho * cp * cell_volume)
 
     T = compute_timestep_ultra(T, T_init, alpha_dt_dx2, alpha_dt_dy2,
@@ -175,10 +176,9 @@ print("\nGenerating plots...\n")
 # Figure 1: Thermistors
 figT, axT = plt.subplots(figsize=(6, 4))
 line1, = axT.plot(temps, T1, label="Thermistance 1")
-line2 = axT.plot(t, T, label='Données expérimentales')
+line2 = axT.plot(t_exp, T_exp, label='Données expérimentales')
 axT.set_xlabel("Temps [s]")
 axT.set_ylabel("Température [°C]")
-axT.set_title("Température des thermistances")
 axT.grid(True)
 axT.legend()
 
@@ -202,7 +202,7 @@ therm_temps = [T[therm1_locx, therm1_locy]-273]
 therm_x = [therm1_locx*dx]
 therm_y = [therm1_locy*dy]
 
-for i in range(3):
+for i in range(1):
     ax3D.plot([therm_x[i], therm_x[i]], 
               [therm_y[i], therm_y[i]], 
               [T_init-273, therm_temps[i]], 
