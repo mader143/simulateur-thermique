@@ -80,7 +80,7 @@ longueur = params["longueur"]
 largeur = params["largeur"]
 epaisseur = params["epaisseur"]
 T_init = params["T_init"] + 273.15
-t_simulation = 1200
+t_simulation = 2000
 k = params["k"]
 rho = params["rho"]
 cp = params["cp"]
@@ -110,7 +110,7 @@ ry = int((act_size/2) / dy)
 cell_volume = dx * dy * epaisseur
 nb_cells = (2*rx + 1) * (2*ry + 1)
 
-echelon = 600
+echelon = 800
 
 therm1_locx, therm1_locy = int(14.87e-3/dx), int((largeur/2)/dx)
 therm2_locx, therm2_locy = int(59.35e-3/dx), int((largeur/2)/dx)
@@ -179,9 +179,9 @@ for t in range(nt):
         P_cell_dt_vol = (P_cell * dt) / (rho * cp * cell_volume)
 
     else:
-        P_cell = -Pin / nb_cells
+        P_cell = 0
         P_cell_dt_vol = (P_cell * dt) / (rho * cp * cell_volume)
-        
+
     T = compute_timestep_ultra(T, T_init, alpha_dt_dx2, alpha_dt_dy2,
                                coeff_conv, coeff_face_2, P_cell_dt_vol,
                                x0, rx, y0, ry, nx, ny)

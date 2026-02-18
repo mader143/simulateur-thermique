@@ -2,7 +2,7 @@
   "longueur": 117.28e-3,
   "largeur": 61.57e-3,
   "epaisseur": 1.61e-3,
-  "T_init": 24.31,
+  "T_init": 23.37,
   "t_simulation": 240.0,
   "k": 167,
   "rho": 2700,

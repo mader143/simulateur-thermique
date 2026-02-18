@@ -9,5 +9,8 @@ fichier_xlsx = os.path.join(dossier_script, "rechau+refroi.xlsx")
 # --- Lecture des données ---
 # Expérience A
 pol = pd.read_excel(fichier_xlsx, sheet_name=0)
-t = pol["angle"].to_numpy()
-T = pol["intensité_te"].to_numpy()
+t = pol["temps"].to_numpy()
+T = pol["temperature_C"].to_numpy()
+
+plt.plot(t, T)
+plt.show()
