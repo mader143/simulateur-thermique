@@ -1,62 +1,226 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# ----- Paramètres capteur et montage -----
-R0   = 10_000.0       # ohms @ 25°C
-T0K  = 298.15         # K
-BETA = 3980.0         # K
+# -------------------------------------------------------
+# Paramètres du circuit
+# -------------------------------------------------------
+R_A  = 10.0    # kΩ
+R_B  = 5.6     # kΩ
+R_C  = 3.3     # kΩ
+R_D  = 5.6     # kΩ
+R_E  = 6.3     # kΩ
+VDD  = 5.0     # V
 
-# Contributions compactées vers u_R2 (voir LaTeX)
-# 2% (NTC) + ~1.7% (diff-amp) + 1% (V1/V2) -> RSS ≈ 2.8%
-REL_U_R2 = 0.028      # incertitude relative sur la NTC effective
+# Incertitude multimètre (résolution 0.01 kΩ) -- toutes les résistances
+u_R = 0.01     # kΩ
 
-# ----- Plage de température -----
-Tmin_C, Tmax_C, N = 15.0, 40.0, 300
-T_C = np.linspace(Tmin_C, Tmax_C, N)
-T_K = T_C + 273.15
+# -------------------------------------------------------
+# Calibration NTC : deux points de mesure au multimètre
+# -------------------------------------------------------
+T1_C = 25.0;   R1 = 10.050   # kΩ  (aussi R0 et T0)
+T2_C = 35.0;   R2 = 6.666    # kΩ
+T0   = T1_C + 273.15          # K
+R0   = R1                     # kΩ  (mesuré au multimètre)
 
-# ----- Résistance NTC théorique -----
-R_T = R0 * np.exp(BETA * (1.0/T_K - 1.0/T0K))
+# β calculé à partir des deux points
+T1 = T1_C + 273.15
+T2 = T2_C + 273.15
+beta = np.log(R1 / R2) / (1/T1 - 1/T2)
+print(f"β calibré = {beta:.4f} K")   # doit donner ~3782.74
 
-# ----- Incertitude sur R2 -----
-u_R2 = REL_U_R2 * R_T
+# -------------------------------------------------------
+# Propagation de l'incertitude sur β
+#
+#   β = ln(R1/R2) / (1/T1 - 1/T2)
+#
+#   ∂β/∂R1 =  1/(R1 * (1/T1 - 1/T2))
+#   ∂β/∂R2 = -1/(R2 * (1/T1 - 1/T2))
+#
+# T1, T2 supposées exactes (thermomètre de référence)
+# u_R1 = u_R2 = u_R (multimètre)
+# -------------------------------------------------------
+denom = 1/T1 - 1/T2
+dbeta_dR1 =  1.0 / (R1 * denom)
+dbeta_dR2 = -1.0 / (R2 * denom)
+u_beta = np.sqrt((dbeta_dR1 * u_R)**2 + (dbeta_dR2 * u_R)**2)
+print(f"u_β        = ±{u_beta:.4f} K")
 
-# u_T = (T^2 / (BETA * R)) * u_R
-u_T_K = (T_K**2 / (BETA * R_T)) * u_R2
-u_T_C = u_T_K  # même échelle en K et °C pour un écart-type
+# u_R0 = u_R (R0 mesuré au multimètre à T0)
+u_R0 = u_R
+print(f"u_R0       = ±{u_R0:.4f} kΩ")
 
-idx_15 = np.argmin(np.abs(T_C - 15.0))
-idx_25 = np.argmin(np.abs(T_C - 25.0))
-idx_40 = np.argmin(np.abs(T_C - 40.0))
+# -------------------------------------------------------
+# Fonctions NTC
+# -------------------------------------------------------
 
-print(f"u_T @ 15°C ≈ {u_T_C[idx_15]:.2f} °C")
-print(f"u_T @ 25°C ≈ {u_T_C[idx_25]:.2f} °C")
-print(f"u_T @ 40°C ≈ {u_T_C[idx_40]:.2f} °C")
+def R_NTC(T_celsius):
+    """R_TH en fonction de T (kΩ)"""
+    T = T_celsius + 273.15
+    return R0 * np.exp(beta * (1/T - 1/T0))
 
-# --- Figure ---
-plt.figure(figsize=(7, 4.5))
+def T_from_R(R_TH):
+    """T en fonction de R_TH (°C)"""
+    return 1.0 / (1/T0 + np.log(R_TH / R0) / beta) - 273.15
 
-# Courbe principale
-plt.plot(T_C, u_T_C, color='tab:blue', lw=2, label=r'$u_T$ (1$\sigma$)')
+# -------------------------------------------------------
+# Fonctions du circuit
+# -------------------------------------------------------
 
-# Point à 25°C
-plt.scatter([25], [u_T_C[idx_25]], color='tab:green', zorder=3, label='25°C')
+def V_ref():
+    return VDD * R_B / (R_A + R_B)
 
-# Ligne pointillée horizontale au niveau u_T(25°C)
-y25 = u_T_C[idx_25]
-plt.axhline(y=y25, color='tab:green', ls='--', lw=1.5, alpha=0.8)
+def V_plus(R_TH):
+    return VDD * R_D / (R_D + R_TH)
 
+def gain():
+    return (R_C + R_E) / R_C
 
-yticks = list(plt.yticks()[0])
-# Ajoute y25 s'il n'existe pas déjà (tolérance)
-if not any(abs(t - y25) < 1e-6 for t in yticks):
-    yticks.append(y25)
-plt.yticks(sorted(yticks))
+def V_out(R_TH):
+    return V_plus(R_TH) * gain() - V_ref() * (R_E / R_C)
 
+# -------------------------------------------------------
+# Dérivées partielles de V_out par rapport aux résistances
+# -------------------------------------------------------
 
+def dVout_dRD(R_TH):
+    return gain() * VDD * R_TH / (R_D + R_TH)**2
+
+def dVout_dRTH(R_TH):
+    return -gain() * VDD * R_D / (R_D + R_TH)**2
+
+def dVout_dRA():
+    return -(R_E / R_C) * VDD * R_B / (R_A + R_B)**2
+
+def dVout_dRB():
+    return (R_E / R_C) * VDD * R_A / (R_A + R_B)**2
+
+def dVout_dRC(R_TH):
+    return (V_ref() - V_plus(R_TH)) * R_E / R_C**2
+
+def dVout_dRE(R_TH):
+    return (V_plus(R_TH) - V_ref()) / R_C
+
+# -------------------------------------------------------
+# Incertitude sur V_out (résistances circuit + R_TH)
+# -------------------------------------------------------
+
+def u_Vout(R_TH):
+    terms = [
+        (dVout_dRD(R_TH)  * u_R)**2,
+        (dVout_dRTH(R_TH) * u_R)**2,
+        (dVout_dRA()      * u_R)**2,
+        (dVout_dRB()      * u_R)**2,
+        (dVout_dRC(R_TH)  * u_R)**2,
+        (dVout_dRE(R_TH)  * u_R)**2,
+    ]
+    return np.sqrt(sum(terms))
+
+# -------------------------------------------------------
+# Dérivées partielles de T par rapport à R_TH, β, R0
+#
+#   T = [ 1/T0 + ln(R_TH/R0)/β ]^{-1}
+#
+#   ∂T/∂R_TH = -T² / (β · R_TH)
+#   ∂T/∂β    = -T² · ln(R_TH/R0) / β²    =  T² · (1/T - 1/T0) / β
+#   ∂T/∂R0   =  T² / (β · R0)
+# -------------------------------------------------------
+
+def dT_dRTH(T_celsius):
+    T = T_celsius + 273.15
+    R_TH = R_NTC(T_celsius)
+    return -T**2 / (beta * R_TH)
+
+def dT_dbeta(T_celsius):
+    T = T_celsius + 273.15
+    R_TH = R_NTC(T_celsius)
+    return T**2 * (1/T - 1/T0) / beta
+    # équivalent : -T² * ln(R_TH/R0) / beta²
+
+def dT_dR0(T_celsius):
+    T = T_celsius + 273.15
+    return T**2 / (beta * R0)
+
+# -------------------------------------------------------
+# Règle de la chaîne : ∂T/∂Vout = (∂T/∂R_TH) · (∂R_TH/∂Vout)
+# -------------------------------------------------------
+
+def dRTH_dVout(R_TH):
+    return 1.0 / dVout_dRTH(R_TH)
+
+def dT_dVout(T_celsius):
+    R_TH = R_NTC(T_celsius)
+    return dT_dRTH(T_celsius) * dRTH_dVout(R_TH)
+
+# -------------------------------------------------------
+# Incertitude totale sur T
+#
+#   u_T² = (∂T/∂Vout · u_Vout)²   ← circuit + R_TH(mesure)
+#          + (∂T/∂β   · u_β)²      ← calibration β
+#          + (∂T/∂R0  · u_R0)²     ← calibration R0
+# -------------------------------------------------------
+
+def u_T(T_celsius):
+    R_TH = R_NTC(T_celsius)
+
+    term_circuit = (dT_dVout(T_celsius) * u_Vout(R_TH))**2
+    term_beta    = (dT_dbeta(T_celsius) * u_beta)**2
+    term_R0      = (dT_dR0(T_celsius)  * u_R0)**2
+
+    return np.sqrt(term_circuit + term_beta + term_R0)
+
+def u_T_circuit_only(T_celsius):
+    R_TH = R_NTC(T_celsius)
+    return abs(dT_dVout(T_celsius)) * u_Vout(R_TH)
+
+def u_T_beta_only(T_celsius):
+    return abs(dT_dbeta(T_celsius)) * u_beta
+
+def u_T_R0_only(T_celsius):
+    return abs(dT_dR0(T_celsius)) * u_R0
+
+# -------------------------------------------------------
+# Affichage console
+# -------------------------------------------------------
+
+T_range = np.linspace(15, 40, 500)
+
+T_ex = 25.0
+R_ex = R_NTC(T_ex)
+print()
+print(f"=== Exemple à {T_ex}°C ===")
+print(f"  R_TH              = {R_ex:.4f} kΩ")
+print(f"  V_ref             = {V_ref():.4f} V")
+print(f"  V+                = {V_plus(R_ex):.4f} V")
+print(f"  u_Vout            = {u_Vout(R_ex)*1000:.4f} mV")
+print(f"  dT/dVout          = {dT_dVout(T_ex):.4f} °C/V")
+print(f"  Contribution circuit : ±{u_T_circuit_only(T_ex):.4f} °C")
+print(f"  Contribution β       : ±{u_T_beta_only(T_ex):.4f} °C")
+print(f"  Contribution R0      : ±{u_T_R0_only(T_ex):.4f} °C")
+print(f"  u_T TOTAL         = ±{u_T(T_ex):.4f} °C")
+print()
+
+print(f"{'T [°C]':>8} {'u_circuit':>12} {'u_β':>10} {'u_R0':>10} {'u_T total':>12}")
+print("-" * 58)
+for T in [15, 20, 25, 30, 35, 40]:
+    print(f"{T:>8.0f} {u_T_circuit_only(T):>12.4f} "
+          f"{u_T_beta_only(T):>10.4f} "
+          f"{u_T_R0_only(T):>10.4f} "
+          f"{u_T(T):>12.4f}")
+
+# -------------------------------------------------------
+# Graphiques
+# -------------------------------------------------------
+
+plt.plot(figsize=(9, 9))
+
+# -- Graphique 1 : u_T total vs T
+plt.plot(T_range, u_T(T_range), 'b-', linewidth=2, label='$u_T$ total')
 plt.xlabel('Température [°C]')
 plt.ylabel('Incertitude $u_T$ [°C]')
-plt.title('Incertitude de température vs température (NTC 10k, β=3980)')
 plt.grid(True, alpha=0.3)
+
+
 plt.tight_layout()
+plt.savefig(R'C:\Users\sabri\OneDrive\Desktop\uni\design\simulateur-thermique\code arduino et fichiers kicad', dpi=150)
 plt.show()
+print("Graphique sauvegardé.")
