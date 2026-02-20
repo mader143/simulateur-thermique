@@ -57,21 +57,22 @@ def compute_timestep_ultra(T, T_init, alpha_dt_dx2, alpha_dt_dy2,
     return T_new
 
 # ------------------- PARAMETERS -------------------
-longueur = 0.12
-largeur = 0.04
-epaisseur = 0.002
-T_init = 23 + 273.15
-t_simulation = 200
-k = 200
-rho = 7800
-cp = 500
+longueur = 117.28e-3
+largeur = 61.57e-3
+epaisseur = 01.61e-3
+T_init = 24.31 + 273.15
+t_simulation = 240
+k = 167
+rho = 2700
+cp = 900
 dx = 0.001
+h_conv = 13.65
+Pin = 1.68
 
+#tt = 100
 # Paramètres aléatoires (modifiable facilement)
-h_min, h_max = 18, 20
-Pin_min, Pin_max = 1, 3
-h_conv = random.randrange(int(h_min*10), int(h_max*10)+1) / 10.0
-Pin    = random.randrange(int(Pin_min*10), int(Pin_max*10)+1) / 10.0
+#Pin_min, Pin_max = 1.55, 1.70
+#Pin    = random.randrange(int(Pin_min*tt), int(Pin_max*tt)+1) / tt
 
 
 # ------------------- DERIVED -------------------

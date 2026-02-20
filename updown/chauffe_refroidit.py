@@ -5,6 +5,20 @@ import time
 import json
 import os
 import numba
+import pandas as pd
+
+
+dossier_script = os.path.dirname(os.path.abspath(__file__))
+fichier_xlsx = os.path.join(dossier_script, "rechau+refroi.xlsx")
+
+# --- Lecture des données ---
+# Expérience A
+pol = pd.read_excel(fichier_xlsx, sheet_name=0)
+t = pol["temps"].to_numpy()
+T = pol["temperature_C"].to_numpy()
+
+plt.plot(t, T)
+plt.show()
 
 # ULTRA-OPTIMIZED VERSION - Vectorized operations where possible
 @numba.jit(nopython=True)
@@ -80,7 +94,7 @@ longueur = params["longueur"]
 largeur = params["largeur"]
 epaisseur = params["epaisseur"]
 T_init = params["T_init"] + 273.15
-t_simulation = params["t_simulation"]
+t_simulation = 2000
 k = params["k"]
 rho = params["rho"]
 cp = params["cp"]
@@ -109,12 +123,12 @@ ry = int((act_size/2) / dy)
 
 cell_volume = dx * dy * epaisseur
 nb_cells = (2*rx + 1) * (2*ry + 1)
-P_cell = Pin / nb_cells
-P_cell_dt_vol = (P_cell * dt) / (rho * cp * cell_volume)
+
+echelon = 800
 
 therm1_locx, therm1_locy = int(14.87e-3/dx), int((largeur/2)/dx)
-therm2_locx, therm2_locy = int(59.35e-3/dx), int((largeur/2)/dx)
-therm3_locx, therm3_locy = int(104.99e-3/dx), int((largeur/2)/dx)
+# therm2_locx, therm2_locy = int(59.35e-3/dx), int((largeur/2)/dx)
+# therm3_locx, therm3_locy = int(104.99e-3/dx), int((largeur/2)/dx)
 
 x0, y0 = therm1_locx, therm1_locy
 
@@ -130,8 +144,8 @@ plt.ion()  # Enable interactive mode
 # Figure 1: Thermistors
 figT, axT = plt.subplots(figsize=(6, 4))
 line1, = axT.plot([], [], label="Thermistance 1", linewidth=2)
-line2, = axT.plot([], [], label="Thermistance 2", linewidth=2)
-line3, = axT.plot([], [], label="Thermistance 3", linewidth=2)
+# line2, = axT.plot([], [], label="Thermistance 2", linewidth=2)
+# line3, = axT.plot([], [], label="Thermistance 3", linewidth=2)
 axT.set_xlabel("Temps [s]")
 axT.set_ylabel("Température [°C]")
 axT.set_title("Température des thermistances")
@@ -173,22 +187,31 @@ last_2d_update = start_time
 last_3d_update = start_time
 
 for t in range(nt):
+
+    if t < echelon/dt:
+        P_cell = Pin / nb_cells
+        P_cell_dt_vol = (P_cell * dt) / (rho * cp * cell_volume)
+
+    else:
+        P_cell = 0
+        P_cell_dt_vol = (P_cell * dt) / (rho * cp * cell_volume)
+
     T = compute_timestep_ultra(T, T_init, alpha_dt_dx2, alpha_dt_dy2,
                                coeff_conv, coeff_face_2, P_cell_dt_vol,
                                x0, rx, y0, ry, nx, ny)
     
     temps.append(t * dt)
     T1.append(T[therm1_locx, therm1_locy] - 273)
-    T2.append(T[therm2_locx, therm2_locy] - 273)
-    T3.append(T[therm3_locx, therm3_locy] - 273)
+    # T2.append(T[therm2_locx, therm2_locy] - 273)
+    # T3.append(T[therm3_locx, therm3_locy] - 273)
     
     current_time = time.time()
     
     # Update 2D plot
     if t % PLOT_2D_INTERVAL == 0 and (current_time - last_2d_update) > 0.05:
         line1.set_data(temps, T1)
-        line2.set_data(temps, T2)
-        line3.set_data(temps, T3)
+        # line2.set_data(temps, T2)
+        # line3.set_data(temps, T3)
         
         if temps:
             axT.set_xlim(0, max(temps[-1], 1))
