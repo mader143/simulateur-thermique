@@ -44,7 +44,7 @@ G3 = tfest(data_id3, np, opt);
 disp('G3:');
 tf(G3)
 
-Gz = c2d(G2, 0.5, 'tustin');
+Gz = c2d(G3, 0.5, 'tustin');
 disp('Gz:');
 tf(Gz)
 
