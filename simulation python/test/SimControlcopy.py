@@ -9,7 +9,7 @@ from PyQt5 import uic
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
-from SimulationThermique import SimulationThermique
+from SimulationThermiquecopy import SimulationThermique
 
 
 class MplCanvas(FigureCanvas):
@@ -216,15 +216,3 @@ class SimControl(QMainWindow):
         self.doubleSpinBox_h.setValue(self.simulation.h_conv)
         self.doubleSpinBox_dx.setValue(self.simulation.dx * 1000)
         self.doubleSpinBox_pin.setValue(self.simulation.Pin)
-
-        for w in widgets:
-            w.blockSignals(False)
-
-        # Précalculer la grille X/Y pour update_plaque
-        dy = self.simulation.dx
-        nx = int(self.simulation.longueur / self.simulation.dx)
-        ny = int(self.simulation.largeur / dy)
-        x = np.linspace(0, self.simulation.longueur, nx)
-        y = np.linspace(0, self.simulation.largeur, ny)
-        self.X, self.Y = np.meshgrid(x, y, indexing='ij')
-        self.X2, self.Y2 = self.X[::2, ::2], self.Y[::2, ::2]
