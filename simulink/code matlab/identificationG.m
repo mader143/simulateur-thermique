@@ -26,7 +26,8 @@ y_id2 = y2 - y2(1);  % température relative à T0
 data_id2 = iddata(y_id2, y_id1, 0.5);
 
 G2 = tfest(data_id2, np, opt); 
-
+disp('G2:');
+tf(G2)
 
 % Extraire les données
 y3 = T3{:,2};  % température

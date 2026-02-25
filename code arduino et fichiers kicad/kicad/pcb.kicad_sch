@@ -6775,6 +6775,7 @@
 	(symbol
 		(lib_id "Amplifier_Operational:LMC6482")
 		(at 168.91 41.91 0)
+		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6782,7 +6783,7 @@
 		(dnp no)
 		(uuid "38ed9c78-d8d2-484a-9f0e-4aacc9d8e725")
 		(property "Reference" "U2"
-			(at 168.91 45.72 0)
+			(at 168.91 38.1 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6790,7 +6791,7 @@
 			)
 		)
 		(property "Value" "LMC6482"
-			(at 169.926 48.26 0)
+			(at 169.926 35.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7127,6 +7128,7 @@
 	(symbol
 		(lib_id "Amplifier_Operational:LMC6482")
 		(at 86.36 99.06 0)
+		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7134,7 +7136,7 @@
 		(dnp no)
 		(uuid "4df3b3de-7cb8-4198-853c-7195ca417613")
 		(property "Reference" "U3"
-			(at 87.376 102.108 0)
+			(at 87.376 96.012 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7142,7 +7144,7 @@
 			)
 		)
 		(property "Value" "LMC6482"
-			(at 88.392 104.902 0)
+			(at 88.392 93.218 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7212,15 +7214,15 @@
 	(symbol
 		(lib_id "Amplifier_Operational:LMC6482")
 		(at 134.62 39.37 0)
+		(mirror x)
 		(unit 2)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "57f0173e-0744-48e2-ba39-40e423f95f68")
 		(property "Reference" "U2"
-			(at 134.62 29.21 0)
+			(at 134.62 49.53 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7228,7 +7230,7 @@
 			)
 		)
 		(property "Value" "LMC6482"
-			(at 134.62 31.75 0)
+			(at 134.62 46.99 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7365,6 +7367,7 @@
 	(symbol
 		(lib_id "Amplifier_Operational:LMC6482")
 		(at 168.91 95.25 0)
+		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7372,7 +7375,7 @@
 		(dnp no)
 		(uuid "5f92c747-310f-49d5-aec7-1674f24ad8e8")
 		(property "Reference" "U4"
-			(at 169.926 98.298 0)
+			(at 169.926 92.202 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7380,7 +7383,7 @@
 			)
 		)
 		(property "Value" "LMC6482"
-			(at 170.942 101.092 0)
+			(at 170.942 89.408 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7998,6 +8001,7 @@
 	(symbol
 		(lib_id "Amplifier_Operational:LMC6482")
 		(at 86.36 44.45 0)
+		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -8005,7 +8009,7 @@
 		(dnp no)
 		(uuid "7c3d32a9-1c00-4cb5-84be-9197f6fd0833")
 		(property "Reference" "U1"
-			(at 85.598 48.768 0)
+			(at 85.598 40.132 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8013,7 +8017,7 @@
 			)
 		)
 		(property "Value" "LMC6482"
-			(at 87.884 50.546 0)
+			(at 87.884 38.354 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8912,15 +8916,15 @@
 	(symbol
 		(lib_id "Amplifier_Operational:LMC6482")
 		(at 52.07 41.91 0)
+		(mirror x)
 		(unit 2)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "a7c795b0-50b0-45f0-ba3c-1d4394d4cc30")
 		(property "Reference" "U1"
-			(at 52.07 31.75 0)
+			(at 52.07 52.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8928,7 +8932,7 @@
 			)
 		)
 		(property "Value" "LMC6482"
-			(at 52.07 34.29 0)
+			(at 52.07 49.53 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9219,15 +9223,15 @@
 	(symbol
 		(lib_id "Amplifier_Operational:LMC6482")
 		(at 52.07 96.52 0)
+		(mirror x)
 		(unit 2)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "b4361c6f-7fbc-4697-88a2-cda5e15b6739")
 		(property "Reference" "U3"
-			(at 52.07 86.36 0)
+			(at 52.07 106.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9235,7 +9239,7 @@
 			)
 		)
 		(property "Value" "LMC6482"
-			(at 52.07 88.9 0)
+			(at 52.07 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9440,15 +9444,15 @@
 	(symbol
 		(lib_id "Amplifier_Operational:LMC6482")
 		(at 134.62 92.71 0)
+		(mirror x)
 		(unit 2)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "bcc71dfb-2074-4841-bbe5-85c5abe56f95")
 		(property "Reference" "U4"
-			(at 134.62 82.55 0)
+			(at 134.62 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9456,7 +9460,7 @@
 			)
 		)
 		(property "Value" "LMC6482"
-			(at 134.62 85.09 0)
+			(at 134.62 100.33 0)
 			(effects
 				(font
 					(size 1.27 1.27)
