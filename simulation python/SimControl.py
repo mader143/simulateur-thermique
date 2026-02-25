@@ -1,6 +1,7 @@
 # Classe pour contrôler l'interface graphique
 import json
 import os
+import numpy as np
 
 from PyQt5.QtCore import QThread, pyqtSignal, QObject
 from PyQt5.QtWidgets import QMainWindow
@@ -10,6 +11,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 from SimulationThermique import SimulationThermique
+from PyQt5.QtCore import QTimer
 
 
 class SimControl(QMainWindow):
@@ -21,7 +23,9 @@ class SimControl(QMainWindow):
         uic.loadUi(os.path.join(base_path, "interface_simulateur.ui"), self)
 
         self.simulation = SimulationThermique()
-        self.simulation.therm_1.connect(self.update_therm_1)
+        self.simulation.therm_1.connect(self.update_graphs)
+        self.simulation.plaque.connect(self.update_plaque)
+
 
         class MplCanvas(FigureCanvas):
             """A QWidget that contains a Matplotlib figure."""
@@ -30,6 +34,7 @@ class SimControl(QMainWindow):
                 fig = Figure(figsize=(width, height), dpi=dpi)
                 self.thermistance = fig.add_subplot(211)
                 self.plaque = fig.add_subplot(212, projection='3d')
+
                 super().__init__(fig)
                 self.setParent(parent)
 
@@ -39,7 +44,7 @@ class SimControl(QMainWindow):
 
         self.graph_layout.addWidget(self.graphique)
 
-
+        self.temps_ecoule = 0
 
         # Initialiser les boutons ---------------------------------------------------------------------------
 
@@ -73,7 +78,15 @@ class SimControl(QMainWindow):
         # Lancer la simulation thermique
         self.pushButton_start.clicked.connect(self.commencer_simulation)
 
+    def update_timer_label(self):
+        self.temps_ecoule += 1
+        self.label_temps.setText(f'Temps écoulé : {self.temps_ecoule} secondes')
+
     def commencer_simulation(self):
+
+        sim_timer = QTimer()
+        sim_timer.timeout.connect(self.update_timer_label)
+        sim_timer.start(1000)
 
         class Simulation_Worker(QObject):
             finished = pyqtSignal()
@@ -92,6 +105,7 @@ class SimControl(QMainWindow):
 
             self.thread.started.connect(self.worker.run(self.simulation))
             self.worker.finished.connect(self.thread.quit)
+            self.worker.finished.connect(self.timer.disconnect)
             self.worker.finished.connect(self.worker.deleteLater)
             self.thread.finished.connect(self.thread.deleteLater)
 
@@ -104,9 +118,23 @@ class SimControl(QMainWindow):
         except Exception as e:
             print('euhhhhm', e)
 
-    def update_therm_1(self,obj, t, T):
-        self.graphique.thermistance.plot(t, T)
+    def update_graphs(self,obj, t, T1, T2, T3):
+        self.graphique.thermistance.plot(t, T1)
+        self.graphique.thermistance.plot(t, T2)
+        self.graphique.thermistance.plot(t, T3)
+
         print('plotted')
+
+    def update_plaque(self, obj, T):
+        self.graphique.plaque.remove()
+        self.graphique.plaque.plot_surface(
+            self.X, self.Y, T - 273,
+            cmap='inferno',
+            rstride=1, cstride=1,
+            linewidth=0,
+            antialiased=False
+        )
+        print('plaque plotted')
 
     def test(self):
         print(self.simulation.longueur,
@@ -141,6 +169,14 @@ class SimControl(QMainWindow):
         self.simulation.h_conv = params["h_conv"]
         self.simulation.dx = params["dx"]
         self.simulation.Pin = params["Pin"]
+
+        dy = self.simulation.dx
+        nx, ny = int(self.simulation.longueur / self.simulation.dx), int(self.simulation.largeur / dy)
+        x = np.linspace(0, self.simulation.longueur, nx)
+        y = np.linspace(0, self.simulation.largeur, ny)
+        self.X, self.Y = np.meshgrid(x, y, indexing='ij')
+
+
 
         # Placer les valeurs sur l'interface
         self.doubleSpinBox_longueur.setValue(self.simulation.longueur*1000)

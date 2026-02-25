@@ -11,10 +11,8 @@ import numpy as np
 
 
 class SimulationThermique(QObject):
-    therm_1 = pyqtSignal(object, object, object)
-    therm_2 = pyqtSignal()
-    therm_3 = pyqtSignal()
-    plaque = pyqtSignal()
+    therm_1 = pyqtSignal(object, object, object, object, object)
+    plaque = pyqtSignal(object, object)
 
     def __init__(self):
 
@@ -201,7 +199,8 @@ class SimulationThermique(QObject):
                 line1.set_data(temps, T1)
                 line2.set_data(temps, T2)
                 line3.set_data(temps, T3)
-                self.therm_1.emit('T1',temps, T1)
+                self.therm_1.emit('Thermistance',temps, T1, T2, T3)
+
 
                 if temps:
                     axT.set_xlim(0, max(temps[-1], 1))
@@ -215,6 +214,7 @@ class SimulationThermique(QObject):
 
             # Update 3D plot
             if t % PLOT_3D_INTERVAL == 0 and (current_time - last_3d_update) > 0.1:
+                self.plaque.emit('T plaque', T)
                 surf.remove()
                 surf = ax3D.plot_surface(
                     X, Y, T - 273,
