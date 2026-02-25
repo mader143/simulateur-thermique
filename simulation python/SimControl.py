@@ -126,7 +126,7 @@ class SimControl(QMainWindow):
         print('plotted')
 
     def update_plaque(self, obj, T):
-        self.graphique.plaque.remove()
+        self.graphique.plaque.cla()
         self.graphique.plaque.plot_surface(
             self.X, self.Y, T - 273,
             cmap='inferno',
