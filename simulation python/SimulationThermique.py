@@ -11,10 +11,8 @@ import numpy as np
 
 
 class SimulationThermique(QObject):
-    therm_1 = pyqtSignal(object, object, object)
-    therm_2 = pyqtSignal()
-    therm_3 = pyqtSignal()
-    plaque = pyqtSignal()
+    therm_1 = pyqtSignal(object, object, object, object, object)
+    plaque = pyqtSignal(object, object)
 
     def __init__(self):
 
@@ -137,18 +135,10 @@ class SimulationThermique(QObject):
         PLOT_2D_INTERVAL = 10000  # Update 2D plot every N iterations
         PLOT_3D_INTERVAL = 10000  # Update 3D plot every N iterations (heavier)
 
-        plt.ion()  # Enable interactive mode
+        #plt.ion()  # Enable interactive mode
 
-        # Figure 1: Thermistors
-        figT, axT = plt.subplots(figsize=(6, 4))
-        line1, = axT.plot([], [], label="Thermistance 1", linewidth=2)
-        line2, = axT.plot([], [], label="Thermistance 2", linewidth=2)
-        line3, = axT.plot([], [], label="Thermistance 3", linewidth=2)
-        axT.set_xlabel("Temps [s]")
-        axT.set_ylabel("Température [°C]")
-        axT.set_title("Température des thermistances")
-        axT.grid(True)
-        axT.legend()
+
+
 
         # Figure 2: 3D surface
         fig3D = plt.figure(figsize=(7, 5))
@@ -171,7 +161,7 @@ class SimulationThermique(QObject):
         ax3D.set_zlabel("Température [°C]")
         ax3D.set_zlim(self.T_init - 273 - 1, self.T_init - 273 + 15)
 
-        plt.show(block=False)
+        #plt.show(block=False)
 
         print(f"Grid size: {nx} x {ny} = {nx * ny} cells")
         print(f"Time steps: {nt}")
@@ -198,23 +188,13 @@ class SimulationThermique(QObject):
 
             # Update 2D plot
             if t % PLOT_2D_INTERVAL == 0 and (current_time - last_2d_update) > 0.05:
-                line1.set_data(temps, T1)
-                line2.set_data(temps, T2)
-                line3.set_data(temps, T3)
-                self.therm_1.emit('T1',temps, T1)
 
-                if temps:
-                    axT.set_xlim(0, max(temps[-1], 1))
-                    all_temps = T1 + T2 + T3
-                    if all_temps:
-                        axT.set_ylim(min(all_temps) - 1, max(all_temps) + 1)
-
-                figT.canvas.draw()
-                figT.canvas.flush_events()
+                self.therm_1.emit('Thermistance',temps, T1, T2, T3)
                 last_2d_update = current_time
 
             # Update 3D plot
             if t % PLOT_3D_INTERVAL == 0 and (current_time - last_3d_update) > 0.1:
+                self.plaque.emit('T plaque', T)
                 surf.remove()
                 surf = ax3D.plot_surface(
                     X, Y, T - 273,
@@ -260,5 +240,5 @@ class SimulationThermique(QObject):
         ax3D.set_title(f"Température finale – t = {self.t_simulation:.2f} s")
         fig3D.canvas.draw()
 
-        plt.ioff()
-        plt.show()
+        #plt.ioff()
+        #plt.show()
