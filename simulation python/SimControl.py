@@ -3,15 +3,38 @@ import json
 import os
 import numpy as np
 
-from PyQt5.QtCore import QThread, pyqtSignal, QObject
+from PyQt5.QtCore import QThread, pyqtSignal, QObject, QTimer
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import uic
-import pyqtgraph as pqg
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 from SimulationThermique import SimulationThermique
-from PyQt5.QtCore import QTimer
+
+
+class MplCanvas(FigureCanvas):
+    """A QWidget that contains a Matplotlib figure."""
+
+    def __init__(self, parent=None, width=5, height=4, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        self.thermistance = fig.add_subplot(211)
+        self.plaque = fig.add_subplot(212, projection='3d')
+        super().__init__(fig)
+        self.setParent(parent)
+
+
+class Simulation_Worker(QObject):
+    finished = pyqtSignal()
+    progress = pyqtSignal(int)
+
+    def __init__(self, simulation):
+        super().__init__()
+        self.simulation = simulation
+
+    def run(self):
+        """Long-running task."""
+        self.simulation.simuler_diffusion()
+        self.finished.emit()
 
 
 class SimControl(QMainWindow):
@@ -26,18 +49,6 @@ class SimControl(QMainWindow):
         self.simulation.therm_1.connect(self.update_graphs)
         self.simulation.plaque.connect(self.update_plaque)
 
-
-        class MplCanvas(FigureCanvas):
-            """A QWidget that contains a Matplotlib figure."""
-
-            def __init__(self, parent=None, width=5, height=4, dpi=100):
-                fig = Figure(figsize=(width, height), dpi=dpi)
-                self.thermistance = fig.add_subplot(211)
-                self.plaque = fig.add_subplot(212, projection='3d')
-
-                super().__init__(fig)
-                self.setParent(parent)
-
         self.graphique = MplCanvas(self)
         self.graphique.thermistance.set_title('Température des thermistances')
         self.graphique.plaque.set_title('Température de la plaque')
@@ -45,6 +56,10 @@ class SimControl(QMainWindow):
         self.graph_layout.addWidget(self.graphique)
 
         self.temps_ecoule = 0
+        self.X = None
+        self.Y = None
+        self.X2 = None
+        self.Y2 = None
 
         # Initialiser les boutons ---------------------------------------------------------------------------
 
@@ -53,7 +68,7 @@ class SimControl(QMainWindow):
 
         # Pour changer les paramètres de la simulation depuis les boutons
         self.doubleSpinBox_longueur.valueChanged.connect(
-            lambda : setattr(self.simulation, 'longueur', self.doubleSpinBox_longueur.value()/1000))
+            lambda: setattr(self.simulation, 'longueur', self.doubleSpinBox_longueur.value() / 1000))
         self.doubleSpinBox_largeur.valueChanged.connect(
             lambda: setattr(self.simulation, 'largeur', self.doubleSpinBox_largeur.value() / 1000))
         self.doubleSpinBox_epaisseur.valueChanged.connect(
@@ -80,36 +95,25 @@ class SimControl(QMainWindow):
 
     def update_timer_label(self):
         self.temps_ecoule += 1
-        print(self.temps_ecoule)
         self.label_temps.setText(f'Temps écoulé : {self.temps_ecoule} secondes')
 
     def commencer_simulation(self):
 
-        sim_timer = QTimer()
-        sim_timer.timeout.connect(self.update_timer_label)
-        sim_timer.start(1000)
+        self.sim_timer = QTimer()
+        self.sim_timer.timeout.connect(self.update_timer_label)
+        self.sim_timer.start(1000)
 
         self.graphique.thermistance.cla()
         self.graphique.plaque.cla()
 
-        class Simulation_Worker(QObject):
-            finished = pyqtSignal()
-            progress = pyqtSignal(int)
-
-            def run(self, gui):
-                """Long-running task."""
-                gui.simuler_diffusion()
-                self.finished.emit()
-
-
         try:
             self.thread = QThread()
-            self.worker = Simulation_Worker()
+            self.worker = Simulation_Worker(self.simulation)
             self.worker.moveToThread(self.thread)
 
-            self.thread.started.connect(self.worker.run(self.simulation))
+            self.thread.started.connect(self.worker.run)
             self.worker.finished.connect(self.thread.quit)
-            self.worker.finished.connect(self.timer.disconnect)
+            self.worker.finished.connect(self.sim_timer.stop)
             self.worker.finished.connect(self.worker.deleteLater)
             self.thread.finished.connect(self.thread.deleteLater)
 
@@ -117,45 +121,43 @@ class SimControl(QMainWindow):
             #TODO : Connecter les graphiques aux updates pour pouvoir mettre les points
             self.thread.start()
 
-
         #TODO : Figure out c'est quoi l'erreur!
         except Exception as e:
             print('euhhhhm', e)
 
-    def update_graphs(self,obj, t, T1, T2, T3):
+    def update_graphs(self, obj, t, T1, T2, T3):
         self.graphique.thermistance.cla()
         self.graphique.thermistance.plot(t, T1, color='#4D8DB0', label='Thermistance 1', linewidth=3)
         self.graphique.thermistance.plot(t, T2, color='#B04D6C', label='Thermistance 2', linewidth=3)
         self.graphique.thermistance.plot(t, T3, color='#4DB06B', label='Thermistance 3', linewidth=3)
         self.graphique.thermistance.legend()
-        self.graphique.draw()
-
-        print('plotted')
+        self.graphique.draw_idle()
 
     def update_plaque(self, obj, T):
+        if self.X2 is None or self.Y2 is None:
+            return
         self.graphique.plaque.cla()
         self.graphique.plaque.plot_surface(
-            self.X, self.Y, T - 273,
+            self.X2, self.Y2, T[::2, ::2] - 273,  # sous-échantillonner T aussi
             cmap='inferno',
-            rstride=1, cstride=1,
+            rstride=2, cstride=2,
             linewidth=0,
             antialiased=False
         )
-        self.graphique.draw()
-        print('plaque plotted')
+        self.graphique.draw_idle()
 
     def test(self):
         print(self.simulation.longueur,
-        self.simulation.largeur,
-        self.simulation.epaisseur ,
-        self.simulation.T_init,
-        self.simulation.t_simulation,
-        self.simulation.k,
-        self.simulation.rho,
-        self.simulation.cp ,
-        self.simulation.h_conv ,
-        self.simulation.dx ,
-        self.simulation.Pin)
+              self.simulation.largeur,
+              self.simulation.epaisseur,
+              self.simulation.T_init,
+              self.simulation.t_simulation,
+              self.simulation.k,
+              self.simulation.rho,
+              self.simulation.cp,
+              self.simulation.h_conv,
+              self.simulation.dx,
+              self.simulation.Pin)
 
     def load_json(self):
 
@@ -178,26 +180,37 @@ class SimControl(QMainWindow):
         self.simulation.dx = params["dx"]
         self.simulation.Pin = params["Pin"]
 
-        dy = self.simulation.dx
-        nx, ny = int(self.simulation.longueur / self.simulation.dx), int(self.simulation.largeur / dy)
-        x = np.linspace(0, self.simulation.longueur, nx)
-        y = np.linspace(0, self.simulation.largeur, ny)
-        self.X, self.Y = np.meshgrid(x, y, indexing='ij')
-
-
+        # Bloquer les signaux pour éviter que les valueChanged écrasent les paramètres
+        widgets = [
+            self.doubleSpinBox_longueur, self.doubleSpinBox_largeur,
+            self.doubleSpinBox_epaisseur, self.doubleSpinBox_ti,
+            self.spinBox_temps, self.doubleSpinBox_k, self.doubleSpinBox_p,
+            self.doubleSpinBox_cp, self.doubleSpinBox_h, self.doubleSpinBox_dx,
+            self.doubleSpinBox_pin
+        ]
+        for w in widgets:
+            w.blockSignals(True)
 
         # Placer les valeurs sur l'interface
-        self.doubleSpinBox_longueur.setValue(self.simulation.longueur*1000)
-        self.doubleSpinBox_largeur.setValue(self.simulation.largeur*1000)
-        self.doubleSpinBox_epaisseur.setValue(self.simulation.epaisseur*1000)
+        self.doubleSpinBox_longueur.setValue(self.simulation.longueur * 1000)
+        self.doubleSpinBox_largeur.setValue(self.simulation.largeur * 1000)
+        self.doubleSpinBox_epaisseur.setValue(self.simulation.epaisseur * 1000)
         self.doubleSpinBox_ti.setValue(self.simulation.T_init - 273.15)
         self.spinBox_temps.setValue(int(self.simulation.t_simulation))
         self.doubleSpinBox_k.setValue(self.simulation.k)
         self.doubleSpinBox_p.setValue(self.simulation.rho)
         self.doubleSpinBox_cp.setValue(self.simulation.cp)
         self.doubleSpinBox_h.setValue(self.simulation.h_conv)
-        self.doubleSpinBox_dx.setValue(self.simulation.dx*1000)
+        self.doubleSpinBox_dx.setValue(self.simulation.dx * 1000)
         self.doubleSpinBox_pin.setValue(self.simulation.Pin)
 
+        for w in widgets:
+            w.blockSignals(False)
 
-
+        # Précalculer la grille X/Y pour update_plaque
+        dy = self.simulation.dx
+        nx, ny = int(self.simulation.longueur / self.simulation.dx), int(self.simulation.largeur / dy)
+        x = np.linspace(0, self.simulation.longueur, nx)
+        y = np.linspace(0, self.simulation.largeur, ny)
+        self.X, self.Y = np.meshgrid(x, y, indexing='ij')
+        self.X2, self.Y2 = self.X[::2, ::2], self.Y[::2, ::2]
