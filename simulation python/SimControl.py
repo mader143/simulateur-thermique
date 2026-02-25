@@ -80,6 +80,7 @@ class SimControl(QMainWindow):
 
     def update_timer_label(self):
         self.temps_ecoule += 1
+        print(self.temps_ecoule)
         self.label_temps.setText(f'Temps écoulé : {self.temps_ecoule} secondes')
 
     def commencer_simulation(self):
@@ -87,6 +88,9 @@ class SimControl(QMainWindow):
         sim_timer = QTimer()
         sim_timer.timeout.connect(self.update_timer_label)
         sim_timer.start(1000)
+
+        self.graphique.thermistance.cla()
+        self.graphique.plaque.cla()
 
         class Simulation_Worker(QObject):
             finished = pyqtSignal()
@@ -119,9 +123,12 @@ class SimControl(QMainWindow):
             print('euhhhhm', e)
 
     def update_graphs(self,obj, t, T1, T2, T3):
-        self.graphique.thermistance.plot(t, T1)
-        self.graphique.thermistance.plot(t, T2)
-        self.graphique.thermistance.plot(t, T3)
+        self.graphique.thermistance.cla()
+        self.graphique.thermistance.plot(t, T1, color='#4D8DB0', label='Thermistance 1', linewidth=3)
+        self.graphique.thermistance.plot(t, T2, color='#B04D6C', label='Thermistance 2', linewidth=3)
+        self.graphique.thermistance.plot(t, T3, color='#4DB06B', label='Thermistance 3', linewidth=3)
+        self.graphique.thermistance.legend()
+        self.graphique.draw()
 
         print('plotted')
 
@@ -134,6 +141,7 @@ class SimControl(QMainWindow):
             linewidth=0,
             antialiased=False
         )
+        self.graphique.draw()
         print('plaque plotted')
 
     def test(self):
