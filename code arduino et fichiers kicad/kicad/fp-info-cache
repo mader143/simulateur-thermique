@@ -1,4 +1,4 @@
-28244234410521045
+28247778847306982
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -111950,6 +111950,20 @@ LMC6482_SMT
 0
 8
 8
+ampli op
+MTA_CONN2_640445-2
+
+640445-2 
+0
+2
+2
+ampli op
+MTA_CONN4_640445-4
+
+640445-4 
+0
+4
+4
 ampli op
 Untitled
 
