@@ -111,7 +111,7 @@
 			(mirror no)
 			(drillshape 0)
 			(scaleselection 1)
-			(outputdirectory "D2_E5_GPH_V3/")
+			(outputdirectory "D2_E5_GPH_V4/")
 		)
 	)
 	(net 0 "")
