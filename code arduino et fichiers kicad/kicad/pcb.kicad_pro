@@ -518,7 +518,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "D2_E5_GPH_V3/",
+      "plot": "D2_E5_GPH_V2/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "",
@@ -608,12 +608,6 @@
           "group_by": false,
           "label": "PROD_ID",
           "name": "PROD_ID",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "Sim.Library",
-          "name": "Sim.Library",
           "show": false
         }
       ],
