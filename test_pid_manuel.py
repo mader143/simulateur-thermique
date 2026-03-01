@@ -22,7 +22,7 @@ C = ctrl.tf([Kd + Kp*Tf, Kp + Ki*Tf, Ki], [Tf, 1, 0])
 # plt.show()
 
 # Temps de simulation
-t = np.linspace(0, 10000, 1000000)
+t = np.linspace(0, 2000, 10000)
 
 # 1. Réponse à la consigne (Setpoint)
 T_consigne = ctrl.feedback(C * G, 1)
@@ -32,13 +32,13 @@ t_con, y_con = ctrl.forced_response(T_consigne, t, 1.0) # Consigne de 1.0
 # La fonction de transfert "Perturbation -> Sortie" est G / (1 + G*C)
 T_perturb = ctrl.feedback(G, C)
 # On déclenche la perturbation à t=5000s
-u_perturb = np.where(t >= 5000, 0.5, 0) # On ajoute 0.5 brusquement
+u_perturb = np.where(t >= 1000, 200, 0) # On ajoute 0.5 brusquement
 t_per, y_per = ctrl.forced_response(T_perturb, t, u_perturb)
 
 # Sortie totale = Réponse consigne + Réponse perturbation
 plt.plot(t, y_con + y_per)
-plt.axvline(x=5000, color='r', linestyle='--', label='Perturbation')
-plt.title('Réponse du système avec perturbation à t=5000s')
+plt.axvline(x=1000, color='r', linestyle='--', label='Perturbation')
+plt.title('Réponse du système avec perturbation à t=1000s')
 plt.legend()
 plt.grid()
 plt.show()
