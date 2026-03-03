@@ -1,15 +1,10 @@
 import time
-
 import numba
 from PyQt5.QtCore import pyqtSignal, QObject
-from matplotlib.animation import FuncAnimation, FFMpegWriter
-import matplotlib.pyplot as plt
 import numpy as np
 
 
 # Classe pour faire la simulation thermique depuis l'interface graphique
-
-
 class SimulationThermique(QObject):
     therm_1 = pyqtSignal(object, object, object, object, object)
     plaque = pyqtSignal(object, object)
@@ -97,148 +92,66 @@ class SimulationThermique(QObject):
 
         return T_new
 
-    def simuler_diffusion(self):
-        alpha = self.k / (self.rho * self.cp)
+    def init_simulation(self):
+        self.alpha = self.k / (self.rho * self.cp)
         dy = self.dx
-        dt = self.dx ** 2 / (4 * alpha)
+        self.dt = self.dx ** 2 / (4 * self.alpha)
 
         nx, ny = int(self.longueur / self.dx), int(self.largeur / dy)
-        nt = int(self.t_simulation / dt)
+        self.nt = int(self.t_simulation / self.dt)
+        self.t_actuel = 0
 
-        # Pre-calculate constants
-        alpha_dt_dx2 = alpha * dt / (self.dx ** 2)
-        alpha_dt_dy2 = alpha * dt / (dy ** 2)
-        coeff_conv = (self.h_conv * dt) / (self.rho * self.cp * self.dx)
-        coeff_face_2 = 2 * self.h_conv * dt / (self.rho * self.cp * self.epaisseur)
+        self.alpha_dt_dx2 = self.alpha * self.dt / (self.dx ** 2)
+        self.alpha_dt_dy2 = self.alpha * self.dt / (dy ** 2)
+        self.coeff_conv = (self.h_conv * self.dt) / (self.rho * self.cp * self.dx)
+        self.coeff_face_2 = 2 * self.h_conv * self.dt / (self.rho * self.cp * self.epaisseur)
 
-        T = np.full((nx, ny), self.T_init, dtype=float)
+        self.nx, self.ny = nx, ny
+        self.T = np.full((nx, ny), self.T_init, dtype=float)
 
         act_size = 15e-3
         rx = int((act_size / 2) / self.dx)
         ry = int((act_size / 2) / dy)
-
         cell_volume = self.dx * dy * self.epaisseur
         nb_cells = (2 * rx + 1) * (2 * ry + 1)
         P_cell = self.Pin / nb_cells
-        P_cell_dt_vol = (P_cell * dt) / (self.rho * self.cp * cell_volume)
+        self.P_cell_dt_vol = (P_cell * self.dt) / (self.rho * self.cp * cell_volume)
 
-        therm1_locx, therm1_locy = int(14.87e-3 / self.dx), int((self.largeur / 2) / self.dx)
-        therm2_locx, therm2_locy = int(59.35e-3 / self.dx), int((self.largeur / 2) / self.dx)
-        therm3_locx, therm3_locy = int(104.99e-3 / self.dx), int((self.largeur / 2) / self.dx)
+        self.therm1_locx = int(14.87e-3 / self.dx)
+        self.therm1_locy = int((self.largeur / 2) / self.dx)
+        self.therm2_locx = int(59.35e-3 / self.dx)
+        self.therm2_locy = int((self.largeur / 2) / self.dx)
+        self.therm3_locx = int(104.99e-3 / self.dx)
+        self.therm3_locy = int((self.largeur / 2) / self.dx)
 
-        x0, y0 = therm1_locx, therm1_locy
+        self.x0 = self.therm1_locx
+        self.y0 = self.therm1_locy
+        self.rx, self.ry = rx, ry
 
-        temps = []
-        T1, T2, T3 = [], [], []
+        self.temps = []
+        self.T1, self.T2, self.T3 = [], [], []
 
-        # ============ REAL-TIME PLOTTING SETUP ============
-        PLOT_2D_INTERVAL = 10000  # Update 2D plot every N iterations
-        PLOT_3D_INTERVAL = 10000  # Update 3D plot every N iterations (heavier)
+    def step_batch(self, batch_size):
+        """Avance la simulation de batch_size itérations. Retourne True si terminé."""
 
-        #plt.ion()  # Enable interactive mode
+        end = min(self.t_actuel + batch_size, self.nt)
 
+        for t in range(self.t_actuel, end):
+            self.T = self.compute_timestep_ultra(
+                self.T, self.T_init, self.alpha_dt_dx2, self.alpha_dt_dy2,
+                self.coeff_conv, self.coeff_face_2, self.P_cell_dt_vol,
+                self.x0, self.rx, self.y0, self.ry, self.nx, self.ny
+            )
+            self.temps.append(t * self.dt)
+            self.T1.append(self.T[self.therm1_locx, self.therm1_locy] - 273)
+            self.T2.append(self.T[self.therm2_locx, self.therm2_locy] - 273)
+            self.T3.append(self.T[self.therm3_locx, self.therm3_locy] - 273)
 
+        self.t_actuel = end
 
+        # Émettre les signaux pour update les graphiques
+        self.therm_1.emit('Thermistance', self.temps, self.T1, self.T2, self.T3)
+        self.plaque.emit('T plaque', self.T)
 
-        # Figure 2: 3D surface
-        fig3D = plt.figure(figsize=(7, 5))
-        ax3D = fig3D.add_subplot(111, projection='3d')
+        return self.t_actuel >= self.nt
 
-        x = np.linspace(0, self.longueur, nx)
-        y = np.linspace(0, self.largeur, ny)
-        X, Y = np.meshgrid(x, y, indexing='ij')
-
-        surf = ax3D.plot_surface(
-            X, Y, T - 273,
-            cmap='inferno',
-            rstride=1, cstride=1,
-            linewidth=0,
-            antialiased=False
-        )
-
-        ax3D.set_xlabel("x [m]")
-        ax3D.set_ylabel("y [m]")
-        ax3D.set_zlabel("Température [°C]")
-        ax3D.set_zlim(self.T_init - 273 - 1, self.T_init - 273 + 15)
-
-        #plt.show(block=False)
-
-        print(f"Grid size: {nx} x {ny} = {nx * ny} cells")
-        print(f"Time steps: {nt}")
-        print(f"Simulation time: {self.t_simulation} seconds")
-        print(f"dt: {dt:.6f} seconds")
-        print("\nStarting REAL-TIME simulation...")
-        print("(First iteration will be slow due to JIT compilation)\n")
-
-        start_time = time.time()
-        last_2d_update = start_time
-        last_3d_update = start_time
-
-        for t in range(nt):
-            T = self.compute_timestep_ultra(T, self.T_init, alpha_dt_dx2, alpha_dt_dy2,
-                                       coeff_conv, coeff_face_2, P_cell_dt_vol,
-                                       x0, rx, y0, ry, nx, ny)
-
-            temps.append(t * dt)
-            T1.append(T[therm1_locx, therm1_locy] - 273)
-            T2.append(T[therm2_locx, therm2_locy] - 273)
-            T3.append(T[therm3_locx, therm3_locy] - 273)
-
-            current_time = time.time()
-
-            # Update 2D plot
-            if t % PLOT_2D_INTERVAL == 0 and (current_time - last_2d_update) > 0.05:
-
-                self.therm_1.emit('Thermistance',temps, T1, T2, T3)
-                last_2d_update = current_time
-
-            # Update 3D plot
-            if t % PLOT_3D_INTERVAL == 0 and (current_time - last_3d_update) > 0.1:
-                self.plaque.emit('T plaque', T)
-                surf.remove()
-                surf = ax3D.plot_surface(
-                    X, Y, T - 273,
-                    cmap='inferno',
-                    rstride=1, cstride=1,
-                    linewidth=0,
-                    antialiased=False
-                )
-                ax3D.set_title(f"Température de la plaque – t = {t * dt:.2f} s")
-                fig3D.canvas.draw()
-                fig3D.canvas.flush_events()
-                last_3d_update = current_time
-
-            # Progress indicator
-            if t % 500 == 0:
-                elapsed = time.time() - start_time
-                progress = 100 * t / nt
-                if t > 0:
-                    est_total = elapsed / (t / nt)
-                    est_remaining = est_total - elapsed
-                    speed = (t * dt) / elapsed if elapsed > 0 else 0
-                    print(
-                        f"Progress: {progress:.1f}% | Elapsed: {elapsed:.1f}s | ETA: {est_remaining:.1f}s | Speed: {speed:.1f}x",
-                        end='\r')
-                else:
-                    print(f"Progress: {progress:.1f}% | Compiling...", end='\r')
-
-        elapsed = time.time() - start_time
-        print(f"\n\nSimulation complete!")
-        print(f"Total time: {elapsed:.1f}s")
-        print(f"Average time per step: {elapsed / nt * 1000:.2f}ms")
-        print(f"Speed factor: {self.t_simulation / elapsed:.1f}x real-time")
-
-        # Final update to make sure we show the end state
-        surf.remove()
-        surf = ax3D.plot_surface(
-            X, Y, T - 273,
-            cmap='inferno',
-            rstride=1, cstride=1,
-            linewidth=0,
-            antialiased=False
-        )
-        ax3D.set_title(f"Température finale – t = {self.t_simulation:.2f} s")
-        fig3D.canvas.draw()
-
-        #plt.ioff()
-        #plt.show()

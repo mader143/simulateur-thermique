@@ -3,15 +3,15 @@ import json
 import os
 import numpy as np
 
-from PyQt5.QtCore import QThread, pyqtSignal, QObject
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtCore import QThread, pyqtSignal, QObject, Qt, QTimer
+from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5 import uic
 import pyqtgraph as pqg
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 from SimulationThermique import SimulationThermique
-from PyQt5.QtCore import QTimer
+
 
 
 class SimControl(QMainWindow):
@@ -23,8 +23,8 @@ class SimControl(QMainWindow):
         uic.loadUi(os.path.join(base_path, "interface_simulateur.ui"), self)
 
         self.simulation = SimulationThermique()
-        self.simulation.therm_1.connect(self.update_graphs)
-        self.simulation.plaque.connect(self.update_plaque)
+        self.simulation.therm_1.connect(self.update_graphs, Qt.QueuedConnection)
+        self.simulation.plaque.connect(self.update_plaque, Qt.QueuedConnection)
 
 
         class MplCanvas(FigureCanvas):
@@ -85,42 +85,37 @@ class SimControl(QMainWindow):
 
     def commencer_simulation(self):
 
-        sim_timer = QTimer()
-        sim_timer.timeout.connect(self.update_timer_label)
-        sim_timer.start(1000)
-
-        self.graphique.thermistance.cla()
-        self.graphique.plaque.cla()
-
-        class Simulation_Worker(QObject):
-            finished = pyqtSignal()
-            progress = pyqtSignal(int)
-
-            def run(self, gui):
-                """Long-running task."""
-                gui.simuler_diffusion()
-                self.finished.emit()
-
-
         try:
-            self.thread = QThread()
-            self.worker = Simulation_Worker()
-            self.worker.moveToThread(self.thread)
+            self.temps_ecoule = 0
+            self.sim_timer = QTimer()
+            self.sim_timer.timeout.connect(self.update_timer_label)
+            self.sim_timer.start(1000)
 
-            self.thread.started.connect(self.worker.run(self.simulation))
-            self.worker.finished.connect(self.thread.quit)
-            self.worker.finished.connect(self.timer.disconnect)
-            self.worker.finished.connect(self.worker.deleteLater)
-            self.thread.finished.connect(self.thread.deleteLater)
+            self.graphique.thermistance.cla()
+            self.graphique.plaque.cla()
 
-            # Step 6: Start the thread
-            #TODO : Connecter les graphiques aux updates pour pouvoir mettre les points
-            self.thread.start()
+            self.simulation_runner = QTimer()
+            self.simulation.init_simulation()
+            self.simulation_runner.timeout.connect(self.step_simulation)
+            self.simulation_runner.start(0)
 
-
-        #TODO : Figure out c'est quoi l'erreur!
         except Exception as e:
-            print('euhhhhm', e)
+            print('erreur :', e)
+
+
+    def step_simulation(self):
+        BATCH_SIZE = 5000  # nombre d'itérations par tick
+
+        terminé = self.simulation.step_batch(BATCH_SIZE)
+
+        if terminé:
+            self.sim_timer.stop()
+            self.sim_timer.disconnect()
+            self.simulation_runner.stop()
+            self.simulation_runner.disconnect()
+
+
+
 
     def update_graphs(self,obj, t, T1, T2, T3):
         self.graphique.thermistance.cla()
@@ -129,6 +124,8 @@ class SimControl(QMainWindow):
         self.graphique.thermistance.plot(t, T3, color='#4DB06B', label='Thermistance 3', linewidth=3)
         self.graphique.thermistance.legend()
         self.graphique.draw()
+        self.graphique.flush_events()
+
 
         print('plotted')
 
@@ -142,6 +139,8 @@ class SimControl(QMainWindow):
             antialiased=False
         )
         self.graphique.draw()
+        self.graphique.flush_events()
+
         print('plaque plotted')
 
     def test(self):
