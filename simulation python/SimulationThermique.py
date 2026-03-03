@@ -8,6 +8,7 @@ import numpy as np
 class SimulationThermique(QObject):
     therm_1 = pyqtSignal(object, object, object, object, object)
     plaque = pyqtSignal(object, object)
+    progress = pyqtSignal(object, object)
 
     def __init__(self):
 
@@ -24,6 +25,15 @@ class SimulationThermique(QObject):
         self.h_conv = None
         self.dx = None
         self.Pin = None
+
+        self.therm1_x = 14.87e-3
+        self.therm1_y = 0.030785
+        self.therm2_x = 59.35e-3
+        self.therm2_y = 0.030785
+        self.therm3_x = 104.99e-3
+        self.therm3_y = 0.030785
+
+
 
     # ULTRA-OPTIMIZED VERSION - Vectorized operations where possible
     @staticmethod
@@ -117,12 +127,12 @@ class SimulationThermique(QObject):
         P_cell = self.Pin / nb_cells
         self.P_cell_dt_vol = (P_cell * self.dt) / (self.rho * self.cp * cell_volume)
 
-        self.therm1_locx = int(14.87e-3 / self.dx)
-        self.therm1_locy = int((self.largeur / 2) / self.dx)
-        self.therm2_locx = int(59.35e-3 / self.dx)
-        self.therm2_locy = int((self.largeur / 2) / self.dx)
-        self.therm3_locx = int(104.99e-3 / self.dx)
-        self.therm3_locy = int((self.largeur / 2) / self.dx)
+        self.therm1_locx = int(self.therm1_x / self.dx)
+        self.therm1_locy = int(self.therm1_y / self.dx)
+        self.therm2_locx = int(self.therm2_x / self.dx)
+        self.therm2_locy = int(self.therm2_y / self.dx)
+        self.therm3_locx = int(self.therm3_x / self.dx)
+        self.therm3_locy = int(self.therm3_y / self.dx)
 
         self.x0 = self.therm1_locx
         self.y0 = self.therm1_locy
@@ -152,6 +162,7 @@ class SimulationThermique(QObject):
         # Émettre les signaux pour update les graphiques
         self.therm_1.emit('Thermistance', self.temps, self.T1, self.T2, self.T3)
         self.plaque.emit('T plaque', self.T)
+        self.progress.emit('progrès', self.t_actuel/self.nt*100 )
 
         return self.t_actuel >= self.nt
 
