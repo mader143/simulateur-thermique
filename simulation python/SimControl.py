@@ -39,9 +39,9 @@ class SimControl(QMainWindow):
                 self.plaque = fig.add_subplot(122, projection='3d')
                 self.thermistance.set_xlabel('Temps [s]')
                 self.thermistance.set_ylabel('Température [°C]')
-                self.plaque.set_xlabel('x [mm]')
-                self.plaque.set_ylabel('y [mm]')
-                self.plaque.set_zlabel('z [mm]')
+                self.plaque.set_xlabel('x [m]')
+                self.plaque.set_ylabel('y [m]')
+                self.plaque.set_zlabel('T [°C]')
 
 
 
@@ -318,9 +318,9 @@ class SimControl(QMainWindow):
 
     def update_plaque(self, obj, T):
         self.graphique.plaque.cla()
-        self.graphique.plaque.set_xlabel('x [mm]')
-        self.graphique.plaque.set_ylabel('y [mm]')
-        self.graphique.plaque.set_zlabel('z [mm]')
+        self.graphique.plaque.set_xlabel('x [m]')
+        self.graphique.plaque.set_ylabel('y [m]')
+        self.graphique.plaque.set_zlabel('T [°C]')
 
         self.T_plaque_array = T
         self.graphique.plaque.set_title('Température de la plaque')
