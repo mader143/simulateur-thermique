@@ -3,10 +3,10 @@
 #define B   3980
 #define R   10000
 
-const int adcPin = A3;
+const int adcPin = A2;
 
 // ===================== PWM =====================
-const int pwmPin_CHAUD = 2;   // PWM+ → chauffe
+const int pwmPin_CHAUD = 5;   // PWM+ → chauffe
 const int pwmPin_FROID = 11;  // PWM- → refroidit
 
 // ===================== PID DISCRET ===================== trouver manière de prendre le setpoint d'une interface de l'usager
@@ -14,9 +14,9 @@ const float T_s = 0.5;          // Période échantillonnage (doit matcher Simul
 const float setpoint = 28.0;    // Consigne température °C
 
 // ⚠️ Remplacer ces coefficients par ceux extraits de Simulink
-const float a0 =  1.5;
-const float a1 = -1.2;
-const float a2 =  0.3;
+const float a0 =  8.765;
+const float a1 = -8.595;
+const float a2 =  0.0;    // PI, pas de terme k-2
 
 // ===================== CIRCUIT AMPLI =====================
 float Rc = 3300, Rd = 5600, Re = 6300;
@@ -24,8 +24,12 @@ float V1 = 1.795, V2 = 5.0;
 float T0;
 
 // ===================== VARIABLES D'ÉTAT PID =====================
-float e[3]  = {0, 0, 0};   // e[k], e[k-1], e[k-2]
-float u_prev = 0;
+float e[3]  = {0, 0, 0};
+float u_unsat = 0;   // commande non saturée
+float u_prev  = 0;   // commande saturée (utilisée dans la récurrence)
+
+// Gain anti-windup (à ajuster, typiquement 1/a0)
+const float Ka = 0.5;
 
 // ===================== CSV =====================
 const unsigned long DUREE_ENREGISTREMENT = 1000;
@@ -84,8 +88,7 @@ void loop() {
     e[0] = setpoint - T2;
 
     // 3. Récurrence PID
-    float u = u_prev + a0*e[0] + a1*e[1] + a2*e[2];
-
+    float u = u_prev + a0*e[0] + a1*e[1];  // e[2] inutile
     // 4. Saturation + PWM
     envoyerPWM(u);
 

@@ -23,7 +23,7 @@ tf(G1)
 y2 = T2{:,2};  % température
 y_id2 = y2 - y2(1);  % température relative à T0
 
-data_id2 = iddata(y_id2, y_id1, 0.5);
+data_id2 = iddata(y_id2, u, 0.5);
 
 G2 = tfest(data_id2, np, opt); 
 disp('G2:');
@@ -38,7 +38,7 @@ u = 7.8 * ones(size(t));  % échelon de 7.8%
 
 data_id3 = iddata(y_id3, y_id2, 0.5);
 
-np = 1;
+np = 2;
 
 G3 = tfest(data_id3, np, opt); 
 
