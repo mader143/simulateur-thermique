@@ -2,6 +2,7 @@
 import json
 import os
 import numpy as np
+import time as time
 
 from PyQt5.QtCore import QThread, pyqtSignal, QObject, Qt, QTimer
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QFileDialog
@@ -61,8 +62,7 @@ class SimControl(QMainWindow):
         self.T2_array = None
         self.T3_array = None
         self.T_plaque_array = None
-
-        self.temps_ecoule = 0
+        self.start = None
 
         # Initialiser les boutons ---------------------------------------------------------------------------
 
@@ -234,18 +234,18 @@ class SimControl(QMainWindow):
         self.stop_simulation = True
         self.pushButton_stop.setDisabled(True)
 
-
     def update_timer_label(self):
-        self.temps_ecoule += 1
-        print(self.temps_ecoule)
-        self.label_temps.setText(f'Temps écoulé : {self.temps_ecoule} secondes')
+        self.end = time.time()
+        self.elapsed = self.end - self.start
+        self.label_temps.setText(f"Temps écoulé : {self.elapsed:.2f} secondes")
 
     def commencer_simulation(self):
 
         try:
+            self.start = time.time()
+
             self.pushButton_stop.setDisabled(False)
             self.label_status.setText('Statut : Simulation débutée')
-            self.temps_ecoule = 0
             self.sim_timer = QTimer()
             self.sim_timer.timeout.connect(self.update_timer_label)
             self.sim_timer.start(1000)
