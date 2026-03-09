@@ -237,7 +237,7 @@ class SimControl(QMainWindow):
     def update_timer_label(self):
         self.end = time.time()
         self.elapsed = self.end - self.start
-        self.label_temps.setText(f"Temps écoulé : {self.elapsed:.2f} secondes")
+        self.label_temps.setText(f"Temps écoulé : {round(self.elapsed)} secondes")
 
     def commencer_simulation(self):
 
