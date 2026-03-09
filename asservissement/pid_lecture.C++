@@ -14,9 +14,12 @@ const float T_s = 0.5;          // Période échantillonnage (doit matcher Simul
 const float setpoint = 28.0;    // Consigne température °C
 
 // ⚠️ Remplacer ces coefficients par ceux extraits de Simulink
-const float a0 =  8.765;
-const float a1 = -8.595;
-const float a2 =  0.0;    // PI, pas de terme k-2
+const float a0 =  8.765;  // K_c, a tester: 10.849
+const float a1 = -8.595;  // T_i, a tester: 120
+const float a2 =  0.0;    // T_d, a tester: 16
+float T2_prev; // température mesurée à l'itération précédente
+float T3_est;
+float T3_prev;
 
 // ===================== CIRCUIT AMPLI =====================
 float Rc = 3300, Rd = 5600, Re = 6300;
@@ -66,8 +69,12 @@ void setup() {
   pinMode(pwmPin_CHAUD, OUTPUT);
   pinMode(pwmPin_FROID, OUTPUT);
 
+  float T2_prev = lireThermistance(); // température mesurée à l'itération précédente
+  float T3_prev = T2_prev;
+
   while (!Serial);
   delay(2000);
+
 
   Serial.println("temps_s,temperature_C,erreur,commande_u");
   tempsDebut = millis();
@@ -83,12 +90,17 @@ void loop() {
 
     // 1. Lire température
     float T2 = lireThermistance();
+  
+    T3_est = 0.008635 * T2 + 0.008635 * T2_prev + 0.9806 * T3_prev; //
+    T2_prev = T2; // température mesurée à l'itération précédente
+
+    T3_prev = T3_est; // température estimée à l'itération précédente
 
     // 2. Erreur
-    e[0] = setpoint - T2;
+    e[0] = setpoint - T3_est;
 
     // 3. Récurrence PID
-    float u = u_prev + a0*e[0] + a1*e[1];  // e[2] inutile
+    float u = u_prev + a0*e[0] + a1*e[1]+ a2*e[2];  // 
     // 4. Saturation + PWM
     envoyerPWM(u);
 
@@ -105,7 +117,7 @@ void loop() {
       Serial.print(",");
       Serial.print(T2, 2);
       Serial.print(",");
-      Serial.print(e[0], 2);
+      Serial.print(T3_est, 2);
       Serial.print(",");
       Serial.println(u, 2);
     } else if (modeCSV) {
