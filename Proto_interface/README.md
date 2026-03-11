@@ -1,0 +1,8 @@
+IMPORTANT **NE PAS CHANGER LES NOMS DES FICHIERS DANS Proto_Interface**
+
+Pour pouvoir contrôler le Arduino par vscode :
+1. Installer l'extension PlatformIO IDE
+2. Appuyer sur la tête d'extraterrestre à gauche
+3. Appuyer sur 'Project and configuration'
+4. Dans 'simulateur-thermique\Proto_interface', appuyer sur 'Open'
+5. Proto_interface ouvrira une seconde fois au même niveau que simulateur-thermique. C'est celui-là qui permet de rouler le code Arduino. 
