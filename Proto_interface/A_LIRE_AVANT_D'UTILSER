@@ -5,4 +5,5 @@ Pour pouvoir contrôler le Arduino par vscode :
 2. Appuyer sur la tête d'extraterrestre à gauche
 3. Appuyer sur 'Project and configuration'
 4. Dans 'simulateur-thermique\Proto_interface', appuyer sur 'Open'
-5. Proto_interface ouvrira une seconde fois au même niveau que simulateur-thermique. C'est celui-là qui permet de rouler le code Arduino. 
+5. Proto_interface ouvrira une seconde fois, mais au même niveau que simulateur-thermique. C'est celui-là qui permet de rouler le code Arduino. 
+6. Une fois le travail terminé, enregistrer les modifications
