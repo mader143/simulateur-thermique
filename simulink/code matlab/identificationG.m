@@ -5,7 +5,7 @@ opt.InitialCondition = "zero";
 % Extraire les données
 t = T1{:,1};  % temps
 y1 = T1{:,2};  % température
-y_id1 = y1 - y1(1);  % température relative à T0
+y_id1 = y1 - y1(2);  % température relative à T0
 
 % Définir l'entrée réelle : échelon de 7.8%
 u = 7.8 * ones(size(t));  % échelon de 7.8%
@@ -21,7 +21,7 @@ tf(G1)
 
 
 y2 = T2{:,2};  % température
-y_id2 = y2 - y2(1);  % température relative à T0
+y_id2 = y2 - y2(2);  % température relative à T0
 
 data_id2 = iddata(y_id2, u, 0.5);
 
@@ -31,14 +31,14 @@ tf(G2)
 
 % Extraire les données
 y3 = T3{:,2};  % température
-y_id3 = y3 - y3(1);  % température relative à T0
+y_id3 = y3 - y3(2);  % température relative à T0
 
 % Définir l'entrée réelle : échelon de 7.8%
 u = 7.8 * ones(size(t));  % échelon de 7.8%
 
 data_id3 = iddata(y_id3, y_id2, 0.5);
 
-np = 2;
+np = 1;
 
 G3 = tfest(data_id3, np, opt); 
 

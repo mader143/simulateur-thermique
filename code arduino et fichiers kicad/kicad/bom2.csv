@@ -1,0 +1,14 @@
+"Id";"Référence";"Empreinte";"Quantité";"Désignation";"Fournisseur et réf";
+1;"RV3,RV2,RV4,RV1";"trimpot";4;"R_Potentiometer_Trim";;;
+2;"J1";"MTA_CONN2_640445-2";1;"MTA_02";;;
+3;"R6,R4,R11,R1";"Resistance SMT";4;"10K";;;
+4;"R3,R10,R14,R9,R5,R19,R7,R12";"Resistance SMT";8;"5.6K";;;
+5;"C1,C4,C2,C3";"condensateur 1uF";4;"1 μF";;;
+6;"TH3,TH2,TH4,TH1";"MTA_CONN2_640445-2";4;"Screw_Terminal_01x02";;;
+7;"D1";"LED_D5.0mm";1;"LED";;;
+8;"U1,U3,U2,U4";"LMC6482_SMT";4;"LMC6482IMX_NOPB";;;
+9;"R8,R2,R13,R15";"Resistance SMT";4;"3.3K";;;
+10;"R18";"Resistance SMT";1;"560";;;
+11;"J2";"MTA_CONN4_640445-4";1;"MTA_04";;;
+12;"power2,analogA0-A7,comm1,analogA8-A15,pwm2";"PinHeader_1x08_P2.54mm_Vertical";5;"Conn_01x08_Pin";;;
+13;"pwm1";"PinHeader_1x10_P2.54mm_Vertical";1;"Conn_01x10_Pin";;;

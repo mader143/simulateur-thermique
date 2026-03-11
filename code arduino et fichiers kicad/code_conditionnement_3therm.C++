@@ -15,18 +15,17 @@ struct Thermistance {
 
 // =====================================================
 // >>>>>>> PARAMÈTRES DES THERMISTANCES <<<<<<<
-// ⭐ CHANGE SEULEMENT ICI ⭐
 // =====================================================
 Thermistance therm[3] = {
 
-  // Thermistance 1 (A0)
-  {A0, 5082.4 + 998.88, 5088.6 + 998.2, 1988.1, 1.900, 5.01},
+  // Thermistance 1
+  {A3, 5082.4 + 998.88, 5088.6 + 998.2, 3300, 1.900, 5.01},
 
-  // Thermistance 2 (A1)
-  {A1, 5082.4 + 998.88, 5088.6 + 998.2, 1988.1, 1.900, 5.01},
+  // Thermistance 2
+  {A2, 5082.4 + 998.88, 5088.6 + 998.2, 3300, 1.900, 5.01},
 
-  // Thermistance 3 (A2)
-  {A2, 5082.4 + 998.88, 5088.6 + 998.2, 1988.1, 1.900, 5.01}
+  // Thermistance 3 
+  {A1, 5082.4 + 998.88, 5088.6 + 998.2, 3300, 1.900, 5.01}
 };
 
 
@@ -34,10 +33,10 @@ Thermistance therm[3] = {
 const int pwmPin5 = 5;
 const int pwmPin11 = 11;
 
-const int pwmValue5 = 35;
-const int pwmValue11 = 55;
+const int pwmValue5 = 0;
+const int pwmValue11 = 0;
 
-const unsigned long DUREE_ENREGISTREMENT = 240;
+const unsigned long DUREE_ENREGISTREMENT = 800;
 
 float T0;
 unsigned long tempsDebut;
@@ -121,11 +120,11 @@ void loop() {
     t_s = (millis() - tempsDebut) / 1000.0;
 
     Serial.print(t_s, 3);
-    Serial.print("\t");
+    Serial.print(", \t");
     Serial.print(T[0], 2);
-    Serial.print("\t");
+    Serial.print(", \t");
     Serial.print(T[1], 2);
-    Serial.print("\t");
+    Serial.print(", \t");
     Serial.println(T[2], 2);
   }
 
