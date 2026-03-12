@@ -3,7 +3,9 @@
 #define B   3980
 #define R   10000
 
-const int adcPin = A2;
+const int adcPin3 = A1;
+const int adcPin2 = A2;
+const int adcPin1 = A3;
 
 // ===================== PWM =====================
 const int pwmPin_CHAUD = 5;   // PWM+ → chauffe
@@ -22,8 +24,33 @@ float T3_est;
 float T3_prev;
 
 // ===================== CIRCUIT AMPLI =====================
-float Rc = 3300, Rd = 5600, Re = 6300;
-float V1 = 1.795, V2 = 5.0;
+// =====================================================
+// STRUCTURE THERMISTANCE
+// =====================================================
+struct Thermistance {
+  int pin;
+  float Rf;
+  float Rg;
+  float R1;
+  float V1;
+  float V2;
+  float B;
+};
+
+// =====================================================
+// >>>>>>> PARAMÈTRES DES THERMISTANCES <<<<<<<
+// =====================================================
+Thermistance therm[3] = {
+
+  // Thermistance 1
+  {A3, 6300, 5600, 3300, 1.774, 5.0, 3700},
+
+  // Thermistance 2
+  {A2, 6300, 5600, 3300, 1.80, 5.0, 3984},
+
+  // Thermistance 3 
+  {A1, 6300, 5600, 3300, 1.79, 5.0, 3700},
+};
 float T0;
 
 // ===================== VARIABLES D'ÉTAT PID =====================
@@ -44,9 +71,13 @@ unsigned long lastPID = 0;
 
 // ========================================== à vérifier pour le -255 et 255
 float lireThermistance() {
-  float Vout = (5.0 / 1023.0) * analogRead(adcPin);
-  float RT = ((Rc + Re) * Rd * V2) / (Re * Vout + Rc * V1) - Rd;
-  float TX = 1.0 / ((log(RT / RT0) / B) + (1.0 / T0));
+  float Vout = (5.0 / 1023.0) * analogRead(t.pin);
+
+  float RT = ((t.Rf + t.R1) * t.Rg * t.V2) /
+             (t.R1 * Vout + t.Rf * t.V1) - t.Rg;
+
+  float TX = 1.0 / ((log(RT / RT0) / t.B) + (1.0 / T0));
+
   return TX - 273.15;
 }
 
@@ -69,7 +100,13 @@ void setup() {
   pinMode(pwmPin_CHAUD, OUTPUT);
   pinMode(pwmPin_FROID, OUTPUT);
 
-  float T2_prev = lireThermistance(); // température mesurée à l'itération précédente
+float T[3];
+
+  for (int i = 0; i < 3; i++) {
+    T[i] = lireThermistance(therm[i]);
+  }
+
+  float T2_prev = lireThermistance(therm[2]); // température mesurée à l'itération précédente
   float T3_prev = T2_prev;
 
   while (!Serial);
