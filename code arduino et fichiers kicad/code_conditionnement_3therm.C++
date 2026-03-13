@@ -1,5 +1,4 @@
 #define RT0 10000
-#define B   3984
 
 // =====================================================
 // STRUCTURE THERMISTANCE
@@ -11,21 +10,16 @@ struct Thermistance {
   float R1;
   float V1;
   float V2;
+  float B;
 };
 
 // =====================================================
 // >>>>>>> PARAMÈTRES DES THERMISTANCES <<<<<<<
 // =====================================================
 Thermistance therm[3] = {
-
-  // Thermistance 1
-  {A3, 5082.4 + 998.88, 5088.6 + 998.2, 3300, 1.900, 5.01},
-
-  // Thermistance 2
-  {A2, 5082.4 + 998.88, 5088.6 + 998.2, 3300, 1.900, 5.01},
-
-  // Thermistance 3 
-  {A1, 5082.4 + 998.88, 5088.6 + 998.2, 3300, 1.900, 5.01}
+  {A3, 6300, 5600, 3300, 1.774, 5.0, 3700},  // therm[0] → T1
+  {A2, 6300, 5600, 3300, 1.80,  5.0, 3984},  // therm[1] → T2
+  {A1, 6300, 5600, 3300, 1.79,  5.0, 3700},  // therm[2] → T3
 };
 
 
@@ -53,7 +47,7 @@ float mesureTemperature(Thermistance t)
   float RT = ((t.Rf + t.R1) * t.Rg * t.V2) /
              (t.R1 * Vout + t.Rf * t.V1) - t.Rg;
 
-  float T = 1.0 / ((log(RT / RT0) / B) + (1.0 / T0));
+  float T = 1.0 / ((log(RT / RT0) / t.B) + (1.0 / T0));
 
   return T - 273.15;
 }

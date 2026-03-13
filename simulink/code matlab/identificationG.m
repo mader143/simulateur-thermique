@@ -1,4 +1,3 @@
-% IDENTIFICATION G1
 opt = tfestOptions;
 opt.InitialCondition = "zero";
 
@@ -6,10 +5,17 @@ opt.InitialCondition = "zero";
 t = T1{:,1};  % temps
 y1 = T1{:,2};  % température
 y_id1 = y1 - y1(2);  % température relative à T0
+y2 = T1{:,3};
+y_id2 = y2 - y2(2);  
+y3 = T1{:,4}; 
+y_id3 = y3 - y3(2); 
+
 
 % Définir l'entrée réelle : échelon de 7.8%
-u = 7.8 * ones(size(t));  % échelon de 7.8%
+u = 10 * ones(size(t));  % échelon de 7.8%
 
+
+% IDENTIFICATION UT1
 data_id1 = iddata(y_id1, u, 0.5);
 
 np = 1;
@@ -19,26 +25,60 @@ G1 = tfest(data_id1, np, opt);
 disp('G1:');
 tf(G1)
 
+% IDENTIFICATION T1T2
 
-% Extraire les données
-y3 = T3{:,2};  % température
-y_id3 = y3 - y3(2);  % température relative à T0
-
-% Définir l'entrée réelle : échelon de 7.8%
-u = 7.8 * ones(size(t));  % échelon de 7.8%
-
-data_id3 = iddata(y_id3, y_id1, 0.5);
+data_id2 = iddata(y_id2, y_id1, 0.5);
 
 np = 1;
 
-G3 = tfest(data_id3, np, opt); 
+G2 = tfest(data_id2, np, opt); 
 
-disp('G3:');
-tf(G3)
+disp('G2:');
+tf(G2)
 
-Gz = c2d(G3, 0.5, 'tustin');
-disp('Gz:');
-tf(Gz)
+
+% IDENTIFICATION T1T3
+data_id3_1 = iddata(y_id3, y_id1, 0.5);
+
+np = 1;
+
+G3_1 = tfest(data_id3_1, np, opt); 
+
+disp('G3_1:');
+tf(G3_1)
+
+
+% IDENTIFICATION T2T3
+data_id3_2 = iddata(y_id3, y_id2, 0.5);
+
+np = 1;
+
+G3_2 = tfest(data_id3_2, np, opt); 
+
+disp('G3_2:');
+tf(G3_2)
+
+% IDENTIFICATION uT3
+data_id3_u = iddata(y_id3, u, 0.5);
+
+np = 1;
+
+G3_u = tfest(data_id3_u, np, opt); 
+
+disp('G3_u:');
+tf(G3_u)
+
+
+% DISPLAY CONTINUOUS
+
+Gz1 = c2d(G3_1, 0.5, 'tustin');
+disp('Gz1:');
+tf(Gz1)
+
+Gz2 = c2d(G3_2, 0.5, 'tustin');
+disp('Gz2:');
+tf(Gz2)
+
 
 %figure;
 %plot(t, y_id1);hold on

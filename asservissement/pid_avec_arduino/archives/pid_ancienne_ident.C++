@@ -1,13 +1,10 @@
-// ===================== THERMISTANCE =====================
-#define RT0 10000
-
 // ===================== PWM =====================
 const int pwmPin_CHAUD = 5;   // PWM+ → chauffe
 const int pwmPin_FROID = 11;  // PWM- → refroidit
 
 // ===================== PID DISCRET =====================
 const float T_s = 0.5;    // Période échantillonnage (s)
-float setpoint  = 21.0;   // Consigne température °C
+float setpoint  = 30.0;   // Consigne température °C
 
 // Coefficients PID discrets
 const float a0 =  10.86;
@@ -15,6 +12,8 @@ const float a1 = -10.84;
 const float a2 =  0;
 
 // ===================== THERMISTANCES =====================
+#define RT0 10000
+
 struct Thermistance {
   int   pin;
   float Rf;
