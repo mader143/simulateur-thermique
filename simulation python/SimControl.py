@@ -61,7 +61,7 @@ class SimControl(QMainWindow):
         self.T1_array = None
         self.T2_array = None
         self.T3_array = None
-        self.T_plaque_array = None
+        self.T_plaque_array = []
         self.start = None
 
         # Initialiser les boutons ---------------------------------------------------------------------------
@@ -172,12 +172,17 @@ class SimControl(QMainWindow):
                            comments="")  # no '#' before header
 
             if self.checkBox_plaque.isChecked():
-                plaque_data = np.stack([self.X, self.Y, self.T_plaque_array - 273.15], axis=-1).reshape(-1, 3)
-                np.savetxt(f'{filepath}_plaque.txt', plaque_data,
-                           fmt="%.6f",  # 6 decimal places
-                           delimiter=",",  # comma-separated
-                           header="X,Y,T",  # header row
-                           comments="")  # no '#' before header
+                with open(f'{filepath}_plaque.txt', 'w') as f:
+                    for T_plaque_array, time_sim in self.T_plaque_array:
+                        print(time_sim)
+                        print(T_plaque_array)
+                        f.write(f'\nTemps : {round(time_sim, 2)}\n')
+                        plaque_data = np.stack([self.X, self.Y, T_plaque_array - 273.15], axis=-1).reshape(-1, 3)
+                        np.savetxt(f, plaque_data,
+                               fmt="%.6f",  # 6 decimal places
+                               delimiter=",",  # comma-separated
+                               header="X,Y,T",  # header row
+                               comments="")  # no '#' before header
 
             self.label_saving_status.setText('Fichiers sauvegardés avec succès!')
 
@@ -316,13 +321,13 @@ class SimControl(QMainWindow):
 
         print('plotted')
 
-    def update_plaque(self, obj, T):
+    def update_plaque(self, obj, T, sim_time):
         self.graphique.plaque.cla()
         self.graphique.plaque.set_xlabel('x [m]')
         self.graphique.plaque.set_ylabel('y [m]')
         self.graphique.plaque.set_zlabel('T [°C]')
 
-        self.T_plaque_array = T
+        self.T_plaque_array.append([T, sim_time])
         self.graphique.plaque.set_title('Température de la plaque')
         plaque_data = self.graphique.plaque.plot_surface(
             self.X, self.Y, T - 273,

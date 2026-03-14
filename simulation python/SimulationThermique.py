@@ -7,7 +7,7 @@ import numpy as np
 # Classe pour faire la simulation thermique depuis l'interface graphique
 class SimulationThermique(QObject):
     therm_1 = pyqtSignal(object, object, object, object, object)
-    plaque = pyqtSignal(object, object)
+    plaque = pyqtSignal(object, object, object)
     progress = pyqtSignal(object, object)
 
     def __init__(self):
@@ -161,7 +161,7 @@ class SimulationThermique(QObject):
 
         # Émettre les signaux pour update les graphiques
         self.therm_1.emit('Thermistance', self.temps, self.T1, self.T2, self.T3)
-        self.plaque.emit('T plaque', self.T)
+        self.plaque.emit('T plaque', self.T, self.temps[-1])
         self.progress.emit('progrès', self.t_actuel/self.nt*100 )
 
         return self.t_actuel >= self.nt
