@@ -6,7 +6,7 @@ import serial
 import time
 import datetime
 import pandas as pd
-import threading
+import serial.tools.list_ports
 
 class InterfaceProto:
     def __init__(self, root): 
@@ -144,13 +144,28 @@ class InterfaceProto:
         except ValueError:
             messagebox.showerror("Erreur", "Veuillez entrer un nombre valide pour la température à atteindre.")
 
-    def demarrer_proto(self):
+    def trouver_port_arduino():
+        ports = serial.tools.list_ports.comports()
+        for port in ports:
+            # On cherche "Arduino", "USB Serial", ou "CH340" (chipset commun)
+            if "Arduino" in port.description or "USB Serial" in port.description:
+                print(f"Arduino trouvé sur le port : {port.device}")
+                return port.device
+        return None
 
+    def demarrer_proto(self):
+        # chercher le port
+        port_auto = self.trouver_port_arduino()
+        
+        if port_auto is None:
+            messagebox.showerror("Erreur", "Arduino introuvable. Vérifiez le branchement USB.")
+            return
+        
         if not self.running:
             try:
-                #de ce que je comprends ça ouvre la connection avec arduino. Le port s'appelle pas vrm PORT jsp cest quoi
-                self.ser = serial.Serial('PORT', 9600, timeout=1) 
-                #time.sleep(2)
+                #de ce que je comprends ça ouvre la connection avec arduino, jai mis que ca trouve le port automatiquement
+                self.ser = serial.Serial(port_auto, 9600, timeout=1) 
+                time.sleep(2)
             
                 self.running = True
                 self.start_time = time.time()
@@ -199,8 +214,7 @@ class InterfaceProto:
 
         if self.running:
             self.root.after(100, self.update_data)
-
-   
+    
 
 
 def main():
