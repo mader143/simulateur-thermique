@@ -193,9 +193,9 @@ class InterfaceProto:
                 line = self.ser.readline().decode('utf-8').strip()
                 if line:
                     values = line.split(',')
-                    if len(values) == 2:
-                        t2 = float(values[0])
-                        t3 = float(values[1])
+                    if len(values) == 4:
+                        t2 = float(values[1])
+                        t3 = float(values[2])
                         current_time = time.time() - self.start_time
 
                         self.times.append(current_time)
