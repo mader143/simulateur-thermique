@@ -144,7 +144,7 @@ class InterfaceProto:
         except ValueError:
             messagebox.showerror("Erreur", "Veuillez entrer un nombre valide pour la température à atteindre.")
 
-    def trouver_port_arduino():
+    def trouver_port_arduino(self):
         ports = serial.tools.list_ports.comports()
         for port in ports:
             # On cherche "Arduino", "USB Serial", ou "CH340" (chipset commun)
