@@ -6,14 +6,25 @@ import serial
 import time
 import datetime
 import pandas as pd
+import threading
 
 class InterfaceProto:
-    def __init__(self, root):
+    def __init__(self, root): 
         self.root = root
         self.root.title("Contrôle du prototype")
         
+        #essai
+        self.ser = None
+        self.running = False
+        self.start_time = None
+
         self.temperature_voulue = 35
         self.temperature_ambiante = 21
+
+        self.times = []
+        self.t2_data = []
+        self.t3_data = []
+        #essai
         
         self.create_widgets()
         
@@ -87,7 +98,7 @@ class InterfaceProto:
         #y
         self.ax.yaxis.set_tick_params(labelsize=18)
         self.ax.set_ylabel("Température (°C)", fontsize=18)
-        self.ax.set_ylim(15, 30)
+        self.ax.set_ylim(15, 45)
 
         #plot
         self.line = self.ax.plot([], [], label="Thermistance 1", color="#A61F08")[0]
@@ -113,7 +124,7 @@ class InterfaceProto:
             value = float(self.temperature_entry_amb.get())
             if -30 <= value <= 60:
                 self.temperature_ambiante = value
-                if self.temperature_voulue is isinstance(value, (float)):
+                if isinstance(value, float): #jai changé la syntaxe etait pas bonne je crois
                     self.demarrer_proto()
             
             else:
@@ -126,7 +137,7 @@ class InterfaceProto:
             value = float(self.temperature_entry_att.get())
             if 10 <= value <= 45:
                 self.temperature_voulue = value
-                if self.temperature_ambiante is isinstance(value, (int, float)):
+                if isinstance(value, (int, float)): #same here
                     self.demarrer_proto()
             else:
                 raise ValueError
@@ -135,11 +146,59 @@ class InterfaceProto:
 
     def demarrer_proto(self):
 
+        if not self.running:
+            try:
+                #de ce que je comprends ça ouvre la connection avec arduino. Le port s'appelle pas vrm PORT jsp cest quoi
+                self.ser = serial.Serial('PORT', 9600, timeout=1) 
+                #time.sleep(2)
+            
+                self.running = True
+                self.start_time = time.time()
+                
+                self.update_data() #ca commence la boucle qui prends les données d'arduino (le port) et ca va
+                #les mettres dans le graphique
+                
+                print("Communication établie. Réception des données T2 et T3??") 
+            except Exception as e:
+                messagebox.showerror("Erreur", f"Vérifiez le port USB : {e}")
+
         print(f"Température Ambiante: {self.temperature_ambiante} °C")
         print(f"Température à atteindre: {self.temperature_voulue} °C") 
 
     def arreter_proto(self):
-        pass
+        self.running = False
+        if self.ser:
+            self.ser.close()
+        print("Prototype arrêté")
+
+    def update_data(self):
+        if self.running and self.ser and self.ser.in_waiting > 0:
+            try:
+                # lis la ligne d'arduino, ça faut le changer ca depend de comment on le définit dans le code arduino
+                line = self.ser.readline().decode('utf-8').strip()
+                if line:
+                    values = line.split(',')
+                    if len(values) == 2:
+                        t2 = float(values[0])
+                        t3 = float(values[1])
+                        current_time = time.time() - self.start_time
+
+                        self.times.append(current_time)
+                        self.t2_data.append(t2)
+                        self.t3_data.append(t3)
+
+                        self.line.set_data(self.times, self.t2_data)
+                        self.line2.set_data(self.times, self.t3_data)
+                        
+                        if current_time > 100:
+                            self.ax.set_xlim(current_time - 100, current_time)
+                        
+                        self.canvas.draw()
+            except Exception as e:
+                print(f"Read error: {e}")
+
+        if self.running:
+            self.root.after(100, self.update_data)
 
    
 
