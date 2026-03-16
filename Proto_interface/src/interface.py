@@ -8,6 +8,7 @@ import datetime
 import pandas as pd
 import serial.tools.list_ports
 from tkinter import filedialog
+from matplotlib.figure import Figure
 
 class InterfaceProto:
     def __init__(self, root): 
@@ -90,31 +91,47 @@ class InterfaceProto:
         self.t2_data = []
         self.t3est_data = []
         self.y_data = []
-        self.fig, self.ax = plt.subplots(figsize=(7, 10))
-        self.ax.set_title("Température des thermistances 1 et 2 en temps réel\net température estimée de la thermistance 3", fontsize=20)
-        
-        #x
-        self.ax.set_xlabel("Temps (s)", fontsize=18)
-        self.ax.xaxis.set_tick_params(labelsize=18)
-        self.ax.set_xlim(0, 100)
+
+        self.fig = Figure(figsize=(8, 4), dpi=100)
+        self.ax1 = self.fig.add_subplot(121) # 1 row, 2 cols, 1st position
+        self.ax2 = self.fig.add_subplot(122) # 1 row, 2 cols, 2nd position
+        self.ax1.set_title("Température des thermistances 1 et 2 en temps réel\net température estimée de la thermistance 3", fontsize=12)
+        self.ax2.set_title("Commande et erreur en temps réel", fontsize=12)
+
+        #x1
+        self.ax1.set_xlabel("Temps (s)", fontsize=10)
+        self.ax1.xaxis.set_tick_params(labelsize=7)
+        self.ax1.set_xlim(0, 100)
  
-        #y
-        self.ax.yaxis.set_tick_params(labelsize=18)
-        self.ax.set_ylabel("Température (°C)", fontsize=18)
-        self.ax.set_ylim(15, 45)
+        #y1
+        self.ax1.yaxis.set_tick_params(labelsize=7)
+        self.ax1.set_ylabel("Température (°C)", fontsize=10)
+        self.ax1.set_ylim(15, 45)
+
+        #x2
+        self.ax2.set_xlabel("Temps (s)", fontsize=10)
+        self.ax2.xaxis.set_tick_params(labelsize=7)
+        self.ax2.set_xlim(0, 100)
+ 
+        #y2
+        self.ax2.yaxis.set_tick_params(labelsize=7)
+        self.ax2.set_ylabel("Température (°C)", fontsize=10)
+        self.ax2.set_ylim(15, 45)
  
         #plot
-        self.line  = self.ax.plot([], [], label="Thermistance 1",    color="#A61F08")[0]
-        self.line2 = self.ax.plot([], [], label="Thermistance 2",    color="#0062DB")[0]
-        self.line3 = self.ax.plot([], [], label="T3 estimée (moy)",  color="#1A8A2E")[0]
-        self.line4 = self.ax.plot([], [], label="Commande u",        color="#E08000")[0]
-        self.line5 = self.ax.plot([], [], label="Erreur",            color="#9B00C2")[0]
-        self.ax.legend(fontsize=18)
-        self.ax2.legend(fontsize=18)
+        self.line  = self.ax1.plot([], [], label="Thermistance 1",    color="#A61F08")[0]
+        self.line2 = self.ax1.plot([], [], label="Thermistance 2",    color="#0062DB")[0]
+        self.line3 = self.ax1.plot([], [], label="T3 estimée (moy)",  color="#1A8A2E")[0]
+        self.line4 = self.ax2.plot([], [], label="Commande u",        color="#E08000")[0]
+        self.line5 = self.ax2.plot([], [], label="Erreur",            color="#9B00C2")[0]
+        self.ax1.legend(fontsize=7)
+        self.ax2.legend(fontsize=7)
+        self.fig.tight_layout()
         
         #colour
         self.fig.patch.set_facecolor("#ECE4EA")
-        self.ax.set_facecolor("#F8F8F8")
+        self.ax1.set_facecolor("#F8F8F8")
+        self.ax2.set_facecolor("#F8F8F8")
  
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
         self.canvas.get_tk_widget().pack(pady=20)
