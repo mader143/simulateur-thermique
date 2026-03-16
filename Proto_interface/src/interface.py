@@ -77,10 +77,8 @@ class InterfaceProto:
         self.t1_data = []
         self.t2_data = []
         self.t3est_data = []
-        self.u_data = []
-        self.e_data = []
         self.y_data = []
-        self.fig, self.ax = plt.subplots(figsize=(15, 10))
+        self.fig, self.ax = plt.subplots(figsize=(7, 10))
         self.ax.set_title("Température des thermistances 1 et 2 en temps réel\net température estimée de la thermistance 3", fontsize=20)
         
         #x
@@ -100,6 +98,7 @@ class InterfaceProto:
         self.line4 = self.ax.plot([], [], label="Commande u",        color="#E08000")[0]
         self.line5 = self.ax.plot([], [], label="Erreur",            color="#9B00C2")[0]
         self.ax.legend(fontsize=18)
+        self.ax2.legend(fontsize=18)
         
         #colour
         self.fig.patch.set_facecolor("#ECE4EA")
