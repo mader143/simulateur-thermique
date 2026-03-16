@@ -7,6 +7,7 @@ import time
 import datetime
 import pandas as pd
 import serial.tools.list_ports
+from tkinter import filedialog
 
 class InterfaceProto:
     def __init__(self, root): 
@@ -88,7 +89,7 @@ class InterfaceProto:
         self.t2_data = []
         self.y_data = []
         self.fig, self.ax = plt.subplots(figsize=(15, 10))
-        self.ax.set_title("Température des thermistances 1 et 2 en temps réel", fontsize=20)
+        self.ax.set_title("Température des thermistances 1 et 2 en temps réel\net température estimée de la thermistance 3", fontsize=20)
         
         #x
         self.ax.set_xlabel("Temps (s)", fontsize=18)
@@ -115,9 +116,19 @@ class InterfaceProto:
         
         #enregistrer
         enregistrer_btn = tk.Button(
-            button_frame, text="Enregistrer les données", command=self.demarrer_proto, font=("Arial", 20),
+            button_frame, text="Enregistrer les données", command=self.enregistrer_donnees, font=("Arial", 20),
             fg="#E8E3E5", relief="flat", pady=10, width=20, bg=BTN)
         enregistrer_btn.pack(padx=10, side=tk.LEFT)
+
+
+    def envoyer_valeurs_arduino(self):
+        if self.ser and self.ser.is_open:
+            cmd_consigne = f"SET_CONSIGNE:{self.temperature_voulue}\n"
+            cmd_ambiant  = f"SET_AMBIANT:{self.temperature_ambiante}\n"
+            self.ser.write(cmd_consigne.encode('utf-8'))
+            self.ser.write(cmd_ambiant.encode('utf-8'))
+            print(f"Envoyé → {cmd_consigne.strip()} | {cmd_ambiant.strip()}")
+
 
     def valider_temp_ambiante(self):
         try:
@@ -206,8 +217,16 @@ class InterfaceProto:
                         self.line2.set_data(self.times, self.t3_data)
                         
                         if current_time > 100:
-                            self.ax.set_xlim(current_time - 100, current_time)
+                            self.ax.set_xlim(0, max(current_time, 100))
                         
+                        toutes_temps = self.t1_data + self.t2_data + self.t3_data
+                        y_min = min(toutes_temps)
+                        y_max = max(toutes_temps)
+                        marge = (y_max - y_min) * 0.1 or 1  
+
+                        self.ax.set_ylim(y_min - marge, y_max + marge)
+
+
                         self.canvas.draw()
             except Exception as e:
                 print(f"Read error: {e}")
@@ -216,7 +235,33 @@ class InterfaceProto:
             self.root.after(100, self.update_data)
     
 
+    def enregistrer_donnees(self):
+        if not self.times:
+            messagebox.showwarning("Avertissement", "Aucune donnée à enregistrer.")
+            return
 
+        nom_defaut = f"donnees_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        
+        chemin = filedialog.asksaveasfilename(
+            defaultextension=".csv",
+            filetypes=[("Fichiers CSV", "*.csv"), ("Tous les fichiers", "*.*")],
+            initialfile=nom_defaut,
+            title="Enregistrer les données"
+        )
+        
+        if not chemin:  # l'usager a annulé
+            return
+
+        df = pd.DataFrame({
+            "Temps (s)": self.times,
+            "Thermistance 1 - T2 (°C)": self.t2_data,
+            "Thermistance 2 - T3 (°C)": self.t3_data
+        })
+
+        df.to_csv(chemin, index=False)
+        messagebox.showinfo("Succès", f"Données enregistrées dans :\n{chemin}")
+
+        
 def main():
     root = tk.Tk()
     app = InterfaceProto(root)
