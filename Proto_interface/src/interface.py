@@ -53,6 +53,18 @@ class InterfaceProto:
             fg="#E8E3E5", relief="flat", pady=10, width=20, bg="#832828")
         arreter_btn.pack(padx=10, side=tk.LEFT)
 
+        #enregistrer
+        enregistrer_btn = tk.Button(
+            button_frame, text="Enregistrer les données", command=self.enregistrer_donnees, font=("Arial", 20),
+            fg="#E8E3E5", relief="flat", pady=10, width=20, bg=BTN)
+        enregistrer_btn.pack(padx=10, side=tk.LEFT)
+
+        #revenir à la température initiale
+        tinit_btn = tk.Button(
+            button_frame, text="Revenir à la température initiale", command=self.t_init, font=("Arial", 20),
+            fg="#E8E3E5", relief="flat", pady=10, width=20, bg=BTN)
+        tinit_btn.pack(padx=10, side=tk.LEFT)
+
         # config. température
         frame_temp = tk.Frame(self.root, bg=FRAME)
         frame_temp.pack(pady=25, padx=20)
@@ -85,14 +97,12 @@ class InterfaceProto:
             bg=BTN, fg="#F8F8F8", relief="flat", width=10)
         apply_btn_att.grid(row=3, column=2, padx=5, pady=15)
 
-        #graphique
+        #graphique 1
         self.t1_data = []
         self.t2_data = []
         self.t3est_data = []
-        self.u_data = []
-        self.e_data = []
         self.y_data = []
-        self.fig, self.ax = plt.subplots(figsize=(15, 10))
+        self.fig, self.ax = plt.subplots(figsize=(7, 10))
         self.ax.set_title("Température des thermistances 1 et 2 en temps réel\net température estimée de la thermistance 3", fontsize=20)
         
         #x
@@ -105,27 +115,44 @@ class InterfaceProto:
         self.ax.set_ylabel("Température (°C)", fontsize=18)
         self.ax.set_ylim(15, 45)
 
+        #graphique 2
+        self.u_data = []
+        self.e_data = []
+        self.fig2, self.ax2 = plt.subplots(figsize=(7, 10))
+        
+        #x2
+        self.ax2.set_xlabel("Temps (s)", fontsize=18)
+        self.ax2.xaxis.set_tick_params(labelsize=18)
+        self.ax2.set_xlim(0, 100)
+
+        #y2
+        self.ax2.yaxis.set_tick_params(labelsize=18)
+        self.ax2.set_ylabel("Whatever", fontsize=18)
+        self.ax2.set_ylim(15, 45)
+
         #plot
         self.line = self.ax.plot([], [], label="Thermistance 1", color="#A61F08")[0]
         self.line2 = self.ax.plot([], [], label="Thermistance 2", color="#0062DB")[0]
         self.line3 = self.ax.plot([], [], label="Thermistance 3", color="#0062DB")[0]
-        self.line4 = self.ax.plot([], [], label="Commande", color="#0062DB")[0]
-        self.line5 = self.ax.plot([], [], label="Erreur", color="#0062DB")[0]
+        self.line4 = self.ax2.plot([], [], label="Commande", color="#0062DB")[0]
+        self.line5 = self.ax2.plot([], [], label="Erreur", color="#0062DB")[0]
         self.ax.legend(fontsize=18)
+        self.ax2.legend(fontsize=18)
         
         #colour
         self.fig.patch.set_facecolor("#ECE4EA")
         self.ax.set_facecolor("#F8F8F8")
 
+        self.fig2.patch.set_facecolor("#ECE4EA")
+        self.ax2.set_facecolor("#F8F8F8")
+
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
         self.canvas.get_tk_widget().pack(pady=20)
         self.canvas.draw()
-        
-        #enregistrer
-        enregistrer_btn = tk.Button(
-            button_frame, text="Enregistrer les données", command=self.enregistrer_donnees, font=("Arial", 20),
-            fg="#E8E3E5", relief="flat", pady=10, width=20, bg=BTN)
-        enregistrer_btn.pack(padx=10, side=tk.LEFT)
+
+        self.canvas2 = FigureCanvasTkAgg(self.fig2, master=self.root)
+        self.canvas2.get_tk_widget().pack(pady=20)
+        self.canvas2.draw()
 
 
     def envoyer_valeurs_arduino(self):
@@ -234,6 +261,7 @@ class InterfaceProto:
                         
                         if current_time > 100:
                             self.ax.set_xlim(0, max(current_time, 100))
+                            self.ax2.set_xlim(0, max(current_time, 100))
                         
                         toutes_temps = self.t1_data + self.t2_data + self.t3est_data + self.u_data + self.e_data
                         y_min = min(toutes_temps)
@@ -241,9 +269,11 @@ class InterfaceProto:
                         marge = (y_max - y_min) * 0.1 or 1  
 
                         self.ax.set_ylim(y_min - marge, y_max + marge)
+                        self.ax2.set_ylim(y_min - marge, y_max + marge)
 
 
                         self.canvas.draw()
+                        self.canvas2.draw()
             except Exception as e:
                 print(f"Read error: {e}")
 
@@ -279,7 +309,15 @@ class InterfaceProto:
         df.to_csv(chemin, index=False)
         messagebox.showinfo("Succès", f"Données enregistrées dans :\n{chemin}")
 
-        
+    def t_init(self):
+        pass
+
+    def timer(self):
+        pass
+    
+    def indicateur_stabilite(self):
+        pass
+
 def main():
     root = tk.Tk()
     app = InterfaceProto(root)
@@ -287,3 +325,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+#timer 5min à partir de l'atteinte de la consigne
+#bouton "aller à la température ambiante"
+#deuxieme graphique pour erreur et commande
+#indicateur de stabilité - indique quon est dans le 5%
