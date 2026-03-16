@@ -20,7 +20,7 @@ class InterfaceProto:
         self.start_time = None
  
         self.temperature_voulue = 35
-        self.temperature_ambiante = 21
+        self.temperature_ambiante = 23.5
  
         self.times = []
         self.t1_data = []
@@ -60,19 +60,7 @@ class InterfaceProto:
         frame_temp.grid_rowconfigure(1, minsize=60)
         frame_temp.grid_rowconfigure(3, minsize=60)
  
-        # température ambiante
-        tk.Label(frame_temp, text="Température ambiante (°C):", font=("Arial", 20),
-            bg=FRAME).grid(row=1, column=0, padx=10, pady=15, sticky="w")
- 
-        self.temperature_entry_amb = tk.Entry(frame_temp, width=10, bg='#F8F8F8', font=("Arial", 20))
-        self.temperature_entry_amb.insert(0, self.temperature_ambiante)
-        self.temperature_entry_amb.grid(row=1, column=1, padx=5, pady=15)
- 
-        apply_btn_amb = tk.Button(
-            frame_temp, text="Appliquer", command=self.valider_temp_ambiante, font=("Arial", 20),
-            bg=BTN, fg="#E8E3E5", relief="flat", width=10)
-        apply_btn_amb.grid(row=1, column=2, padx=5, pady=15)
- 
+
         # température à atteindre
         tk.Label(frame_temp, text="Température à atteindre (°C):", font=("Arial", 20),
             bg=FRAME).grid(row=3, column=0, padx=10, pady=15, sticky="w")
@@ -159,28 +147,11 @@ class InterfaceProto:
             print(f"Envoyé → {cmd_consigne.strip()} | {cmd_ambiant.strip()}")
  
  
-    def valider_temp_ambiante(self):
-        try:
-            value = float(self.temperature_entry_amb.get())
-            if -30 <= value <= 60:
-                self.temperature_ambiante = value
-                # CORRECTION 3 : envoyer la valeur à Arduino si connecté,
-                # sinon démarrer la connexion
-                if self.running:
-                    self.envoyer_valeurs_arduino()
-                else:
-                    self.demarrer_proto()
-            else:
-                raise ValueError
-        except ValueError:
-            messagebox.showerror("Erreur", "Veuillez entrer un nombre valide pour la température ambiante.")
- 
     def valider_temp_voulue(self):
         try:
             value = float(self.temperature_entry_att.get())
             if 10 <= value <= 45:
                 self.temperature_voulue = value
-                # CORRECTION 3 : idem
                 if self.running:
                     self.envoyer_valeurs_arduino()
                 else:
@@ -224,6 +195,7 @@ class InterfaceProto:
         if self.ser:
             self.ser.close()
         print("Prototype arrêté")
+        self.ramener_ambiante()
  
     def update_data(self):
         if self.running and self.ser:
@@ -307,9 +279,9 @@ class InterfaceProto:
         try:
             cmd = f"SET_CONSIGNE:{self.temperature_ambiante}\n"
             self.ser.write(cmd.encode('utf-8'))
-            print(f"Envoyé → {cmd.strip()}")
         except Exception as e:
             messagebox.showerror("Erreur", f"Vérifiez le port USB : {e}") 
+        print(f"Commande envoyée pour ramener à T ambiante")
 
 def main():
     root = tk.Tk()
