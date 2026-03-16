@@ -23,8 +23,9 @@ class InterfaceProto:
         self.temperature_ambiante = 21
 
         self.times = []
+        self.t1_data = []
         self.t2_data = []
-        self.t3_data = []
+        self.t3est_data = []
         #essai
         
         self.create_widgets()
@@ -87,6 +88,7 @@ class InterfaceProto:
         #graphique
         self.t1_data = []
         self.t2_data = []
+        self.t3est_data = []
         self.y_data = []
         self.fig, self.ax = plt.subplots(figsize=(15, 10))
         self.ax.set_title("Température des thermistances 1 et 2 en temps réel\net température estimée de la thermistance 3", fontsize=20)
@@ -104,6 +106,7 @@ class InterfaceProto:
         #plot
         self.line = self.ax.plot([], [], label="Thermistance 1", color="#A61F08")[0]
         self.line2 = self.ax.plot([], [], label="Thermistance 2", color="#0062DB")[0]
+        self.line3 = self.ax.plot([], [], label="Thermistance 3", color="#0062DB")[0]
         self.ax.legend(fontsize=18)
         
         #colour
@@ -205,21 +208,24 @@ class InterfaceProto:
                 if line:
                     values = line.split(',')
                     if len(values) == 4:
-                        t2 = float(values[1])
-                        t3 = float(values[2])
+                        t1 = float(values[1])
+                        t2 = float(values[2])
+                        t3 = float(values[3])
                         current_time = time.time() - self.start_time
 
                         self.times.append(current_time)
+                        self.t1_data.append(t1)
                         self.t2_data.append(t2)
-                        self.t3_data.append(t3)
+                        self.t3est_data.append(t3)
 
-                        self.line.set_data(self.times, self.t2_data)
-                        self.line2.set_data(self.times, self.t3_data)
+                        self.line.set_data(self.times, self.t1_data)
+                        self.line2.set_data(self.times, self.t2_data)
+                        self.line3.set_data(self.times, self.t3est_data)
                         
                         if current_time > 100:
                             self.ax.set_xlim(0, max(current_time, 100))
                         
-                        toutes_temps = self.t1_data + self.t2_data + self.t3_data
+                        toutes_temps = self.t1_data + self.t2_data + self.t3est_data
                         y_min = min(toutes_temps)
                         y_max = max(toutes_temps)
                         marge = (y_max - y_min) * 0.1 or 1  
@@ -254,8 +260,9 @@ class InterfaceProto:
 
         df = pd.DataFrame({
             "Temps (s)": self.times,
-            "Thermistance 1 - T2 (°C)": self.t2_data,
-            "Thermistance 2 - T3 (°C)": self.t3_data
+            "Thermistance 1 - T1 (°C)": self.t1_data,
+            "Thermistance 2 - T2 (°C)": self.t2_data,
+            "Thermistance 3 - T3 (°C)": self.t3est_data
         })
 
         df.to_csv(chemin, index=False)
