@@ -8,7 +8,7 @@ import datetime
 import pandas as pd
 import serial.tools.list_ports
 from tkinter import filedialog
- 
+
 class InterfaceProto:
     def __init__(self, root): 
         self.root = root
@@ -284,17 +284,6 @@ class InterfaceProto:
         df.to_csv(chemin, index=False)
         messagebox.showinfo("Succès", f"Données enregistrées dans :\n{chemin}")
  
-    def ramener_ambiante(self):
-        if self.ser and self.ser.is_open:
-            try:
-                vieille_consigne = self.temperature_voulue
-                self.temperature_voulue = self.temperature_ambiante
-                self.envoyer_valeurs_arduino()
-                self.temperature_voulue = vieille_consigne  # restaurer pour l'interface
- 
-            except Exception as e:
-                messagebox.showerror("Erreur", f"Vérifiez la température ambiante et le port USB : {e}")   
-        
     def ramener_ambiante(self):
         if not self.running or not self.ser or not self.ser.is_open:
             messagebox.showwarning("Avertissement", "Le prototype n'est pas démarré.")
