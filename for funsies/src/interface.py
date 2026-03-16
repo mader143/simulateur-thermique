@@ -42,12 +42,6 @@ class InterfaceProto:
         button_frame = tk.Frame(self.root, bg=BG)
         button_frame.pack(pady=20)
 
-        jouer_btn = tk.Button(
-        button_frame, text="Jouer au Dino", command=self.lancer_dino, font=("Arial", 20),
-        fg="#E8E3E5", relief="flat", pady=10, width=20, bg="#1D3557"
-        )
-        jouer_btn.pack(padx=10, side=tk.LEFT)
-
         #démarrer
         demarrer_btn = tk.Button(
             button_frame, text="Démarrer le prototype", command=self.demarrer_proto, font=("Arial", 20),
@@ -59,6 +53,12 @@ class InterfaceProto:
             button_frame, text="Arrêter le prototype", command=self.arreter_proto, font=("Arial", 20),
             fg="#E8E3E5", relief="flat", pady=10, width=20, bg="#832828")
         arreter_btn.pack(padx=10, side=tk.LEFT)
+
+        jouer_btn = tk.Button(
+        button_frame, text="En attendant", command=self.lancer_dino, font=("Arial", 20),
+        fg="#E8E3E5", relief="flat", pady=10, width=20, bg="#1D3557"
+        )
+        jouer_btn.pack(padx=10, side=tk.LEFT)
 
         # config. température
         frame_temp = tk.Frame(self.root, bg=FRAME)
