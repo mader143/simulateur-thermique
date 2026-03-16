@@ -59,28 +59,65 @@ class InterfaceProto:
             fg="#E8E3E5", relief="flat", pady=10, width=20, bg="#832828")
         arreter_btn.pack(padx=10, side=tk.LEFT)
  
+        #premiere ligne
+        ligne_milieu = tk.Frame(self.root, bg=BG)
+        ligne_milieu.pack(fill="x", pady=20)
+
+        #boite droite
+        boite_droite = tk.Frame(ligne_milieu, bg=FRAME)
+        boite_droite.pack(side="right", padx=20)
+
         # config. température
-        frame_temp = tk.Frame(self.root, bg=FRAME)
-        frame_temp.pack(pady=25, padx=20)
-        frame_temp.grid_rowconfigure(1, minsize=60)
-        frame_temp.grid_rowconfigure(3, minsize=60)
+        frame_temp = tk.Frame(boite_droite, bg=FRAME)
+        frame_temp.pack(padx=20, pady=10)
+        frame_temp.grid_rowconfigure(1, minsize=10)
+        frame_temp.grid_rowconfigure(3, minsize=10)
  
 
         # température à atteindre
         tk.Label(frame_temp, text="Température à atteindre (°C):", font=("Arial", 20),
-            bg=FRAME).grid(row=3, column=0, padx=10, pady=15, sticky="w")
+            bg=FRAME).grid(row=3, column=0, padx=1, pady=1, sticky="w")
  
-        self.temperature_entry_att = tk.Entry(frame_temp, width=10, bg='#F8F8F8', font=("Arial", 20))
+        self.temperature_entry_att = tk.Entry(frame_temp, width=6, bg='#F8F8F8', font=("Arial", 20))
         self.temperature_entry_att.insert(0, self.temperature_voulue)
-        self.temperature_entry_att.grid(row=3, column=1, padx=5, pady=15)
+        self.temperature_entry_att.grid(row=3, column=1, padx=5, pady=10)
  
         apply_btn_att = tk.Button(
             frame_temp, text="Appliquer", command=self.valider_temp_voulue, font=("Arial", 20),
-            bg=BTN, fg="#F8F8F8", relief="flat", width=10)
-        apply_btn_att.grid(row=3, column=2, padx=5, pady=15)
+            bg=BTN, fg="#F8F8F8", relief="flat", width=6)
+        apply_btn_att.grid(row=3, column=2, padx=1, pady=1)
+
+        #changer PID
+        frame_pid = tk.Frame(ligne_milieu, bg=FRAME)
+        frame_pid.grid_rowconfigure(1, minsize=1)
+        frame_pid.grid_rowconfigure(3, minsize=1)
+        frame_pid.pack(side="left", padx=50)
+
+        self.a0_entry = tk.Entry(frame_pid, width=6, bg='#F8F8F8', font=("Arial", 20))
+        self.a0_entry.grid(row=2, column=1)
+
+        self.a1_entry = tk.Entry(frame_pid, width=6, bg='#F8F8F8', font=("Arial", 20))
+        self.a1_entry.grid(row=3, column=1)
+
+        self.a2_entry = tk.Entry(frame_pid, width=6, bg='#F8F8F8', font=("Arial", 20))
+        self.a2_entry.grid(row=4, column=1)
+
+        tk.Label(frame_pid, text="Paramètres PID :", font=("Arial", 20),
+            bg=FRAME).grid(row=1, column=0, sticky="e")
+        tk.Label(frame_pid, text="K (a0):", font=("Arial", 20),
+            bg=FRAME).grid(row=2, column=0, sticky="e")
+        tk.Label(frame_pid, text="Ti (a1):", font=("Arial", 20),
+            bg=FRAME).grid(row=3, column=0, sticky="e")
+        tk.Label(frame_pid, text="Td (a2):", font=("Arial", 20),
+            bg=FRAME).grid(row=4, column=0, sticky="e")
+ 
+        apply_btn_att = tk.Button(
+            frame_pid, text="Appliquer", font=("Arial", 20),
+            bg=BTN, fg="#F8F8F8", relief="flat", width=6)
+        apply_btn_att.grid(row=4, column=2, padx=1, pady=1)
  
         #timer
-        self.timer_frame = tk.Frame(self.root, bg="#EBCDE2", padx=20, pady=10, relief="flat", width=10)
+        self.timer_frame = tk.Frame(boite_droite, bg="#EBCDE2", padx=20, pady=10, relief="flat", width=10)
         self.timer_frame.pack(pady=15)
         self.label_timer = tk.Label(
             self.timer_frame, 
@@ -354,10 +391,6 @@ def main():
  
 if __name__ == "__main__":
     main()
-
-
-#timer 5min à partir de l'atteinte de la consigne
-#indicateur de stabilité - indique quon est dans le 5%
 
 #JSON?
 #mettre a0, a1, a2 custom dans code C++
