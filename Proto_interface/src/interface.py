@@ -63,12 +63,14 @@ class InterfaceProto:
         ligne_milieu = tk.Frame(self.root, bg=BG)
         ligne_milieu.pack(fill="x", pady=20)
 
-        #boite droite
-        boite_droite = tk.Frame(ligne_milieu, bg=FRAME)
-        boite_droite.pack(side="right", padx=20)
+        #boites
+        boite1 = tk.Frame(ligne_milieu, bg=FRAME)
+        boite1.pack(padx=100, side='left')
+        boite2 = tk.Frame(ligne_milieu, bg=FRAME)
+        boite2.pack(padx=75, side='left')
 
         # config. température
-        frame_temp = tk.Frame(boite_droite, bg=FRAME)
+        frame_temp = tk.Frame(boite2, bg=FRAME)
         frame_temp.pack(padx=20, pady=10)
         frame_temp.grid_rowconfigure(1, minsize=10)
         frame_temp.grid_rowconfigure(3, minsize=10)
@@ -88,10 +90,10 @@ class InterfaceProto:
         apply_btn_att.grid(row=3, column=2, padx=1, pady=1)
 
         #changer PID
-        frame_pid = tk.Frame(ligne_milieu, bg=FRAME)
+        frame_pid = tk.Frame(boite1, bg=FRAME)
         frame_pid.grid_rowconfigure(1, minsize=1)
         frame_pid.grid_rowconfigure(3, minsize=1)
-        frame_pid.pack(side="left", padx=50)
+        frame_pid.pack(side="right", padx=1)
 
         self.a0_entry = tk.Entry(frame_pid, width=6, bg='#F8F8F8', font=("Arial", 20))
         self.a0_entry.grid(row=2, column=1)
@@ -117,7 +119,7 @@ class InterfaceProto:
         apply_btn_att.grid(row=4, column=2, padx=1, pady=1)
  
         #timer
-        self.timer_frame = tk.Frame(boite_droite, bg="#EBCDE2", padx=20, pady=10, relief="flat", width=10)
+        self.timer_frame = tk.Frame(boite2, bg="#EBCDE2", padx=20, pady=10, relief="flat", width=10)
         self.timer_frame.pack(pady=15)
         self.label_timer = tk.Label(
             self.timer_frame, 
@@ -214,6 +216,9 @@ class InterfaceProto:
                 raise ValueError
         except ValueError:
             messagebox.showerror("Erreur", "Veuillez entrer un nombre valide pour la température à atteindre.")
+
+    def params_pid(self):
+        pass
  
     def trouver_port_arduino(self):
         ports = serial.tools.list_ports.comports()
