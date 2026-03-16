@@ -80,9 +80,16 @@ class InterfaceProto:
         apply_btn_att.grid(row=3, column=2, padx=5, pady=15)
  
         #timer
-        self.timer_label = tk.Label(self.root, text="Test de stabilité : En attente...", 
-                            font=("Arial", 20), bg="#ECE4EA", fg="#4B0E26")
-        self.timer_label.pack(pady=10)
+        self.timer_frame = tk.Frame(self.root, bg="#EBCDE2", padx=20, pady=10, relief="flat", width=10)
+        self.timer_frame.pack(pady=15)
+        self.label_timer = tk.Label(
+            self.timer_frame, 
+            text="Test de stabilité : En attente", 
+            font=("Arial", 20), 
+            bg="#EBCDE2",
+            fg="#000000"
+        )
+        self.label_timer.pack()
 
         #graphique
         self.t1_data = []
@@ -311,7 +318,8 @@ class InterfaceProto:
             
             if self.timer_start is None:
                 self.timer_start = time.time()
-                self.timer_label.config(text="Test de stabilité : 00:00", fg="orange")
+                self.label_timer.config(text="Test de stabilité : 00:00")
+                self.timer_frame.config(bg="#67EB5B")
 
             else:
                 #calculer temps écoulé
@@ -320,17 +328,20 @@ class InterfaceProto:
 
                 #minutes, secondes
                 mins, secs = divmod(int(restant), 60)
-                self.timer_label.config(text=f"Test de stabilité : {mins:02d}:{secs:02d}", fg="green")
+                self.label_timer.config(text=f"Test de stabilité : {mins:02d}:{secs:02d}")
+                self.timer_frame.config(bg="#67EB5B")
 
                 #quand ça atteint 5min
                 if restant <= 0:
                     self.timer_termine = True
-                    self.timer_label.config(text="CIBLE ATTEINTE (5 min) : Système stable", fg="blue")
+                    self.label_timer.config(text="CIBLE ATTEINTE (5 min) : Système stable")
+                    self.timer_frame.config(bg="#67EB5B")
         else:
             # sortie du corridor : on reset le timer seulement si on n'avait pas fini
             if not self.timer_termine:
                 self.timer_start = None
-                self.timer_label.config(text="Hors corridor (Pause)", fg="red")
+                self.label_timer.config(text="Hors corridor (Pause)")
+                self.timer_frame.config(bg="#EBCDE2")
 
     def indicateur_stabilite(self):
         pass
