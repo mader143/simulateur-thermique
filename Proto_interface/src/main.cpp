@@ -8,6 +8,8 @@ const int pwmPin_FROID = 11;
 float setpoint    = 35.0;   // ← variable, modifiable via Python
 float T0_celsius  = 21.0;   // ← température ambiante, modifiable via Python
 
+// CORRECTION 1 : T_s était utilisé dans loop() mais jamais déclaré
+const float T_s = 1.0;     // période d'échantillonnage en secondes
 
 const float a0 =  10.86;
 const float a1 = -10.84;
@@ -35,7 +37,6 @@ Thermistance therm[3] = {
 float T0;
 
 // ===================== ESTIMATEUR T3 depuis T1 (G3_1) =====================
-// y[k] = b0*u[k] + b1*u[k-1] - a1*y[k-1]
 const float G1_b0 =  0.002432;
 const float G1_b1 =  0.002432;
 const float G1_a1 = -0.9926;
@@ -110,10 +111,8 @@ void setup() {
   analogWrite(pwmPin_CHAUD, 0);
   analogWrite(pwmPin_FROID, 0);
 
-  while (!Serial);
   delay(2000);
 
-  // Capture état initial pour les estimateurs (écarts = 0 au repos)
   T1_init = mesureTemperature(therm[0]);
   T2_init = mesureTemperature(therm[1]);
   T3_init = mesureTemperature(therm[2]);
@@ -131,6 +130,18 @@ void setup() {
 // =====================================================
 void loop() {
   unsigned long now = millis();
+
+  // CORRECTION 2 : lire les commandes SET_CONSIGNE et SET_AMBIANT envoyées par Python
+  if (Serial.available() > 0) {
+    String cmd = Serial.readStringUntil('\n');
+    cmd.trim();
+    if (cmd.startsWith("SET_CONSIGNE:")) {
+      setpoint = cmd.substring(13).toFloat();
+    } else if (cmd.startsWith("SET_AMBIANT:")) {
+      T0_celsius = cmd.substring(12).toFloat();
+      T0 = T0_celsius + 273.15;
+    }
+  }
 
   if (now - lastPID >= (unsigned long)(T_s * 1000)) {
     lastPID = now;
