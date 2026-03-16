@@ -260,8 +260,9 @@ class InterfaceProto:
 
         df = pd.DataFrame({
             "Temps (s)": self.times,
-            "Thermistance 1 - T2 (°C)": self.t2_data,
-            "Thermistance 2 - T3 (°C)": self.t3_data
+            "Thermistance 1 - T1 (°C)": self.t1_data,
+            "Thermistance 2 - T2 (°C)": self.t2_data,
+            "Thermistance 3 - T3 (°C)": self.t3est_data
         })
 
         df.to_csv(chemin, index=False)
