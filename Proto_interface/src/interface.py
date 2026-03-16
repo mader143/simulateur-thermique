@@ -135,7 +135,6 @@ class InterfaceProto:
             value = float(self.temperature_entry_att.get())
             if 10 <= value <= 45:
                 self.temperature_voulue = value
-                # CORRECTION 3 : idem
                 if self.running:
                     self.envoyer_valeurs_arduino()
                 else:
