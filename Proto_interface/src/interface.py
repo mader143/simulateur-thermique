@@ -18,6 +18,11 @@ class InterfaceProto:
         self.ser = None
         self.running = False
         self.start_time = None
+
+        #timer
+        self.timer_start = None
+        self.duree_cible = 300
+        self.timer_termine = False
  
         self.temperature_voulue = 35
         self.temperature_ambiante = 23.5
@@ -74,6 +79,11 @@ class InterfaceProto:
             bg=BTN, fg="#F8F8F8", relief="flat", width=10)
         apply_btn_att.grid(row=3, column=2, padx=5, pady=15)
  
+        #timer
+        self.timer_label = tk.Label(self.root, text="Test de stabilité : En attente...", 
+                            font=("Arial", 20), bg="#ECE4EA", fg="#4B0E26")
+        self.timer_label.pack(pady=10)
+
         #graphique
         self.t1_data = []
         self.t2_data = []
@@ -103,7 +113,7 @@ class InterfaceProto:
  
         #y2
         self.ax2.yaxis.set_tick_params(labelsize=7)
-        self.ax2.set_ylabel("Température (°C)", fontsize=10)
+        self.ax2.set_ylabel("Whatever...", fontsize=10)
         self.ax2.set_ylim(15, 45)
  
         #plot
@@ -205,6 +215,10 @@ class InterfaceProto:
                 if line and not line.startswith("temps") and line != "FIN":
                     values = line.split(',')
                     if len(values) == 9:
+
+                        #commencer timer
+                        self.timer()
+
                         t1  = float(values[1])
                         t2  = float(values[2])
                         t3  = float(values[6])
@@ -228,12 +242,18 @@ class InterfaceProto:
                         if current_time > 100:
                             self.ax.set_xlim(0, max(current_time, 100))
 
-                        toutes_temps = self.t1_data + self.t2_data + self.t3est_data + self.u_data + self.e_data
-                        y_min = min(toutes_temps)
-                        y_max = max(toutes_temps)
-                        marge = (y_max - y_min) * 0.1 or 1
+                        toutes_temps1 = self.t1_data + self.t2_data + self.t3est_data
+                        y_min1 = min(toutes_temps1)
+                        y_max1 = max(toutes_temps1)
+                        marge1 = (y_max1 - y_min1) * 0.1 or 1
 
-                        self.ax.set_ylim(y_min - marge, y_max + marge)
+                        toutes_temps2 = self.u_data + self.e_data
+                        y_min2 = min(toutes_temps2)
+                        y_max2 = max(toutes_temps2)
+                        marge2 = (y_max1 - y_min1) * 0.1 or 1
+
+                        self.ax1.set_ylim(y_min1 - marge1, y_max1 + marge1)
+                        self.ax2.set_ylim(y_min2 - marge2, y_max2 + marge2)
                         self.canvas.draw()
 
             except Exception as ex:
@@ -283,6 +303,39 @@ class InterfaceProto:
             messagebox.showerror("Erreur", f"Vérifiez le port USB : {e}") 
         print(f"Commande envoyée pour ramener à T ambiante")
 
+    def timer(self):
+
+        if self.t3est_data >= self.temperature_voulue - (self.temperature_voulue - self.temperature_ambiante)*0.05 and self.t3est_data <= self.temperature_voulue + (self.temperature_voulue - self.temperature_ambiante)*0.05:
+            if self.timer_termine:
+                return
+            
+            if self.timer_start is None:
+                self.timer_start = time.time()
+                self.timer_label.config(text="Test de stabilité : 00:00", fg="orange")
+
+            else:
+                #calculer temps écoulé
+                ecoule = time.time() - self.timer_start
+                restant = max(0, self.duree_cible - ecoule)
+
+                #minutes, secondes
+                mins, secs = divmod(int(restant), 60)
+                self.timer_label.config(text=f"Test de stabilité : {mins:02d}:{secs:02d}", fg="green")
+
+                #quand ça atteint 5min
+                if restant <= 0:
+                    self.timer_termine = True
+                    self.timer_label.config(text="CIBLE ATTEINTE (5 min) : Système stable", fg="blue")
+        else:
+            # sortie du corridor : on reset le timer seulement si on n'avait pas fini
+            if not self.timer_termine:
+                self.timer_start = None
+                self.timer_label.config(text="Hors corridor (Pause)", fg="red")
+
+    def indicateur_stabilite(self):
+        pass
+
+
 def main():
     root = tk.Tk()
     app = InterfaceProto(root)
@@ -290,3 +343,11 @@ def main():
  
 if __name__ == "__main__":
     main()
+
+
+#timer 5min à partir de l'atteinte de la consigne
+#indicateur de stabilité - indique quon est dans le 5%
+
+#JSON?
+#mettre a0, a1, a2 custom dans code C++
+#charger des valeurs de pid dans code C++, et donc changer les a
