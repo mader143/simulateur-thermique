@@ -260,25 +260,25 @@ class InterfaceProto:
         raise serial.SerialException("Arduino introuvable! Vérifiez le branchement USB.")
  
     def demarrer_proto(self):
-        port_auto = self.trouver_port_arduino()
-        
-        if port_auto is None:
-            messagebox.showerror("Erreur", "Arduino introuvable. Vérifiez le branchement USB.")
-            return
-        
-        if not self.running:
-            try:
-                self.ser = serial.Serial(port_auto, 9600, timeout=1) 
-                time.sleep(2)
+        try:
+            port_auto = self.trouver_port_arduino()
             
-                self.running = True
-                self.start_time = time.time()
+            if not self.running:
+                    self.ser = serial.Serial(port_auto, 9600, timeout=1) 
+                    time.sleep(2)
                 
-                self.update_data()
-                
-                print("Communication établie. Réception des données.")
-            except Exception as e:
-                messagebox.showerror("Erreur", f"Vérifiez le port USB : {e}")
+                    self.running = True
+                    self.start_time = time.time()
+                    
+                    self.update_data()
+                    
+                    print("Communication établie. Réception des données.")
+
+        except serial.SerialException as e:
+            messagebox.showerror("Erreur de connexion", f"{e}")
+            
+        except Exception as e:
+            messagebox.showerror("Erreur critique", f"Vérifiez le port USB : {e}")
  
     def arreter_proto(self):
         self.running = False
