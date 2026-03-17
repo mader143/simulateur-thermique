@@ -92,7 +92,7 @@ class InterfaceProto:
  
         apply_btn_att = tk.Button(
             frame_temp, text="Appliquer les données", command=self.envoyer_config_totale, font=("Arial", 20),
-            bg=BTN, fg="#F8F8F8", relief="flat", width=15)
+            bg=BTN, fg="#F8F8F8", relief="flat", width=20)
         apply_btn_att.grid(row=2, column=0, padx=1, pady=10)
 
         #changer PID
