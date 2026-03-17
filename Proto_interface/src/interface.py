@@ -23,9 +23,15 @@ class InterfaceProto:
         self.timer_start = None
         self.duree_cible = 300
         self.timer_termine = False
- 
+
+        #temp
         self.temperature_voulue = 35
         self.temperature_ambiante = 23.5
+
+        #pid
+        self.kp = 10.849
+        self.ti = 271
+        self.td = 0
  
         self.times = []
         self.t1_data = []
@@ -70,38 +76,41 @@ class InterfaceProto:
         boite2.pack(padx=75, side='left')
 
         # config. température
-        frame_temp = tk.Frame(boite2, bg=FRAME)
-        frame_temp.pack(padx=20, pady=10)
+        frame_temp = tk.Frame(boite1, bg=FRAME)
+        frame_temp.pack(padx=20, pady=10, side='right')
         frame_temp.grid_rowconfigure(1, minsize=10)
         frame_temp.grid_rowconfigure(3, minsize=10)
  
 
         # température à atteindre
         tk.Label(frame_temp, text="Température à atteindre (°C):", font=("Arial", 20),
-            bg=FRAME).grid(row=3, column=0, padx=1, pady=1, sticky="w")
+            bg=FRAME).grid(row=0, column=0, padx=5, pady=10, sticky="w")
  
         self.temperature_entry_att = tk.Entry(frame_temp, width=6, bg='#F8F8F8', font=("Arial", 20))
         self.temperature_entry_att.insert(0, self.temperature_voulue)
-        self.temperature_entry_att.grid(row=3, column=1, padx=5, pady=10)
+        self.temperature_entry_att.grid(row=1, column=0, padx=5, pady=10)
  
         apply_btn_att = tk.Button(
-            frame_temp, text="Appliquer", command=self.valider_temp_voulue, font=("Arial", 20),
-            bg=BTN, fg="#F8F8F8", relief="flat", width=6)
-        apply_btn_att.grid(row=3, column=2, padx=1, pady=1)
+            frame_temp, text="Appliquer les données", command=self.envoyer_config_totale, font=("Arial", 20),
+            bg=BTN, fg="#F8F8F8", relief="flat", width=15)
+        apply_btn_att.grid(row=2, column=0, padx=1, pady=10)
 
         #changer PID
         frame_pid = tk.Frame(boite1, bg=FRAME)
         frame_pid.grid_rowconfigure(1, minsize=1)
         frame_pid.grid_rowconfigure(3, minsize=1)
-        frame_pid.pack(side="right", padx=1)
+        frame_pid.pack(side="left", padx=1)
 
         self.a0_entry = tk.Entry(frame_pid, width=6, bg='#F8F8F8', font=("Arial", 20))
+        self.a0_entry.insert(0, self.kp)
         self.a0_entry.grid(row=2, column=1)
 
         self.a1_entry = tk.Entry(frame_pid, width=6, bg='#F8F8F8', font=("Arial", 20))
+        self.a1_entry.insert(0, self.ti)
         self.a1_entry.grid(row=3, column=1)
 
         self.a2_entry = tk.Entry(frame_pid, width=6, bg='#F8F8F8', font=("Arial", 20))
+        self.a2_entry.insert(0, self.td)
         self.a2_entry.grid(row=4, column=1)
 
         tk.Label(frame_pid, text="Paramètres PID :", font=("Arial", 20),
@@ -113,14 +122,9 @@ class InterfaceProto:
         tk.Label(frame_pid, text="Td (a2):", font=("Arial", 20),
             bg=FRAME).grid(row=4, column=0, sticky="e")
  
-        apply_btn_att = tk.Button(
-            frame_pid, text="Appliquer", font=("Arial", 20),
-            bg=BTN, fg="#F8F8F8", relief="flat", width=6)
-        apply_btn_att.grid(row=4, column=2, padx=1, pady=1)
- 
         #timer
         self.timer_frame = tk.Frame(boite2, bg="#EBCDE2", padx=20, pady=10, relief="flat", width=10)
-        self.timer_frame.pack(pady=15)
+        self.timer_frame.pack(pady=15, side='left')
         self.label_timer = tk.Label(
             self.timer_frame, 
             text="Test de stabilité : En attente", 
@@ -195,30 +199,56 @@ class InterfaceProto:
  
  
     def envoyer_valeurs_arduino(self):
+        '''Envoie les valeurs du PID et la température voulue à l'Arduino'''
         if self.ser and self.ser.is_open:
-            cmd_consigne = f"SET_CONSIGNE:{self.temperature_voulue}\n"
-            cmd_ambiant  = f"SET_AMBIANT:{self.temperature_ambiante}\n"
-            self.ser.write(cmd_consigne.encode('utf-8'))
-            self.ser.write(cmd_ambiant.encode('utf-8'))
-            print(f"Envoyé → {cmd_consigne.strip()} | {cmd_ambiant.strip()}")
+            message = f"CONFIG:{self.temp},{self.kp},{self.ti},{self.td}\n"
+            self.ser.write(message.encode('utf-8'))
+            print(f"Envoyé → {message.strip()}")
+        else:
+            messagebox.showwarning("Erreur", "L'Arduino n'est pas connecté.")
  
  
-    def valider_temp_voulue(self):
+    # def valider_temp_voulue(self):
+    #     try:
+    #         value = float(self.temperature_entry_att.get())
+    #         if 10 <= value <= 45:
+    #             self.temperature_voulue = value
+    #             if self.running:
+    #                 self.envoyer_valeurs_arduino()
+    #             else:
+    #                 self.demarrer_proto()
+    #         else:
+    #             raise ValueError
+    #     except ValueError:
+    #         messagebox.showerror("Erreur", "Veuillez entrer un nombre valide pour la température à atteindre.")
+
+    def envoyer_config_totale(self):
         try:
-            value = float(self.temperature_entry_att.get())
-            if 10 <= value <= 45:
-                self.temperature_voulue = value
+            temp = float(self.temperature_entry_att.get())
+            kp = float(self.a0_entry.get())
+            ti = float(self.a1_entry.get())
+            td = float(self.a2_entry.get())
+
+            if 10 <= temp <= 45 and type(kp) in [float, int] and type(ti) in [float, int] and type(td) in [float, int]:
+                self.temperature_voulue = temp
+                self.temp = temp
+                self.kp = kp
+                self.ti = ti
+                self.td = td
+
                 if self.running:
                     self.envoyer_valeurs_arduino()
                 else:
                     self.demarrer_proto()
             else:
                 raise ValueError
+                
         except ValueError:
-            messagebox.showerror("Erreur", "Veuillez entrer un nombre valide pour la température à atteindre.")
-
-    def params_pid(self):
-        pass
+            messagebox.showerror("Erreur", "Veuillez entrer des nombres valides dans tous les champs.")
+        except serial.SerialException as e:
+            messagebox.showerror("Erreur de connexion", f"Impossible de trouver l'Arduino : {e}")
+        except Exception as e:
+            messagebox.showerror("Erreur Inattendue", f"Il y a un problème : {e}")
  
     def trouver_port_arduino(self):
         ports = serial.tools.list_ports.comports()
@@ -226,7 +256,8 @@ class InterfaceProto:
             if "Arduino" in port.description or "USB Serial" in port.description:
                 print(f"Arduino trouvé sur le port : {port.device}")
                 return port.device
-        return None
+            
+        raise serial.SerialException("Arduino introuvable! Vérifiez le branchement USB.")
  
     def demarrer_proto(self):
         port_auto = self.trouver_port_arduino()
@@ -382,7 +413,7 @@ class InterfaceProto:
             # sortie du corridor : on reset le timer seulement si on n'avait pas fini
             if not self.timer_termine:
                 self.timer_start = None
-                self.label_timer.config(text="Hors corridor (Pause)")
+                self.label_timer.config(text="Hors corridor")
                 self.timer_frame.config(bg="#EBCDE2")
 
     def indicateur_stabilite(self):

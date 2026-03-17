@@ -132,15 +132,37 @@ void loop() {
   unsigned long now = millis();
 
   // CORRECTION 2 : lire les commandes SET_CONSIGNE et SET_AMBIANT envoyées par Python
+  //Correction 3: jai mis tout dans un même chargement: les trucs du pid et la temp voulue
   if (Serial.available() > 0) {
     String cmd = Serial.readStringUntil('\n');
     cmd.trim();
-    if (cmd.startsWith("SET_CONSIGNE:")) {
-      setpoint = cmd.substring(13).toFloat();
-    } else if (cmd.startsWith("SET_AMBIANT:")) {
-      T0_celsius = cmd.substring(12).toFloat();
-      T0 = T0_celsius + 273.15;
+
+    if (cmd.startsWith("CONFIG:")) {
+        String valeurs = cmd.substring(7);
+        int v1 = valeurs.indexOf(',');
+        int v2 = valeurs.indexOf(',', v1 + 1);
+        int v3 = valeurs.indexOf(',', v2 + 1);
+        int v4 = valeurs.indexOf(',', v3 + 1);
+
+        if (v1 != -1 && v2 != -1 && v3 != -1 && v4 != -1) {
+            setpoint   = valeurs.substring(0, v1).toFloat();
+            T0_celsius = valeurs.substring(v1 + 1, v2).toFloat();
+            Kp         = valeurs.substring(v2 + 1, v3).toFloat();
+            Ki         = valeurs.substring(v3 + 1, v4).toFloat();
+            Kd         = valeurs.substring(v4 + 1).toFloat();
+
+            T0 = T0_celsius + 273.15;
+            
+            Serial.println("ACK:CONFIG_COMPLETE"); 
+        }
     }
+//ANCIEN CODE
+    // if (cmd.startsWith("SET_CONSIGNE:")) {
+    //   setpoint = cmd.substring(13).toFloat();
+    // } else if (cmd.startsWith("SET_AMBIANT:")) {
+    //   T0_celsius = cmd.substring(12).toFloat();
+    //   T0 = T0_celsius + 273.15;
+    // }
   }
 
   if (now - lastPID >= (unsigned long)(T_s * 1000)) {
