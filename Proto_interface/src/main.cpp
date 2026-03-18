@@ -142,14 +142,14 @@ void loop() {
         int v1 = valeurs.indexOf(',');
         int v2 = valeurs.indexOf(',', v1 + 1);
         int v3 = valeurs.indexOf(',', v2 + 1);
-        int v4 = valeurs.indexOf(',', v3 + 1);
+        //int v4 = valeurs.indexOf(',', v3 + 1);
 
         if (v1 != -1 && v2 != -1 && v3 != -1 && v4 != -1) {
             setpoint   = valeurs.substring(0, v1).toFloat();
             a0         = valeurs.substring(v1 + 1, v2).toFloat();
             //a1         = valeurs.substring(v2 + 1, v3).toFloat();
             a1 = -a0
-            a2         = valeurs.substring(v3 + 1, v4).toFloat();
+            a2         = valeurs.substring(v3 + 1).toFloat();
             //T0_celsius = valeurs.substring(v4 + 1).toFloat();
 
             //T0 = T0_celsius + 273.15;
