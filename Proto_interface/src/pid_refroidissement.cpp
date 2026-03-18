@@ -64,7 +64,9 @@ float T3_init     = 0.0;
 
 // ===================== VARIABLES PID =====================
 float e[3]   = {0, 0, 0};
-float u_prev = 0.0;
+float u_prev_1 = 0.0;
+float u_prev_2 = 0.0;
+
 
 // ===================== CSV / LOG =====================
 const unsigned long DUREE_ENREGISTREMENT = 1000;
