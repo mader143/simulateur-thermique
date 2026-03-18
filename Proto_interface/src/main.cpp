@@ -194,10 +194,11 @@ void loop() {
 
     // 4. Erreur PID sur T3 fusionnée
     e[0] = setpoint - T3_moy;
+    
     //PAS SURE DE CES RELATIONS
-    a0 = K + Ti*T_s + Td/T_s;
-    a1 = -K -2*Td/T_s;
-    a2 = -Td/T_s;
+    a0 = K*(1 + T_s/Ti + Td/T_s);
+    a1 = K*(1 + 2*Td/T_s);
+    a2 = K*Td/T_s;
 
     // 5. Récurrence PID
     float u = u_prev + a0 * e[0] + a1 * e[1] + a2 * e[2];
