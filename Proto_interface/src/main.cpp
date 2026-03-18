@@ -15,6 +15,10 @@ float a0 =  10.86;
 float a1 = -10.84;
 float a2 =  0;
 
+float K = 10.85;
+float Ti = 271;
+float Td = 0;
+
 // ===================== THERMISTANCES =====================
 #define RT0 10000
 
@@ -142,17 +146,12 @@ void loop() {
         int v1 = valeurs.indexOf(',');
         int v2 = valeurs.indexOf(',', v1 + 1);
         int v3 = valeurs.indexOf(',', v2 + 1);
-        //int v4 = valeurs.indexOf(',', v3 + 1);
 
         if (v1 != -1 && v2 != -1 && v3 != -1) {
             setpoint   = valeurs.substring(0, v1).toFloat();
-            a0         = valeurs.substring(v1 + 1, v2).toFloat();
-            //a1         = valeurs.substring(v2 + 1, v3).toFloat();
-            a1 = -a0;
-            a2         = valeurs.substring(v3 + 1).toFloat();
-            //T0_celsius = valeurs.substring(v4 + 1).toFloat();
-
-            //T0 = T0_celsius + 273.15;
+            K         = valeurs.substring(v1 + 1, v2).toFloat();
+            Ti         = valeurs.substring(v2 + 1, v3).toFloat();
+            Td         = valeurs.substring(v3 + 1).toFloat();
             
             Serial.println("ACK:CONFIG_COMPLETE"); 
         }
@@ -195,6 +194,10 @@ void loop() {
 
     // 4. Erreur PID sur T3 fusionnée
     e[0] = setpoint - T3_moy;
+    //PAS SURE DE CES RELATIONS
+    a0 = K + Ti*T_s + Td/T_s;
+    a1 = -K -2*Td/T_s;
+    a2 = -Td/T_s;
 
     // 5. Récurrence PID
     float u = u_prev + a0 * e[0] + a1 * e[1] + a2 * e[2];
