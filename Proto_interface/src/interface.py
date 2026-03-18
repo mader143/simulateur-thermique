@@ -282,15 +282,16 @@ class InterfaceProto:
  
     def arreter_proto(self):
         self.running = False
-        if self.ser:
-            self.ser.close()
-        print("Prototype arrêté")
         try:
             cmd = f"CONFIG:{self.temperature_ambiante},{self.kp},{self.ti},{self.td}\n"
             self.ser.write(cmd.encode('utf-8'))
         except Exception as e:
             messagebox.showerror("Erreur", f"Vérifiez le port USB : {e}") 
         print(f"Commande envoyée pour ramener à T ambiante")
+        
+        if self.ser:
+            self.ser.close()
+        print("Prototype arrêté")
 
  
     def update_data(self):
