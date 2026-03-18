@@ -296,9 +296,6 @@ class InterfaceProto:
                     values = line.split(',')
                     if len(values) == 9:
 
-                        #commencer timer
-                        self.timer()
-
                         t1  = float(values[1])
                         t2  = float(values[2])
                         t3  = float(values[6])
@@ -318,6 +315,9 @@ class InterfaceProto:
                         self.line3.set_data(self.times, self.t3est_data)
                         self.line4.set_data(self.times, self.u_data)
                         self.line5.set_data(self.times, self.e_data)
+
+                        #commencer timer
+                        self.timer()
 
                         if current_time > 100:
                             self.ax.set_xlim(0, max(current_time, 100))
@@ -385,7 +385,7 @@ class InterfaceProto:
 
     def timer(self):
 
-        if self.t3est_data[-1:] >= self.temperature_voulue - (self.temperature_voulue - self.temperature_ambiante)*0.05 and self.t3est_data[-1:] <= self.temperature_voulue + (self.temperature_voulue - self.temperature_ambiante)*0.05:
+        if self.t3est_data[-1] >= self.temperature_voulue - (self.temperature_voulue - self.temperature_ambiante)*0.05 and self.t3est_data[-1] <= self.temperature_voulue + (self.temperature_voulue - self.temperature_ambiante)*0.05:
             if self.timer_termine:
                 return
             

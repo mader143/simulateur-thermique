@@ -11,9 +11,9 @@ float T0_celsius  = 21.0;   // ← température ambiante, modifiable via Python
 // CORRECTION 1 : T_s était utilisé dans loop() mais jamais déclaré
 const float T_s = 1.0;     // période d'échantillonnage en secondes
 
-const float a0 =  10.86;
-const float a1 = -10.84;
-const float a2 =  0;
+float a0 =  10.86;
+float a1 = -10.84;
+float a2 =  0;
 
 // ===================== THERMISTANCES =====================
 #define RT0 10000
