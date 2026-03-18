@@ -285,7 +285,13 @@ class InterfaceProto:
         if self.ser:
             self.ser.close()
         print("Prototype arrêté")
-        self.ramener_ambiante()
+        try:
+            cmd = f"CONFIG:{self.temperature_ambiante},{self.kp},{self.ti},{self.td}\n"
+            self.ser.write(cmd.encode('utf-8'))
+        except Exception as e:
+            messagebox.showerror("Erreur", f"Vérifiez le port USB : {e}") 
+        print(f"Commande envoyée pour ramener à T ambiante")
+
  
     def update_data(self):
         if self.running and self.ser:
@@ -431,3 +437,5 @@ if __name__ == "__main__":
 #JSON?
 #mettre a0, a1, a2 custom dans code C++
 #charger des valeurs de pid dans code C++, et donc changer les a
+
+#reset graphique quand on clique sur demarrer
