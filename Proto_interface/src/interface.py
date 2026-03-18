@@ -385,7 +385,7 @@ class InterfaceProto:
 
     def timer(self):
 
-        if self.t3est_data >= self.temperature_voulue - (self.temperature_voulue - self.temperature_ambiante)*0.05 and self.t3est_data <= self.temperature_voulue + (self.temperature_voulue - self.temperature_ambiante)*0.05:
+        if self.t3est_data[-1:] >= self.temperature_voulue - (self.temperature_voulue - self.temperature_ambiante)*0.05 and self.t3est_data[-1:] <= self.temperature_voulue + (self.temperature_voulue - self.temperature_ambiante)*0.05:
             if self.timer_termine:
                 return
             
