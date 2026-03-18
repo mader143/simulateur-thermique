@@ -144,7 +144,7 @@ void loop() {
         int v3 = valeurs.indexOf(',', v2 + 1);
         //int v4 = valeurs.indexOf(',', v3 + 1);
 
-        if (v1 != -1 && v2 != -1 && v3 != -1 && v4 != -1) {
+        if (v1 != -1 && v2 != -1 && v3 != -1) {
             setpoint   = valeurs.substring(0, v1).toFloat();
             a0         = valeurs.substring(v1 + 1, v2).toFloat();
             //a1         = valeurs.substring(v2 + 1, v3).toFloat();
