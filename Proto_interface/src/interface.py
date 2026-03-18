@@ -297,7 +297,7 @@ class InterfaceProto:
     def update_data(self):
         if self.running and self.ser:
             try:
-                line = self.ser.readline().decode('utf-8').strip()  # bloque jusqu'à timeout=1s
+                line = self.ser.readline().decode('utf-8').strip()
 
                 if line and not line.startswith("temps") and line != "FIN":
                     values = line.split(',')
@@ -317,30 +317,37 @@ class InterfaceProto:
                         self.u_data.append(u)
                         self.e_data.append(e)
 
+
                         self.line.set_data(self.times, self.t1_data)
                         self.line2.set_data(self.times, self.t2_data)
                         self.line3.set_data(self.times, self.t3est_data)
                         self.line4.set_data(self.times, self.u_data)
                         self.line5.set_data(self.times, self.e_data)
 
-                        #commencer timer
-                        self.timer()
-
+                        # Axe X
                         if current_time > 100:
-                            self.ax.set_xlim(0, max(current_time, 100))
+                            self.ax1.set_xlim(0, current_time)
+                            self.ax2.set_xlim(0, current_time)
+                        else:
+                            self.ax1.set_xlim(0, max(current_time, 10))
+                            self.ax2.set_xlim(0, max(current_time, 10))
+                        # Axe Y graph 1
+                        if self.t1_data and self.t2_data and self.t3est_data:
+                            toutes = self.t1_data + self.t2_data + self.t3est_data
+                            y_min = min(toutes)
+                            y_max = max(toutes)
+                            marge = max((y_max - y_min) * 0.1, 1)
+                            self.ax1.set_ylim(y_min - marge, y_max + marge)
 
-                        toutes_temps1 = self.t1_data + self.t2_data + self.t3est_data
-                        y_min1 = min(toutes_temps1)
-                        y_max1 = max(toutes_temps1)
-                        marge1 = (y_max1 - y_min1) * 0.1 or 1
+                        # Axe Y graph 2
+                        if self.u_data and self.e_data:
+                            toutes2 = self.u_data + self.e_data
+                            y_min2 = min(toutes2)
+                            y_max2 = max(toutes2)
+                            marge2 = max((y_max2 - y_min2) * 0.1, 1)
+                            self.ax2.set_ylim(y_min2 - marge2, y_max2 + marge2)
 
-                        toutes_temps2 = self.u_data + self.e_data
-                        y_min2 = min(toutes_temps2)
-                        y_max2 = max(toutes_temps2)
-                        marge2 = (y_max1 - y_min1) * 0.1 or 1
-
-                        self.ax1.set_ylim(y_min1 - marge1, y_max1 + marge1)
-                        self.ax2.set_ylim(y_min2 - marge2, y_max2 + marge2)
+                        self.timer()
                         self.canvas.draw()
 
             except Exception as ex:
