@@ -343,9 +343,10 @@ class InterfaceProto:
     def demarrer_proto(self):
         try:
             self.initialiser_graphiques()
-            port_auto = self.trouver_port_arduino()
+
 
             if not self.running:
+                port_auto = self.trouver_port_arduino()
                 self.ser = serial.Serial(port_auto, 9600, timeout=1)
                 time.sleep(2)
 
@@ -407,6 +408,9 @@ class InterfaceProto:
                         facecolor=CARD, edgecolor=BORDER)
         self.ax2.legend(fontsize=8, loc="upper right",
                         facecolor=CARD, edgecolor=BORDER)
+
+        self.canvas.get_tk_widget().pack(fill="both", expand=True,
+                                         padx=10, pady=(0, 10))
         self.canvas.draw()
 
     def arreter_proto(self):
@@ -529,10 +533,9 @@ class InterfaceProto:
 
     def ramener_ambiante(self):        
         try:
-            port_auto = self.trouver_port_arduino()
-            self.initialiser_graphiques()
 
             if not self.running:
+                port_auto = self.trouver_port_arduino()
                 self.ser = serial.Serial(port_auto, 9600, timeout=1)
                 time.sleep(2)
                 
