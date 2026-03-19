@@ -26,7 +26,7 @@ class InterfaceProto:
         self.timer_termine = False
 
         # temp
-        self.temperature_voulue = 35
+        self.temperature_voulue = 30
         self.temperature_ambiante = 23.5
 
         # pid
@@ -299,9 +299,6 @@ class InterfaceProto:
                                          padx=10, pady=(0, 10))
         self.canvas.draw()
 
-    # ══════════════════════════════════════════════════════════════════════════
-    # LOGIQUE MÉTIER
-    # ══════════════════════════════════════════════════════════════════════════
 
     def envoyer_config_totale(self):
         try:
@@ -345,6 +342,7 @@ class InterfaceProto:
 
     def demarrer_proto(self):
         try:
+            self.initialiser_graphiques()
             port_auto = self.trouver_port_arduino()
 
             if not self.running:
@@ -367,10 +365,53 @@ class InterfaceProto:
             messagebox.showerror("Erreur critique",
                 f"Vérifiez le port USB : {e}")
 
+    def initialiser_graphiques(self):
+        self.ax1.cla()
+        self.ax2.cla()
+
+        CARD     = "#FFFFFF"
+        SURFACE  = "#F5EFF3"
+        MUTED    = "#7A5568"
+        BORDER   = "#D9C8D4"
+
+
+        for ax, title in [
+            (self.ax1, "Températures des thermistances 1 & 2 et T3 estimée"),
+            (self.ax2, "Commande u et erreur en temps réel"),
+        ]:
+            ax.set_facecolor(SURFACE)
+            ax.set_title(title, fontsize=10, color=MUTED, pad=6)
+            ax.set_xlabel("Temps (s)", fontsize=9, color=MUTED)
+            ax.set_ylabel("°C", fontsize=9, color=MUTED)
+            ax.set_xlim(0, 100)
+            ax.tick_params(colors=MUTED, labelsize=8)
+            for spine in ax.spines.values():
+                spine.set_edgecolor(BORDER)
+            ax.grid(color="#EAE0E8", linewidth=0.5)
+
+        self.ax1.set_ylim(15, 45)
+        self.ax2.set_ylim(15, 45)
+
+        self.line  = self.ax1.plot([], [], label="Thermistance 1",
+                                   color="#A61F08", lw=1.5)[0]
+        self.line2 = self.ax1.plot([], [], label="Thermistance 2",
+                                   color="#0062DB", lw=1.5)[0]
+        self.line3 = self.ax1.plot([], [], label="T3 estimée (moy)",
+                                   color="#1A8A2E", lw=1.5, linestyle="--")[0]
+        self.line4 = self.ax2.plot([], [], label="Commande u",
+                                   color="#E08000", lw=1.5)[0]
+        self.line5 = self.ax2.plot([], [], label="Erreur",
+                                   color="#9B00C2", lw=1.5)[0]
+
+        self.ax1.legend(fontsize=8, loc="upper right",
+                        facecolor=CARD, edgecolor=BORDER)
+        self.ax2.legend(fontsize=8, loc="upper right",
+                        facecolor=CARD, edgecolor=BORDER)
+        self.canvas.draw()
+
     def arreter_proto(self):
         self.running = False
 
-        # ← mise à jour statut
         self.status_label.config(
             text="● Arrêté", bg="#FCEBEB", fg="#A32D2D")
 
@@ -486,17 +527,37 @@ class InterfaceProto:
         messagebox.showinfo("Succès",
             f"Données enregistrées dans :\n{chemin}")
 
-    def ramener_ambiante(self):
-        if not self.running or not self.ser or not self.ser.is_open:
-            messagebox.showwarning("Avertissement",
-                "Le prototype n'est pas démarré.")
-            return
+    def ramener_ambiante(self):        
         try:
-            cmd = f"SET_CONSIGNE:{self.temperature_ambiante}\n"
+            port_auto = self.trouver_port_arduino()
+            self.initialiser_graphiques()
+
+            if not self.running:
+                self.ser = serial.Serial(port_auto, 9600, timeout=1)
+                time.sleep(2)
+                
+            cmd = f"SET_CONSIGNE:{23.5}\n"
             self.ser.write(cmd.encode('utf-8'))
+            print("Commande envoyée pour ramener à T ambiante")
+            self.running = True
+            self.initialiser_graphiques()
+
+        except serial.SerialException as e:
+            messagebox.showerror("Erreur de connexion", f"{e}")
         except Exception as e:
-            messagebox.showerror("Erreur", f"Vérifiez le port USB : {e}")
-        print("Commande envoyée pour ramener à T ambiante")
+            messagebox.showerror("Erreur critique",
+                f"Vérifiez le port USB : {e}")
+
+        #if not self.running or not self.ser or not self.ser.is_open:
+         #   messagebox.showwarning("Avertissement",
+          #      "Le prototype n'est pas démarré.")
+           # return
+        #try:
+         #   cmd = f"SET_CONSIGNE:{self.temperature_ambiante}\n"
+          #  self.ser.write(cmd.encode('utf-8'))
+        #except Exception as e:
+         #   messagebox.showerror("Erreur", f"Vérifiez le port USB : {e}")
+        #print("Commande envoyée pour ramener à T ambiante")
 
     def timer(self):
         corridor_bas  = (self.temperature_voulue
@@ -531,8 +592,6 @@ class InterfaceProto:
                 self.label_timer.config(text="Hors corridor")
                 self.timer_frame.config(bg="#EBCDE2")
 
-    def indicateur_stabilite(self):
-        pass
 
     def envoyer_valeurs_arduino(self):
         try:
@@ -545,7 +604,8 @@ class InterfaceProto:
                 f"Impossible d'envoyer la config : {e}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+    def indicateur_stabilite(self):
+        pass
 
 def main():
     root = tk.Tk()
