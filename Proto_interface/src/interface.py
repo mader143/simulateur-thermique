@@ -369,6 +369,11 @@ class InterfaceProto:
     def initialiser_graphiques(self):
         self.ax1.cla()
         self.ax2.cla()
+        self.t1_data = []
+        self.t2_data = []
+        self.t3est_data = []
+        self.u_data = []
+        self.e_data = []
 
         CARD     = "#FFFFFF"
         SURFACE  = "#F5EFF3"
