@@ -369,6 +369,7 @@ class InterfaceProto:
     def initialiser_graphiques(self):
         self.ax1.cla()
         self.ax2.cla()
+        self.times = []
         self.t1_data = []
         self.t2_data = []
         self.t3est_data = []
@@ -459,6 +460,7 @@ class InterfaceProto:
                         self.e_data.append(e)
 
                         self.line.set_data(self.times, self.t1_data)
+                        print(len(self.times), len(self.t1_data)  )
                         self.line2.set_data(self.times, self.t2_data)
                         self.line3.set_data(self.times, self.t3est_data)
                         self.line4.set_data(self.times, self.u_data)
