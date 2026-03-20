@@ -237,20 +237,14 @@ class InterfaceProto:
                                     highlightbackground=BORDER)
         self.timer_frame.pack(fill="x")
 
-        tk.Label(self.timer_frame, text="〰  Signal de stabilité",
+        tk.Label(self.timer_frame, text="\nSignal de stabilité",
                  font=("Arial", 11, "bold"), bg=CARD, fg=TEXT) \
-            .pack(pady=(12, 2))
+            .pack(pady=(14, 2))
         self.label_timer = tk.Label(
-            self.timer_frame, text="En attente d'un signal actif",
+            self.timer_frame, text="En attente d'un signal\n   \n",
             font=("Arial", 10), bg=CARD, fg=MUTED)
         self.label_timer.pack()
-        self.stabilite_btn = tk.Button(
-            self.timer_frame, text="Lancer le test de stabilité",
-            command=self.indicateur_stabilite,
-            font=("Arial", 10), bg=AMBER_BG, fg=AMBER_FG,
-            relief="flat", cursor="hand2", pady=7,
-            activebackground="#FAC775", activeforeground=AMBER_FG)
-        self.stabilite_btn.pack(fill="x", padx=12, pady=10)
+
 
         # ── Colonne droite : graphiques ───────────────────────────────────────
         charts_card = tk.Frame(body, bg=CARD, highlightthickness=1,
