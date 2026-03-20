@@ -1,17 +1,21 @@
 #include <Arduino.h>
-
+// Code updaté qui détermine si on prend le PID chaud ou froid
 // ===================== PWM =====================
 const int pwmPin_CHAUD = 5;
 const int pwmPin_FROID = 11;
 
 // ===================== PID DISCRET =====================
-float setpoint = 30.0;
+float setpoint = 20;
 
 const float T_s = 0.5;
 
 float K  = 10.85;
 float Ti = 271.0;
 float Td = 0.0;
+float new_K  = 0.0;
+float new_Ti = 0.0;
+float new_Td = 0.0;
+
 
 // ===================== THERMISTANCES =====================
 #define RT0 10000
@@ -127,27 +131,61 @@ void setup() {
 void loop() {
   unsigned long now = millis();
 
+
   if (Serial.available() > 0) {
     String cmd = Serial.readStringUntil('\n');
     cmd.trim();
 
     if (cmd.startsWith("CONFIG:")) {
       String valeurs = cmd.substring(7);
+      Serial.println(valeurs);
       int v1 = valeurs.indexOf(',');
       int v2 = valeurs.indexOf(',', v1 + 1);
       int v3 = valeurs.indexOf(',', v2 + 1);
+      int v4 = valeurs.indexOf(',', v3 + 1);
+      int v5 = valeurs.indexOf(',', v4 + 1);
+      int v6 = valeurs.indexOf(',', v5 + 1);
+      Serial.println(v1);
+      Serial.println(v2);
+      Serial.println(v3);
+      Serial.println(v4);
+      Serial.println(v5);
+      Serial.println(v6);
+
+      // Réinitialisation des valeurs stockées quand on applique une nouvelle consigne
+      u_prev = 0.0;
+      e[1] = 0.0;
+      e[2] = 0.0;
+
+
+
 
       if (v1 > 0 && v2 > v1 + 1 && v3 > v2 + 1) {
         float new_sp = valeurs.substring(0, v1).toFloat();
-        float new_K  = valeurs.substring(v1 + 1, v2).toFloat();
-        float new_Ti = valeurs.substring(v2 + 1, v3).toFloat();
-        float new_Td = valeurs.substring(v3 + 1).toFloat();
+        if (new_sp > 23.5) {
+            Serial.println("on est dans la boucle plus grande");
+            new_K  = valeurs.substring(v1 + 1, v2).toFloat();
+            new_Ti = valeurs.substring(v2 + 1, v3).toFloat();
+            new_Td = valeurs.substring(v3 + 1, v4).toFloat();
+            Serial.println(new_K);
+
+        } else {
+            Serial.println("On refroidit");
+            new_K  = valeurs.substring(v4 + 1, v5).toFloat();
+            new_Ti = valeurs.substring(v5 + 1, v6).toFloat();
+            new_Td = valeurs.substring(v6 + 1).toFloat();
+        }
+        Serial.println(new_K, 3);
+        Serial.println(new_Ti, 3);
+        Serial.println(new_Td, 3);
+
 
         if (new_Ti != 0.0) {
           setpoint = new_sp;
           K        = new_K;
           Ti       = new_Ti;
           Td       = new_Td;
+
           Serial.println("ACK:CONFIG_COMPLETE");
         } else {
           Serial.println("ERR:Ti_INVALIDE");
@@ -180,31 +218,26 @@ void loop() {
 
     float T3_moy = (T3_estimT1 + T3_estimT2) / 2.0;
 
+    float a0 =  K * (1.0 + T_s / Ti + Td / T_s);
+    float a1 =  -K * (1.0 + 2.0 * Td / T_s);
+    float a2 =  K * (Td / T_s);
+    Serial.println(a0);
+    Serial.println(a1);
+    Serial.println(a2);
+
     e[0] = setpoint - T3_moy;
 
-    float a0 =  K * (1.0 + T_s / Ti + Td / T_s);
-    float a1 =  K * (1.0 + 2.0 * Td / T_s);
-    float a2 =  K * (Td / T_s);
 
-    float u = u_prev + a0 * e[0] - a1 * e[1] + a2 * e[2];
 
+    float u = u_prev + a0 * e[0] + a1 * e[1] + a2 * e[2];
     float u_sat = constrain(u, U_MIN, U_MAX);
 
-    // ===================== ANTI-WINDUP CORRIGÉ =====================
-    // On ne met à jour u_prev QUE si on n'est PAS en saturation,
-    // OU si l'erreur pousse dans le sens opposé à la saturation.
-    // Cela empêche l'intégrateur de continuer à accumuler inutilement.
-    bool saturation_haute = (u > U_MAX && e[0] > 0);
-    bool saturation_basse = (u < U_MIN && e[0] < 0);
-
-    if (!saturation_haute && !saturation_basse) {
-      u_prev = u_sat;
-    }
-    // Si en saturation active : u_prev reste inchangé → accumulation bloquée
-    // ===============================================================
 
     envoyerPWM(u_sat);
 
+
+    // On initialise les valeurs pour la prochaine itération
+    u_prev = u;
     e[2] = e[1];
     e[1] = e[0];
 
