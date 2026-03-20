@@ -631,10 +631,10 @@ class InterfaceProto:
     def timer(self):
         corridor_bas  = (self.temperature_voulue
                          - (self.temperature_voulue
-                            - self.temperature_ambiante) * 0.05)
+                            - self.t3est_data[0]) * 0.05)
         corridor_haut = (self.temperature_voulue
                          + (self.temperature_voulue
-                            - self.temperature_ambiante) * 0.05)
+                            - self.t3est_data[0]) * 0.05)
 
         if corridor_bas <= self.t3est_data[-1] <= corridor_haut:
             if self.timer_termine:
