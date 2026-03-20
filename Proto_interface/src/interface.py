@@ -27,6 +27,8 @@ class InterfaceProto:
         # temp
         self.temperature_voulue = 30
         self.temperature_ambiante = 23.5
+        self.temperature_initiale = self.temperature_ambiante
+        self.applied = False
 
         # pid réchauffement
         self.kp_chaud = 10.849
@@ -324,7 +326,7 @@ class InterfaceProto:
         self.ax2b.tick_params(axis='y', colors="#E08000", labelsize=8)
         for sp in self.ax2b.spines.values():
             sp.set_edgecolor(BORDER)
-            
+
         self.ax2b.yaxis.set_label_position('right')
         self.ax2b.yaxis.tick_right()
 
@@ -380,6 +382,7 @@ class InterfaceProto:
         self.ax2b.set_ylim(-marge_u, marge_u)
 
     def appliquer_config(self):
+        self.applied = True
         temp_str = self.temperature_entry_att.get().strip()
         try:
             temp = float(temp_str)
@@ -435,9 +438,6 @@ class InterfaceProto:
         except Exception as e:
             messagebox.showerror("Erreur", f"Problème inattendu : {e}")
 
-    def envoyer_config_totale(self):
-        self.appliquer_config()
-
     def trouver_port_arduino(self):
         ports = serial.tools.list_ports.comports()
         for port in ports:
@@ -463,8 +463,8 @@ class InterfaceProto:
 
                 self.status_label.config(
                     text="● En marche", bg="#EAF3DE", fg="#3B6D11")
-
-                self.update_data()
+                
+                self.appliquer_config()
                 print("Communication établie. Réception des données.")
 
         except serial.SerialException as e:
@@ -495,6 +495,7 @@ class InterfaceProto:
 
     def arreter_proto(self):
         self.running = False
+        self.appliquer = False
         self.status_label.config(
             text="● Arrêté", bg="#FCEBEB", fg="#A32D2D")
 
@@ -565,6 +566,10 @@ class InterfaceProto:
                                 min(self.u_data), max(self.u_data)
                             )
 
+                        if self.applied:
+                            self.temperature_initiale = self.t3est_data[-1]
+                            self.applied = False
+
                         self.timer()
                         self.canvas.draw()
 
@@ -632,12 +637,13 @@ class InterfaceProto:
             messagebox.showerror("Erreur critique", f"Vérifiez le port USB : {e}")
 
     def timer(self):
+            
         corridor_bas  = (self.temperature_voulue
-                         - (self.temperature_voulue
-                            - self.t3est_data[0]) * 0.05)
+                        - (self.temperature_voulue
+                            - self.temperature_initiale) * 0.05)
         corridor_haut = (self.temperature_voulue
-                         + (self.temperature_voulue
-                            - self.t3est_data[0]) * 0.05)
+                        + (self.temperature_voulue
+                            - self.temperature_initiale) * 0.05)
 
         if corridor_bas <= self.t3est_data[-1] <= corridor_haut:
             if self.timer_termine:
@@ -646,16 +652,16 @@ class InterfaceProto:
             if self.timer_start is None:
                 self.timer_start = time.time()
                 self.label_timer.config(
-                    text="Test de stabilité : 00:00", bg="#DFCD01")
-                self.timer_frame.config(bg="#DFCD01")
+                    text="Test de stabilité : 00:00", bg="#F4AD4B")
+                self.timer_frame.config(bg="#F4AD4B")
             else:
                 ecoule  = time.time() - self.timer_start
                 restant = max(0, self.duree_cible - ecoule)
                 mins, secs = divmod(int(restant), 60)
                 self.label_timer.config(
                     text=f"Test de stabilité : {mins:02d}:{secs:02d}",
-                    bg="#DFCD01")
-                self.timer_frame.config(bg="#DFCD01")
+                    bg="#F4AD4B")
+                self.timer_frame.config(bg="#F4AD4B")
 
                 if restant <= 0:
                     self.timer_termine = True
@@ -679,6 +685,7 @@ class InterfaceProto:
                    f"{self.kp_froid},{self.ti_froid},{self.td_froid}\n")
             self.ser.write(cmd.encode('utf-8'))
             print(f"Config envoyée : {cmd.strip()}")
+            self.update_data()
         except Exception as e:
             messagebox.showerror("Erreur",
                 f"Impossible d'envoyer la config : {e}")
