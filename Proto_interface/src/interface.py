@@ -324,6 +324,9 @@ class InterfaceProto:
         self.ax2b.tick_params(axis='y', colors="#E08000", labelsize=8)
         for sp in self.ax2b.spines.values():
             sp.set_edgecolor(BORDER)
+            
+        self.ax2b.yaxis.set_label_position('right')
+        self.ax2b.yaxis.tick_right()
 
         # lignes graphique 1
         self.line  = self.ax1.plot([], [], label="Thermistance 1",
