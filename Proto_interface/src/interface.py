@@ -64,7 +64,7 @@ class InterfaceProto:
         outer = tk.Frame(self.root, bg=BG)
         outer.pack(fill="both", expand=True, padx=14, pady=10)
 
-        # ── En-tête compact ───────────────────────────────────────────────────
+        # ── En-tête ───────────────────────────────────────────────────
         header = tk.Frame(outer, bg=CARD, highlightthickness=1,
                           highlightbackground=BORDER)
         header.pack(fill="x", pady=(0, 6))
@@ -89,7 +89,7 @@ class InterfaceProto:
         )
         self.status_label.pack()
 
-        # ── Boutons d'action alignés ──────────────────────────────────────────
+        # ── Boutons d'action ──────────────────────────────────────────
         btn_row = tk.Frame(outer, bg=BG)
         btn_row.pack(fill="x", pady=(0, 6))
         for i in range(4):
@@ -245,7 +245,7 @@ class InterfaceProto:
         self.label_timer.pack()
 
 
-        # ── Colonne droite : graphiques ───────────────────────────────────────
+        # ── Graphiques ───────────────────────────────────────
         charts_card = tk.Frame(body, bg=CARD, highlightthickness=1,
                                highlightbackground=BORDER, highlightcolor=BORDER)
         charts_card.grid(row=0, column=1, sticky="nsew")
@@ -280,7 +280,7 @@ class InterfaceProto:
     def _setup_axes(self, CARD="#FFFFFF", SURFACE="#F5EFF3",
                     MUTED="#7A5568", BORDER="#D9C8D4"):
 
-        # graphique 1
+        # Graphique 1
         self.ax1.set_facecolor(SURFACE)
         self.ax1.set_title(
             "Températures des thermistances 1 & 2 et T3 estimée",
@@ -294,7 +294,7 @@ class InterfaceProto:
             sp.set_edgecolor(BORDER)
         self.ax1.grid(color="#EAE0E8", linewidth=0.5)
 
-        # graphique 2
+        # Graphique 2
         self.ax2.set_facecolor(SURFACE)
         self.ax2.set_title(
             "Commande et erreur en temps réel",
@@ -309,7 +309,7 @@ class InterfaceProto:
             sp.set_edgecolor(BORDER)
         self.ax2.grid(color="#EAE0E8", linewidth=0.5)
 
-        # graphique 2 axe droit
+        # Graphique 2 axe droit
         self.ax2b.set_facecolor(SURFACE)
         self.ax2b.set_ylabel("Commande (PWM)", fontsize=9, color="#E08000")
         self.ax2b.set_ylim(-100, 100)  # plage fixe ±100
@@ -320,7 +320,7 @@ class InterfaceProto:
         self.ax2b.yaxis.set_label_position('right')
         self.ax2b.yaxis.tick_right()
 
-        # lignes graphique 1
+        # Lignes graphique 1
         self.line = self.ax1.plot([], [], label="Thermistance 1",
                                   color="#A61F08", lw=1.5)[0]
         self.line2 = self.ax1.plot([], [], label="Thermistance 2",
@@ -328,13 +328,13 @@ class InterfaceProto:
         self.line3 = self.ax1.plot([], [], label="T3 estimée",
                                    color="#1A8A2E", lw=1.5, linestyle="--")[0]
 
-        # lignes graphique 2
+        # Lignes graphique 2
         self.line4, = self.ax2b.plot([], [], label="Commande (PWM)",
                                      color="#E08000", lw=1.5)
         self.line5, = self.ax2.plot([], [], label="Erreur (°C)",
                                     color="#9B00C2", lw=1.5)
 
-        # légendes
+        # Légendes
         self.ax1.legend(
             fontsize=8, ncol=1,
             loc="upper left",
@@ -357,7 +357,7 @@ class InterfaceProto:
         )
 
     def _sync_zeros(self, e_min, e_max, u_min, u_max):
-        # marge de sécurité
+        # Marge de sécurité
         marge_e = max(abs(e_min), abs(e_max), 1) * 1.20
         marge_u = max(abs(u_min), abs(u_max), 1) * 1.20
 
@@ -528,7 +528,7 @@ class InterfaceProto:
                         self.line4.set_data(self.times, self.u_data)
                         self.line5.set_data(self.times, self.e_data)
 
-                        # métriques
+                        # Métriques
                         self.metric_t1.set(f"{t1:.1f} °C")
                         self.metric_t2.set(f"{t2:.1f} °C")
                         self.metric_t3.set(f"{t3:.1f} °C")
@@ -607,7 +607,7 @@ class InterfaceProto:
                 time.sleep(2)
                 self.running = True
                 self.start_time = time.time()
-                self.update_data()  # redémarre la boucle seulement si elle n'était pas active
+                self.update_data()  # Redémarre la boucle seulement si elle n'était pas active
 
             cmd = f"SET_CONSIGNE:{self.temperature_ambiante}\n"
             self.ser.write(cmd.encode('utf-8'))
@@ -663,7 +663,6 @@ class InterfaceProto:
                 self.timer_start = None
                 self.label_timer.config(text="Hors corridor", bg="#EBCDE2")
                 self.timer_frame.config(bg="#EBCDE2")
-
 
     def envoyer_valeurs_arduino(self):
         try:
