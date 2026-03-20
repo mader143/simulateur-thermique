@@ -422,7 +422,8 @@ class InterfaceProto:
         try:
             if self.running:
                 self.envoyer_valeurs_arduino()
-                messagebox.showinfo("Succès", "Configuration envoyée à l'Arduino.")
+                # Mise à jour de la ligne de consigne sans toucher aux données
+                messagebox.showinfo("Succès", "Configuration envoyée à l'Arduino.\nL'acquisition continue.")
             else:
                 messagebox.showinfo(
                     "Succès",
@@ -607,18 +608,25 @@ class InterfaceProto:
                 port_auto = self.trouver_port_arduino()
                 self.ser = serial.Serial(port_auto, 9600, timeout=1)
                 time.sleep(2)
+                self.running = True
+                self.start_time = time.time()
+                self.update_data()  # redémarre la boucle seulement si elle n'était pas active
 
             cmd = f"SET_CONSIGNE:{self.temperature_ambiante}\n"
             self.ser.write(cmd.encode('utf-8'))
             print("Commande envoyée pour ramener à T ambiante")
-            self.running = True
-            self.initialiser_graphiques()
+
+            # Marqueur visuel sans effacer les données
+            if self.times:
+                t_now = self.times[-1]
+                self.ax1.axvline(x=t_now, color="#0062DB", lw=1, linestyle=":")
+                self.ax2.axvline(x=t_now, color="#0062DB", lw=1, linestyle=":")
+                self.canvas.draw()
 
         except serial.SerialException as e:
             messagebox.showerror("Erreur de connexion", f"{e}")
         except Exception as e:
-            messagebox.showerror("Erreur critique",
-                f"Vérifiez le port USB : {e}")
+            messagebox.showerror("Erreur critique", f"Vérifiez le port USB : {e}")
 
     def timer(self):
         corridor_bas  = (self.temperature_voulue
@@ -635,16 +643,16 @@ class InterfaceProto:
             if self.timer_start is None:
                 self.timer_start = time.time()
                 self.label_timer.config(
-                    text="Test de stabilité : 00:00", bg="#67EB5B")
-                self.timer_frame.config(bg="#67EB5B")
+                    text="Test de stabilité : 00:00", bg="#DFCD01")
+                self.timer_frame.config(bg="#DFCD01")
             else:
                 ecoule  = time.time() - self.timer_start
                 restant = max(0, self.duree_cible - ecoule)
                 mins, secs = divmod(int(restant), 60)
                 self.label_timer.config(
                     text=f"Test de stabilité : {mins:02d}:{secs:02d}",
-                    bg="#67EB5B")
-                self.timer_frame.config(bg="#67EB5B")
+                    bg="#DFCD01")
+                self.timer_frame.config(bg="#DFCD01")
 
                 if restant <= 0:
                     self.timer_termine = True
