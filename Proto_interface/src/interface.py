@@ -57,8 +57,7 @@ class InterfaceProto:
         MUTED = "#7A5568"
         TEXT = "#1A0A10"
         BORDER = "#D9C8D4"
-        AMBER_BG = "#FAEEDA"
-        AMBER_FG = "#854F0B"
+
 
         self.root.configure(bg=BG)
 
@@ -78,7 +77,7 @@ class InterfaceProto:
         dot.create_oval(0, 0, 20, 20, fill=WINE, outline="")
         dot.pack(side="left", padx=(0, 8))
 
-        tk.Label(left_h, text="Contrôleur PID — Prototype thermique",
+        tk.Label(left_h, text="Contrôleur PID — Prototype thermique — Équipe 5",
                  font=("Arial", 12, "bold"), bg=CARD, fg=TEXT).pack(side="left")
 
         right_h = tk.Frame(header, bg=CARD)
@@ -99,7 +98,7 @@ class InterfaceProto:
         btns = [
             ("Démarrer le prototype", "#174D1C", "#E8F5EA", self.demarrer_proto),
             ("Arrêter le prototype", "#832828", "#FAE8E8", self.arreter_proto),
-            ("Ramener à T ambiante", WINE, "#F9EFF4", self.ramener_ambiante),
+            ("Ramener à température ambiante", WINE, "#F9EFF4", self.ramener_ambiante),
             ("Enregistrer les données", "#1A3A5C", "#E6F1FB", self.enregistrer_donnees),
         ]
         for i, (txt, bg, fg, cmd) in enumerate(btns):
@@ -248,7 +247,7 @@ class InterfaceProto:
 
         # ── Colonne droite : graphiques ───────────────────────────────────────
         charts_card = tk.Frame(body, bg=CARD, highlightthickness=1,
-                               highlightbackground=BORDER)
+                               highlightbackground=BORDER, highlightcolor=BORDER)
         charts_card.grid(row=0, column=1, sticky="nsew")
 
         title_bar = tk.Frame(charts_card, bg=CARD)
@@ -298,12 +297,12 @@ class InterfaceProto:
         # graphique 2
         self.ax2.set_facecolor(SURFACE)
         self.ax2.set_title(
-            "Commande u et erreur en temps réel",
+            "Commande et erreur en temps réel",
             fontsize=10, color=MUTED, pad=4)
         self.ax2.set_xlabel("Temps (s)", fontsize=9, color=MUTED)
         self.ax2.set_ylabel("Erreur (°C)", fontsize=9, color="#9B00C2")
         self.ax2.set_xlim(0, 100)
-        self.ax2.set_ylim(-10, 10)  # plage initiale symétrique
+        self.ax2.set_ylim(-15, 15)  # plage initiale symétrique
         self.ax2.tick_params(axis='y', colors="#9B00C2", labelsize=8)
         self.ax2.tick_params(axis='x', colors=MUTED, labelsize=8)
         for sp in self.ax2.spines.values():
@@ -312,8 +311,8 @@ class InterfaceProto:
 
         # graphique 2 axe droit
         self.ax2b.set_facecolor(SURFACE)
-        self.ax2b.set_ylabel("Commande u (PWM)", fontsize=9, color="#E08000")
-        self.ax2b.set_ylim(-70, 70)  # plage fixe ±70
+        self.ax2b.set_ylabel("Commande (PWM)", fontsize=9, color="#E08000")
+        self.ax2b.set_ylim(-100, 100)  # plage fixe ±100
         self.ax2b.tick_params(axis='y', colors="#E08000", labelsize=8)
         for sp in self.ax2b.spines.values():
             sp.set_edgecolor(BORDER)
@@ -326,11 +325,11 @@ class InterfaceProto:
                                   color="#A61F08", lw=1.5)[0]
         self.line2 = self.ax1.plot([], [], label="Thermistance 2",
                                    color="#0062DB", lw=1.5)[0]
-        self.line3 = self.ax1.plot([], [], label="T3 estimée (moy)",
+        self.line3 = self.ax1.plot([], [], label="T3 estimée",
                                    color="#1A8A2E", lw=1.5, linestyle="--")[0]
 
         # lignes graphique 2
-        self.line4, = self.ax2b.plot([], [], label="Commande u (PWM)",
+        self.line4, = self.ax2b.plot([], [], label="Commande (PWM)",
                                      color="#E08000", lw=1.5)
         self.line5, = self.ax2.plot([], [], label="Erreur (°C)",
                                     color="#9B00C2", lw=1.5)
@@ -594,7 +593,7 @@ class InterfaceProto:
             "Thermistance 2 - T2 (°C)": self.t2_data,
             "Thermistance 3 estimée - T3_moy (°C)": self.t3est_data,
             "Erreur (°C)": self.e_data,
-            "Commande - u (PWM)": self.u_data,
+            "Commande (PWM)": self.u_data,
         })
         df.to_csv(chemin, index=False)
         messagebox.showinfo("Succès",
@@ -612,7 +611,7 @@ class InterfaceProto:
 
             cmd = f"SET_CONSIGNE:{self.temperature_ambiante}\n"
             self.ser.write(cmd.encode('utf-8'))
-            print("Commande envoyée pour ramener à T ambiante")
+            print("Commande envoyée pour ramener à température ambiante")
 
             # Marqueur visuel sans effacer les données
             if self.times:
@@ -665,8 +664,6 @@ class InterfaceProto:
                 self.label_timer.config(text="Hors corridor", bg="#EBCDE2")
                 self.timer_frame.config(bg="#EBCDE2")
 
-    def indicateur_stabilite(self):
-        pass
 
     def envoyer_valeurs_arduino(self):
         try:
