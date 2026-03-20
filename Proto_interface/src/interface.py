@@ -36,8 +36,8 @@ class InterfaceProto:
         self.td_chaud = 0
 
         # pid refroidissement
-        self.kp_froid = 2.16
-        self.ti_froid = 88.64
+        self.kp_froid = 10.849
+        self.ti_froid = 271
         self.td_froid = 0
 
         self.times = []
@@ -49,15 +49,14 @@ class InterfaceProto:
 
         self.create_widgets()
 
-
     def create_widgets(self):
-        BG      = "#F5EFF3"
-        CARD    = "#FFFFFF"
+        BG = "#F5EFF3"
+        CARD = "#FFFFFF"
         SURFACE = "#F5EFF3"
-        WINE    = "#4B0E26"
-        MUTED   = "#7A5568"
-        TEXT    = "#1A0A10"
-        BORDER  = "#D9C8D4"
+        WINE = "#4B0E26"
+        MUTED = "#7A5568"
+        TEXT = "#1A0A10"
+        BORDER = "#D9C8D4"
         AMBER_BG = "#FAEEDA"
         AMBER_FG = "#854F0B"
 
@@ -98,9 +97,9 @@ class InterfaceProto:
             btn_row.grid_columnconfigure(i, weight=1, uniform="btn")
 
         btns = [
-            ("Démarrer le prototype",   "#174D1C", "#E8F5EA", self.demarrer_proto),
-            ("Arrêter le prototype",    "#832828", "#FAE8E8", self.arreter_proto),
-            ("Ramener à T ambiante",    WINE,      "#F9EFF4", self.ramener_ambiante),
+            ("Démarrer le prototype", "#174D1C", "#E8F5EA", self.demarrer_proto),
+            ("Arrêter le prototype", "#832828", "#FAE8E8", self.arreter_proto),
+            ("Ramener à T ambiante", WINE, "#F9EFF4", self.ramener_ambiante),
             ("Enregistrer les données", "#1A3A5C", "#E6F1FB", self.enregistrer_donnees),
         ]
         for i, (txt, bg, fg, cmd) in enumerate(btns):
@@ -120,8 +119,8 @@ class InterfaceProto:
         metric_defs = [
             ("T1 — Thermistance 1", "metric_t1"),
             ("T2 — Thermistance 2", "metric_t2"),
-            ("T3 — Estimée",        "metric_t3"),
-            ("Erreur courante",     "metric_err"),
+            ("T3 — Estimée", "metric_t3"),
+            ("Erreur courante", "metric_err"),
         ]
         for i, (lbl, attr) in enumerate(metric_defs):
             card = tk.Frame(metrics_row, bg=CARD, highlightthickness=1,
@@ -150,14 +149,14 @@ class InterfaceProto:
             f = tk.Frame(parent, bg=BG)
             f.pack(fill="x", pady=(5, 2))
             tk.Frame(f, bg=WINE, width=3, height=12).pack(side="left",
-                                                            padx=(0, 5))
+                                                          padx=(0, 5))
             tk.Label(f, text=text.upper(), font=("Arial", 9, "bold"),
                      bg=BG, fg=WINE).pack(side="left")
 
         # Carte réglages
         section_title(left_col, "Réglages")
         reglages_card = tk.Frame(left_col, bg=CARD, highlightthickness=1,
-                                  highlightbackground=BORDER)
+                                 highlightbackground=BORDER)
         reglages_card.pack(fill="x", pady=(0, 8))
 
         inner = tk.Frame(reglages_card, bg=CARD)
@@ -167,7 +166,7 @@ class InterfaceProto:
 
         # Température cible
         tk.Label(inner, text="Température à atteindre (°C) :",
-                 font=("Arial", 11), bg=CARD, fg=MUTED)\
+                 font=("Arial", 11), bg=CARD, fg=MUTED) \
             .grid(row=0, column=0, sticky="w", pady=(0, 6))
         self.temperature_entry_att = tk.Entry(
             inner, width=7, font=("Courier", 12),
@@ -178,51 +177,51 @@ class InterfaceProto:
         self.temperature_entry_att.grid(row=0, column=1, pady=(0, 6))
 
         # PID réchauffement
-        tk.Frame(inner, bg=BORDER, height=1)\
+        tk.Frame(inner, bg=BORDER, height=1) \
             .grid(row=1, column=0, columnspan=2, sticky="ew", pady=(2, 6))
         tk.Label(inner, text="PID réchauffement",
-                 font=("Arial", 10, "bold"), bg=CARD, fg=WINE)\
+                 font=("Arial", 10, "bold"), bg=CARD, fg=WINE) \
             .grid(row=2, column=0, columnspan=2, sticky="w", pady=(0, 4))
 
         for r, (lbl, val, attr) in enumerate([
             ("K  (a0) — gain proportionnel", str(self.kp_chaud), "a0_chaud_entry"),
-            ("Ti (a1) — temps intégral",     str(self.ti_chaud), "a1_chaud_entry"),
-            ("Td (a2) — temps dérivé",       str(self.td_chaud), "a2_chaud_entry"),
+            ("Ti (a1) — temps intégral", str(self.ti_chaud), "a1_chaud_entry"),
+            ("Td (a2) — temps dérivé", str(self.td_chaud), "a2_chaud_entry"),
         ]):
-            tk.Label(inner, text=lbl, font=("Arial", 10), bg=CARD, fg=MUTED)\
-                .grid(row=3+r, column=0, sticky="w", pady=3)
+            tk.Label(inner, text=lbl, font=("Arial", 10), bg=CARD, fg=MUTED) \
+                .grid(row=3 + r, column=0, sticky="w", pady=3)
             e = tk.Entry(inner, width=7, font=("Courier", 11),
                          bg=SURFACE, fg=TEXT, relief="flat",
                          highlightthickness=1, highlightbackground=BORDER,
                          justify="right")
             e.insert(0, val)
-            e.grid(row=3+r, column=1, pady=3)
+            e.grid(row=3 + r, column=1, pady=3)
             setattr(self, attr, e)
 
         # PID refroidissement
-        tk.Frame(inner, bg=BORDER, height=1)\
+        tk.Frame(inner, bg=BORDER, height=1) \
             .grid(row=6, column=0, columnspan=2, sticky="ew", pady=(6, 6))
         tk.Label(inner, text="PID refroidissement",
-                 font=("Arial", 10, "bold"), bg=CARD, fg="#185FA5")\
+                 font=("Arial", 10, "bold"), bg=CARD, fg="#185FA5") \
             .grid(row=7, column=0, columnspan=2, sticky="w", pady=(0, 4))
 
         for r, (lbl, val, attr) in enumerate([
             ("K  (a0) — gain proportionnel", str(self.kp_froid), "a0_froid_entry"),
-            ("Ti (a1) — temps intégral",     str(self.ti_froid), "a1_froid_entry"),
-            ("Td (a2) — temps dérivé",       str(self.td_froid), "a2_froid_entry"),
+            ("Ti (a1) — temps intégral", str(self.ti_froid), "a1_froid_entry"),
+            ("Td (a2) — temps dérivé", str(self.td_froid), "a2_froid_entry"),
         ]):
-            tk.Label(inner, text=lbl, font=("Arial", 10), bg=CARD, fg=MUTED)\
-                .grid(row=8+r, column=0, sticky="w", pady=3)
+            tk.Label(inner, text=lbl, font=("Arial", 10), bg=CARD, fg=MUTED) \
+                .grid(row=8 + r, column=0, sticky="w", pady=3)
             e = tk.Entry(inner, width=7, font=("Courier", 11),
                          bg=SURFACE, fg=TEXT, relief="flat",
                          highlightthickness=1, highlightbackground=BORDER,
                          justify="right")
             e.insert(0, val)
-            e.grid(row=8+r, column=1, pady=3)
+            e.grid(row=8 + r, column=1, pady=3)
             setattr(self, attr, e)
 
         # Bouton appliquer
-        tk.Frame(inner, bg=BORDER, height=1)\
+        tk.Frame(inner, bg=BORDER, height=1) \
             .grid(row=11, column=0, columnspan=2, sticky="ew", pady=(6, 6))
         tk.Button(
             inner, text="Appliquer les données",
@@ -239,7 +238,7 @@ class InterfaceProto:
         self.timer_frame.pack(fill="x")
 
         tk.Label(self.timer_frame, text="〰  Signal de stabilité",
-                 font=("Arial", 11, "bold"), bg=CARD, fg=TEXT)\
+                 font=("Arial", 11, "bold"), bg=CARD, fg=TEXT) \
             .pack(pady=(12, 2))
         self.label_timer = tk.Label(
             self.timer_frame, text="En attente d'un signal actif",
@@ -260,7 +259,7 @@ class InterfaceProto:
 
         title_bar = tk.Frame(charts_card, bg=CARD)
         title_bar.pack(fill="x", padx=12, pady=(8, 2))
-        tk.Frame(title_bar, bg=WINE, width=3, height=12)\
+        tk.Frame(title_bar, bg=WINE, width=3, height=12) \
             .pack(side="left", padx=(0, 5))
         tk.Label(title_bar, text="VISUALISATION TEMPS RÉEL",
                  font=("Arial", 9, "bold"), bg=CARD, fg=WINE).pack(side="left")
@@ -268,8 +267,8 @@ class InterfaceProto:
         self.fig = Figure(dpi=100)
         self.fig.patch.set_facecolor(CARD)
 
-        self.ax1  = self.fig.add_subplot(211)
-        self.ax2  = self.fig.add_subplot(212)
+        self.ax1 = self.fig.add_subplot(211)
+        self.ax2 = self.fig.add_subplot(212)
         self.ax2b = self.ax2.twinx()
 
         self._setup_axes(CARD, SURFACE, MUTED, BORDER)
@@ -285,12 +284,10 @@ class InterfaceProto:
                                          padx=8, pady=(0, 8))
         self.canvas.draw()
 
-
-
     def _setup_axes(self, CARD="#FFFFFF", SURFACE="#F5EFF3",
                     MUTED="#7A5568", BORDER="#D9C8D4"):
 
-        #graphique 1
+        # graphique 1
         self.ax1.set_facecolor(SURFACE)
         self.ax1.set_title(
             "Températures des thermistances 1 & 2 et T3 estimée",
@@ -304,7 +301,7 @@ class InterfaceProto:
             sp.set_edgecolor(BORDER)
         self.ax1.grid(color="#EAE0E8", linewidth=0.5)
 
-        #graphique 2
+        # graphique 2
         self.ax2.set_facecolor(SURFACE)
         self.ax2.set_title(
             "Commande u et erreur en temps réel",
@@ -312,17 +309,17 @@ class InterfaceProto:
         self.ax2.set_xlabel("Temps (s)", fontsize=9, color=MUTED)
         self.ax2.set_ylabel("Erreur (°C)", fontsize=9, color="#9B00C2")
         self.ax2.set_xlim(0, 100)
-        self.ax2.set_ylim(-10, 10)          # plage initiale symétrique
+        self.ax2.set_ylim(-10, 10)  # plage initiale symétrique
         self.ax2.tick_params(axis='y', colors="#9B00C2", labelsize=8)
-        self.ax2.tick_params(axis='x', colors=MUTED,    labelsize=8)
+        self.ax2.tick_params(axis='x', colors=MUTED, labelsize=8)
         for sp in self.ax2.spines.values():
             sp.set_edgecolor(BORDER)
         self.ax2.grid(color="#EAE0E8", linewidth=0.5)
 
-        #graphique 2 axe droit
+        # graphique 2 axe droit
         self.ax2b.set_facecolor(SURFACE)
         self.ax2b.set_ylabel("Commande u (PWM)", fontsize=9, color="#E08000")
-        self.ax2b.set_ylim(-70, 70)         # plage fixe ±70
+        self.ax2b.set_ylim(-70, 70)  # plage fixe ±70
         self.ax2b.tick_params(axis='y', colors="#E08000", labelsize=8)
         for sp in self.ax2b.spines.values():
             sp.set_edgecolor(BORDER)
@@ -331,20 +328,20 @@ class InterfaceProto:
         self.ax2b.yaxis.tick_right()
 
         # lignes graphique 1
-        self.line  = self.ax1.plot([], [], label="Thermistance 1",
-                                   color="#A61F08", lw=1.5)[0]
+        self.line = self.ax1.plot([], [], label="Thermistance 1",
+                                  color="#A61F08", lw=1.5)[0]
         self.line2 = self.ax1.plot([], [], label="Thermistance 2",
                                    color="#0062DB", lw=1.5)[0]
         self.line3 = self.ax1.plot([], [], label="T3 estimée (moy)",
                                    color="#1A8A2E", lw=1.5, linestyle="--")[0]
 
-        #lignes graphique 2
+        # lignes graphique 2
         self.line4, = self.ax2b.plot([], [], label="Commande u (PWM)",
                                      color="#E08000", lw=1.5)
-        self.line5, = self.ax2.plot([],  [], label="Erreur (°C)",
+        self.line5, = self.ax2.plot([], [], label="Erreur (°C)",
                                     color="#9B00C2", lw=1.5)
 
-        #légendes
+        # légendes
         self.ax1.legend(
             fontsize=8, ncol=1,
             loc="upper left",
@@ -354,7 +351,7 @@ class InterfaceProto:
             edgecolor=BORDER
         )
 
-        lines2  = [self.line5, self.line4]
+        lines2 = [self.line5, self.line4]
         labels2 = [l.get_label() for l in lines2]
         self.ax2.legend(
             lines2, labels2,
@@ -366,7 +363,6 @@ class InterfaceProto:
             edgecolor=BORDER
         )
 
-
     def _sync_zeros(self, e_min, e_max, u_min, u_max):
         # marge de sécurité
         marge_e = max(abs(e_min), abs(e_max), 1) * 1.20
@@ -374,7 +370,7 @@ class InterfaceProto:
 
         marge_u = max(marge_u, 70)
 
-        f = marge_e / (2 * marge_e) 
+        f = marge_e / (2 * marge_e)
         total_e = marge_e + marge_e
         total_u = marge_u + marge_u
 
@@ -463,7 +459,7 @@ class InterfaceProto:
 
                 self.status_label.config(
                     text="● En marche", bg="#EAF3DE", fg="#3B6D11")
-                
+
                 self.appliquer_config()
                 print("Communication établie. Réception des données.")
 
@@ -471,19 +467,19 @@ class InterfaceProto:
             messagebox.showerror("Erreur de connexion", f"{e}")
         except Exception as e:
             messagebox.showerror("Erreur critique",
-                f"Vérifiez le port USB : {e}")
+                                 f"Vérifiez le port USB : {e}")
 
     def initialiser_graphiques(self):
         self.ax1.cla()
         self.ax2.cla()
         self.ax2b.cla()
 
-        self.times      = []
-        self.t1_data    = []
-        self.t2_data    = []
+        self.times = []
+        self.t1_data = []
+        self.t2_data = []
         self.t3est_data = []
-        self.u_data     = []
-        self.e_data     = []
+        self.u_data = []
+        self.e_data = []
 
         self._setup_axes()
         self.fig.subplots_adjust(
@@ -514,17 +510,16 @@ class InterfaceProto:
         if self.running and self.ser:
             try:
                 line = self.ser.readline().decode('utf-8').strip()
-                print(line)
 
                 if line and not line.startswith("temps") and line != "FIN":
                     values = line.split(',')
                     if len(values) == 9:
 
-                        t1  = float(values[1])
-                        t2  = float(values[2])
-                        t3  = float(values[6])
-                        e   = float(values[7])
-                        u   = float(values[8])
+                        t1 = float(values[1])
+                        t2 = float(values[2])
+                        t3 = float(values[6])
+                        e = float(values[7])
+                        u = float(values[8])
                         current_time = time.time() - self.start_time
 
                         self.times.append(current_time)
@@ -548,7 +543,7 @@ class InterfaceProto:
 
                         # Axe X
                         xlim = max(current_time, 10) if current_time <= 100 \
-                               else current_time
+                            else current_time
                         self.ax1.set_xlim(0, xlim)
                         self.ax2.set_xlim(0, xlim)
                         self.ax2b.set_xlim(0, xlim)
@@ -583,7 +578,7 @@ class InterfaceProto:
     def enregistrer_donnees(self):
         if not self.times:
             messagebox.showwarning("Avertissement",
-                "Aucune donnée à enregistrer.")
+                                   "Aucune donnée à enregistrer.")
             return
 
         nom_defaut = (f"donnees_"
@@ -600,16 +595,16 @@ class InterfaceProto:
             return
 
         df = pd.DataFrame({
-            "Temps (s)":                              self.times,
-            "Thermistance 1 - T1 (°C)":               self.t1_data,
-            "Thermistance 2 - T2 (°C)":               self.t2_data,
-            "Thermistance 3 estimée - T3_moy (°C)":   self.t3est_data,
-            "Erreur (°C)":                             self.e_data,
-            "Commande - u (PWM)":                      self.u_data,
+            "Temps (s)": self.times,
+            "Thermistance 1 - T1 (°C)": self.t1_data,
+            "Thermistance 2 - T2 (°C)": self.t2_data,
+            "Thermistance 3 estimée - T3_moy (°C)": self.t3est_data,
+            "Erreur (°C)": self.e_data,
+            "Commande - u (PWM)": self.u_data,
         })
         df.to_csv(chemin, index=False)
         messagebox.showinfo("Succès",
-            f"Données enregistrées dans :\n{chemin}")
+                            f"Données enregistrées dans :\n{chemin}")
 
     def ramener_ambiante(self):
         try:
@@ -638,12 +633,12 @@ class InterfaceProto:
             messagebox.showerror("Erreur critique", f"Vérifiez le port USB : {e}")
 
     def timer(self):
-            
-        corridor_bas  = (self.temperature_voulue
+
+        corridor_bas = (self.temperature_voulue
                         - (self.temperature_voulue
-                            - self.temperature_initiale) * 0.05)
+                           - self.temperature_initiale) * 0.05)
         corridor_haut = (self.temperature_voulue
-                        + (self.temperature_voulue
+                         + (self.temperature_voulue
                             - self.temperature_initiale) * 0.05)
 
         if corridor_bas <= self.t3est_data[-1] <= corridor_haut:
@@ -656,7 +651,7 @@ class InterfaceProto:
                     text="Test de stabilité : 00:00", bg="#F4AD4B")
                 self.timer_frame.config(bg="#F4AD4B")
             else:
-                ecoule  = time.time() - self.timer_start
+                ecoule = time.time() - self.timer_start
                 restant = max(0, self.duree_cible - ecoule)
                 mins, secs = divmod(int(restant), 60)
                 self.label_timer.config(
@@ -689,8 +684,7 @@ class InterfaceProto:
             self.update_data()
         except Exception as e:
             messagebox.showerror("Erreur",
-                f"Impossible d'envoyer la config : {e}")
-
+                                 f"Impossible d'envoyer la config : {e}")
 
 
 def main():
