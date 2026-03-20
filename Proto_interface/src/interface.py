@@ -47,9 +47,6 @@ class InterfaceProto:
 
         self.create_widgets()
 
-    # ══════════════════════════════════════════════════════════════════════════
-    # INTERFACE
-    # ══════════════════════════════════════════════════════════════════════════
 
     def create_widgets(self):
         BG      = "#F5EFF3"
@@ -286,12 +283,12 @@ class InterfaceProto:
                                          padx=8, pady=(0, 8))
         self.canvas.draw()
 
-    # ── Configuration des axes ────────────────────────────────────────────────
+
 
     def _setup_axes(self, CARD="#FFFFFF", SURFACE="#F5EFF3",
                     MUTED="#7A5568", BORDER="#D9C8D4"):
 
-        # ---- graphique 1 ----------------------------------------------------
+        #graphique 1
         self.ax1.set_facecolor(SURFACE)
         self.ax1.set_title(
             "Températures des thermistances 1 & 2 et T3 estimée",
@@ -305,7 +302,7 @@ class InterfaceProto:
             sp.set_edgecolor(BORDER)
         self.ax1.grid(color="#EAE0E8", linewidth=0.5)
 
-        # ---- graphique 2 : axe gauche = erreur (°C) -------------------------
+        #graphique 2
         self.ax2.set_facecolor(SURFACE)
         self.ax2.set_title(
             "Commande u et erreur en temps réel",
@@ -320,8 +317,7 @@ class InterfaceProto:
             sp.set_edgecolor(BORDER)
         self.ax2.grid(color="#EAE0E8", linewidth=0.5)
 
-        # ---- graphique 2 : axe droit = commande (PWM) -----------------------
-        # PWM borné à ±70 ; on garde la plage symétrique autour de 0
+        #graphique 2 axe droit
         self.ax2b.set_facecolor(SURFACE)
         self.ax2b.set_ylabel("Commande u (PWM)", fontsize=9, color="#E08000")
         self.ax2b.set_ylim(-70, 70)         # plage fixe ±70
@@ -329,7 +325,7 @@ class InterfaceProto:
         for sp in self.ax2b.spines.values():
             sp.set_edgecolor(BORDER)
 
-        # ---- lignes graphique 1 ---------------------------------------------
+        # lignes graphique 1
         self.line  = self.ax1.plot([], [], label="Thermistance 1",
                                    color="#A61F08", lw=1.5)[0]
         self.line2 = self.ax1.plot([], [], label="Thermistance 2",
@@ -337,14 +333,13 @@ class InterfaceProto:
         self.line3 = self.ax1.plot([], [], label="T3 estimée (moy)",
                                    color="#1A8A2E", lw=1.5, linestyle="--")[0]
 
-        # ---- lignes graphique 2 ---------------------------------------------
+        #lignes graphique 2
         self.line4, = self.ax2b.plot([], [], label="Commande u (PWM)",
                                      color="#E08000", lw=1.5)
         self.line5, = self.ax2.plot([],  [], label="Erreur (°C)",
                                     color="#9B00C2", lw=1.5)
 
-        # ---- légendes DANS les graphiques -----------------------------------
-        # Graphique 1 : coin supérieur gauche (là où les courbes montent à droite)
+        #légendes
         self.ax1.legend(
             fontsize=8, ncol=1,
             loc="upper left",
@@ -354,7 +349,6 @@ class InterfaceProto:
             edgecolor=BORDER
         )
 
-        # Graphique 2 : légende combinée (erreur + commande) dans ax2
         lines2  = [self.line5, self.line4]
         labels2 = [l.get_label() for l in lines2]
         self.ax2.legend(
@@ -367,74 +361,73 @@ class InterfaceProto:
             edgecolor=BORDER
         )
 
-    # ══════════════════════════════════════════════════════════════════════════
-    # SYNCHRONISATION DES ZÉROS AX2 / AX2B
-    # ══════════════════════════════════════════════════════════════════════════
 
     def _sync_zeros(self, e_min, e_max, u_min, u_max):
-        """
-        Ajuste les bornes de ax2 (erreur) et ax2b (PWM) de façon que
-        la valeur 0 soit à la même hauteur relative sur les deux axes.
-
-        Principe : si le zéro est à la fraction f de la hauteur totale,
-        alors  ymin = -f * span  et  ymax = (1-f) * span  pour chaque axe.
-        On choisit f = max_abs_e / (max_abs_e + min_abs_e) de manière
-        à centrer le zéro proportionnellement.
-        """
         # marge de sécurité
         marge_e = max(abs(e_min), abs(e_max), 1) * 1.20
         marge_u = max(abs(u_min), abs(u_max), 1) * 1.20
 
-        # on force la plage PWM à ±70 minimum
         marge_u = max(marge_u, 70)
 
-        # fraction du graphique occupée par la partie négative
-        # (identique sur les deux axes → zéros alignés)
-        f = marge_e / (2 * marge_e)   # = 0.5  quand symétrique
-        # calcul général :
-        total_e = marge_e + marge_e    # plage complète erreur  = 2 * marge_e
-        total_u = marge_u + marge_u    # plage complète PWM     = 2 * marge_u
+        f = marge_e / (2 * marge_e) 
+        total_e = marge_e + marge_e
+        total_u = marge_u + marge_u
 
         self.ax2.set_ylim(-marge_e, marge_e)
         self.ax2b.set_ylim(-marge_u, marge_u)
 
-    # ══════════════════════════════════════════════════════════════════════════
-    # LOGIQUE MÉTIER
-    # ══════════════════════════════════════════════════════════════════════════
-
     def appliquer_config(self):
-        """Lit et sauvegarde la config SANS démarrer le prototype."""
+        temp_str = self.temperature_entry_att.get().strip()
         try:
-            temp = float(self.temperature_entry_att.get())
-            kp_c = float(self.a0_chaud_entry.get())
-            ti_c = float(self.a1_chaud_entry.get())
-            td_c = float(self.a2_chaud_entry.get())
-            kp_f = float(self.a0_froid_entry.get())
-            ti_f = float(self.a1_froid_entry.get())
-            td_f = float(self.a2_froid_entry.get())
+            temp = float(temp_str)
+        except ValueError:
+            messagebox.showerror(
+                "Valeur invalide",
+                f"« {temp_str} » n'est pas un nombre valide pour la température. Sélectionnez un nombre entre 10 et 35 °C.")
+            return
+        if temp < 10:
+            messagebox.showerror(
+                "Température trop basse",
+                f"La température cible ({temp} °C) est trop basse. Entrez un nombre entre 10 et 35 °C.")
+            return
+        if temp > 35:
+            messagebox.showerror(
+                "Température trop élevée",
+                f"La température cible ({temp} °C) est trop élevée. Entrez un nombre entre 10 et 35 °C.")
+            return
 
-            if not (10 <= temp <= 45):
-                raise ValueError("Température hors plage [10, 45] °C.")
+        pid_champs = [
+            (self.a0_chaud_entry, "Kp réchauffement"),
+            (self.a1_chaud_entry, "Ti réchauffement"),
+            (self.a2_chaud_entry, "Td réchauffement"),
+            (self.a0_froid_entry, "Kp refroidissement"),
+            (self.a1_froid_entry, "Ti refroidissement"),
+            (self.a2_froid_entry, "Td refroidissement"),
+        ]
+        valeurs_pid = []
+        for entree, nom in pid_champs:
+            val_str = entree.get().strip()
+            try:
+                valeurs_pid.append(float(val_str))
+            except ValueError:
+                messagebox.showerror(
+                    "Valeur invalide",
+                    f"« {val_str} » n'est pas un nombre valide.")
+                return
 
-            self.temperature_voulue = temp
-            self.kp_chaud = kp_c
-            self.ti_chaud = ti_c
-            self.td_chaud = td_c
-            self.kp_froid = kp_f
-            self.ti_froid = ti_f
-            self.td_froid = td_f
+        self.temperature_voulue = temp
+        self.kp_chaud, self.ti_chaud, self.td_chaud = valeurs_pid[0:3]
+        self.kp_froid, self.ti_froid, self.td_froid = valeurs_pid[3:6]
 
+        try:
             if self.running:
                 self.envoyer_valeurs_arduino()
-                messagebox.showinfo("Succès",
-                    "Configuration envoyée à l'Arduino.")
+                messagebox.showinfo("Succès", "Configuration envoyée à l'Arduino.")
             else:
-                messagebox.showinfo("Succès",
+                messagebox.showinfo(
+                    "Succès",
                     "Configuration sauvegardée.\n"
                     "Cliquez sur « Démarrer le prototype » pour lancer.")
-
-        except ValueError as ve:
-            messagebox.showerror("Erreur", f"Valeur invalide : {ve}")
         except Exception as e:
             messagebox.showerror("Erreur", f"Problème inattendu : {e}")
 
@@ -448,7 +441,7 @@ class InterfaceProto:
                 print(f"Arduino trouvé sur le port : {port.device}")
                 return port.device
         raise serial.SerialException(
-            "Arduino introuvable! Vérifiez le branchement USB.")
+            "Arduino non trouvé. Vérifiez le branchement USB.")
 
     def demarrer_proto(self):
         try:
@@ -680,7 +673,6 @@ class InterfaceProto:
                 f"Impossible d'envoyer la config : {e}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
 
 def main():
     root = tk.Tk()
