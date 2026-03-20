@@ -36,8 +36,8 @@ class InterfaceProto:
         self.td_chaud = 0
 
         # pid refroidissement
-        self.kp_froid = 10.849
-        self.ti_froid = 271
+        self.kp_froid = 2.16
+        self.ti_froid = 88.64
         self.td_froid = 0
 
         self.times = []
@@ -514,6 +514,7 @@ class InterfaceProto:
         if self.running and self.ser:
             try:
                 line = self.ser.readline().decode('utf-8').strip()
+                print(line)
 
                 if line and not line.startswith("temps") and line != "FIN":
                     values = line.split(',')
