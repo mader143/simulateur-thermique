@@ -504,6 +504,7 @@ class InterfaceProto:
         if self.running and self.ser:
             try:
                 line = self.ser.readline().decode('utf-8').strip()
+                print(line)
 
                 if line and not line.startswith("temps") and line != "FIN":
                     values = line.split(',')
@@ -559,7 +560,7 @@ class InterfaceProto:
                             )
 
                         if self.applied:
-                            self.temperature_initiale = self.t3est_data[-1]
+                            self.temperature_initiale = t3
                             self.applied = False
 
                         self.timer()
