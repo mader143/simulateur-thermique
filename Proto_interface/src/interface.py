@@ -504,6 +504,7 @@ class InterfaceProto:
         if self.running and self.ser:
             try:
                 line = self.ser.readline().decode('utf-8').strip()
+                print(line)
 
                 if line and not line.startswith("temps") and line != "FIN":
                     values = line.split(',')
