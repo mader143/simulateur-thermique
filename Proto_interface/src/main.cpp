@@ -32,7 +32,7 @@ struct Thermistance {
 };
 
 Thermistance therm[3] = {
-  {A3, 3300, 5600, 3300, 1.774, 5.0, 3700},
+  {A3, 3300, 5600, 3300, 1.774, 5.0, 4010},
   {A2, 6300, 5600, 3300, 1.80,  5.0, 3984},
   {A1, 6300, 5600, 3300, 1.79,  5.0, 3700},
 };
@@ -151,6 +151,8 @@ void loop() {
       Serial.println(v4);
       Serial.println(v5);
       Serial.println(v6);
+      tempsDebut = millis();
+      modeCSV = true;
 
       // Réinitialisation des valeurs stockées quand on applique une nouvelle consigne
       u_prev = 0.0;
@@ -237,7 +239,7 @@ void loop() {
 
 
     // On initialise les valeurs pour la prochaine itération
-    u_prev = u;
+    u_prev = u_sat;
     e[2] = e[1];
     e[1] = e[0];
 

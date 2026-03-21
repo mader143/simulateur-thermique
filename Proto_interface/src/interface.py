@@ -36,9 +36,9 @@ class InterfaceProto:
         self.td_chaud = 0
 
         # pid refroidissement
-        self.kp_froid = 10.849
-        self.ti_froid = 271
-        self.td_froid = 0
+        self.kp_froid = 4.45
+        self.ti_froid = 88.64
+        self.td_froid = 13.04
 
         self.times = []
         self.t1_data = []
@@ -46,6 +46,7 @@ class InterfaceProto:
         self.t3est_data = []
         self.u_data = []
         self.e_data = []
+        self.t3reel_data = []
 
         self.create_widgets()
 
@@ -236,7 +237,7 @@ class InterfaceProto:
                                     highlightbackground=BORDER)
         self.timer_frame.pack(fill="x")
 
-        tk.Label(self.timer_frame, text="\nSignal de stabilité",
+        tk.Label(self.timer_frame, text="\nSignal de stabilité\n",
                  font=("Arial", 11, "bold"), bg=CARD, fg=TEXT) \
             .pack(pady=(14, 2))
         self.label_timer = tk.Label(
@@ -312,7 +313,7 @@ class InterfaceProto:
         # Graphique 2 axe droit
         self.ax2b.set_facecolor(SURFACE)
         self.ax2b.set_ylabel("Commande (PWM)", fontsize=9, color="#E08000")
-        self.ax2b.set_ylim(-100, 100)  # plage fixe ±100
+        self.ax2b.set_ylim(-80, 80)  # plage fixe ±100
         self.ax2b.tick_params(axis='y', colors="#E08000", labelsize=8)
         for sp in self.ax2b.spines.values():
             sp.set_edgecolor(BORDER)
@@ -503,6 +504,7 @@ class InterfaceProto:
         if self.running and self.ser:
             try:
                 line = self.ser.readline().decode('utf-8').strip()
+                print(line)
 
                 if line and not line.startswith("temps") and line != "FIN":
                     values = line.split(',')
@@ -511,6 +513,7 @@ class InterfaceProto:
                         t1 = float(values[1])
                         t2 = float(values[2])
                         t3 = float(values[6])
+                        t3_reel = float(values[3])
                         e = float(values[7])
                         u = float(values[8])
                         current_time = time.time() - self.start_time
@@ -521,6 +524,7 @@ class InterfaceProto:
                         self.t3est_data.append(t3)
                         self.u_data.append(u)
                         self.e_data.append(e)
+                        self.t3reel_data.append(t3_reel)
 
                         self.line.set_data(self.times, self.t1_data)
                         self.line2.set_data(self.times, self.t2_data)
@@ -589,11 +593,15 @@ class InterfaceProto:
 
         df = pd.DataFrame({
             "Temps (s)": self.times,
+            "Consigne (°C)": [self.temperature_voulue] * len(self.times),
+            "Erreur (°C)": self.e_data,
             "Thermistance 1 - T1 (°C)": self.t1_data,
             "Thermistance 2 - T2 (°C)": self.t2_data,
-            "Thermistance 3 estimée - T3_moy (°C)": self.t3est_data,
-            "Erreur (°C)": self.e_data,
+            "Thermistance 3 - T3 (°C)": self.t3reel_data,
+            "T4'": '' * len(self.times),
+            "Thermistance 3 estimée - T3_moy (°C)": self.t3est_data,    
             "Commande (PWM)": self.u_data,
+       
         })
         df.to_csv(chemin, index=False)
         messagebox.showinfo("Succès",
