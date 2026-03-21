@@ -556,7 +556,7 @@ class InterfaceProto:
                             )
 
                         if self.applied:
-                            self.temperature_initiale = self.t3est_data[-1]
+                            self.temperature_initiale = t3
                             self.applied = False
 
                         self.timer()
