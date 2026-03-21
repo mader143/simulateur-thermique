@@ -151,8 +151,7 @@ void loop() {
       Serial.println(v4);
       Serial.println(v5);
       Serial.println(v6);
-      tempsDebut = millis();
-      modeCSV = true;
+
 
       // Réinitialisation des valeurs stockées quand on applique une nouvelle consigne
       u_prev = 0.0;
@@ -177,6 +176,7 @@ void loop() {
             new_Ti = valeurs.substring(v5 + 1, v6).toFloat();
             new_Td = valeurs.substring(v6 + 1).toFloat();
         }
+        Serial.println("NOUVELLE VALEURS DE K, T_I ET T_D");
         Serial.println(new_K, 3);
         Serial.println(new_Ti, 3);
         Serial.println(new_Td, 3);
@@ -239,7 +239,7 @@ void loop() {
 
 
     // On initialise les valeurs pour la prochaine itération
-    u_prev = u_sat;
+    u_prev = u;
     e[2] = e[1];
     e[1] = e[0];
 
