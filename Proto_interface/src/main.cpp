@@ -151,6 +151,8 @@ void loop() {
       Serial.println(v4);
       Serial.println(v5);
       Serial.println(v6);
+      tempsDebut = millis();
+      modeCSV = true;
 
       // Réinitialisation des valeurs stockées quand on applique une nouvelle consigne
       u_prev = 0.0;
