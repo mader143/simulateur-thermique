@@ -47,6 +47,7 @@ class InterfaceProto:
         self.u_data = []
         self.e_data = []
         self.t3reel_data = []
+        self.consigne = []
 
         self.create_widgets()
 
@@ -525,6 +526,7 @@ class InterfaceProto:
                         self.u_data.append(u)
                         self.e_data.append(e)
                         self.t3reel_data.append(t3_reel)
+                        self.consigne.append(self.temperature_voulue)
 
                         self.line.set_data(self.times, self.t1_data)
                         self.line2.set_data(self.times, self.t2_data)
@@ -593,7 +595,7 @@ class InterfaceProto:
 
         df = pd.DataFrame({
             "Temps (s)": self.times,
-            "Consigne (°C)": [self.temperature_voulue] * len(self.times),
+            "Consigne (°C)": self.consigne,
             "Erreur (°C)": self.e_data,
             "Thermistance 1 - T1 (°C)": self.t1_data,
             "Thermistance 2 - T2 (°C)": self.t2_data,
