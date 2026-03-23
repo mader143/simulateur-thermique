@@ -31,9 +31,9 @@ class InterfaceProto:
         self.applied = False
 
         # pid réchauffement
-        self.kp_chaud = 10.849
-        self.ti_chaud = 271
-        self.td_chaud = 0
+        self.kp_chaud = 9.2
+        self.ti_chaud = 250
+        self.td_chaud = 35
 
         # pid refroidissement
         self.kp_froid = 4.45
@@ -114,7 +114,7 @@ class InterfaceProto:
         # ── Métriques temps réel ──────────────────────────────────────────────
         metrics_row = tk.Frame(outer, bg=BG)
         metrics_row.pack(fill="x", pady=(0, 6))
-        for i in range(4):
+        for i in range(5):
             metrics_row.grid_columnconfigure(i, weight=1, uniform="metric")
 
         metric_defs = [
@@ -122,6 +122,7 @@ class InterfaceProto:
             ("T2 — Thermistance 2", "metric_t2"),
             ("T3 — Estimée", "metric_t3"),
             ("Erreur courante", "metric_err"),
+            ("Commande (PWM)", "metric_u"),
         ]
         for i, (lbl, attr) in enumerate(metric_defs):
             card = tk.Frame(metrics_row, bg=CARD, highlightthickness=1,
@@ -129,12 +130,11 @@ class InterfaceProto:
             card.grid(row=0, column=i, padx=4, sticky="nsew")
             tk.Label(card, text=lbl, font=("Arial", 10), bg=CARD,
                      fg=MUTED).pack(anchor="w", padx=10, pady=(6, 0))
-            var = tk.StringVar(value="— °C")
+            var = tk.StringVar(value="— °C" if "metric_t" in attr or attr == "metric_err" else "—")
             tk.Label(card, textvariable=var,
                      font=("Courier", 16, "bold"), bg=CARD,
                      fg=TEXT).pack(anchor="w", padx=10, pady=(1, 6))
             setattr(self, attr, var)
-
         # ── Corps ─────────────────────────────────────────────────────────────
         body = tk.Frame(outer, bg=BG)
         body.pack(fill="both", expand=True)
@@ -185,9 +185,9 @@ class InterfaceProto:
             .grid(row=2, column=0, columnspan=2, sticky="w", pady=(0, 4))
 
         for r, (lbl, val, attr) in enumerate([
-            ("K  (a0) — gain proportionnel", str(self.kp_chaud), "a0_chaud_entry"),
-            ("Ti (a1) — temps intégral", str(self.ti_chaud), "a1_chaud_entry"),
-            ("Td (a2) — temps dérivé", str(self.td_chaud), "a2_chaud_entry"),
+            ("K — gain proportionnel", str(self.kp_chaud), "a0_chaud_entry"),
+            ("Ti — temps intégral", str(self.ti_chaud), "a1_chaud_entry"),
+            ("Td — temps dérivé", str(self.td_chaud), "a2_chaud_entry"),
         ]):
             tk.Label(inner, text=lbl, font=("Arial", 10), bg=CARD, fg=MUTED) \
                 .grid(row=3 + r, column=0, sticky="w", pady=3)
@@ -207,9 +207,9 @@ class InterfaceProto:
             .grid(row=7, column=0, columnspan=2, sticky="w", pady=(0, 4))
 
         for r, (lbl, val, attr) in enumerate([
-            ("K  (a0) — gain proportionnel", str(self.kp_froid), "a0_froid_entry"),
-            ("Ti (a1) — temps intégral", str(self.ti_froid), "a1_froid_entry"),
-            ("Td (a2) — temps dérivé", str(self.td_froid), "a2_froid_entry"),
+            ("K — gain proportionnel", str(self.kp_froid), "a0_froid_entry"),
+            ("Ti — temps intégral", str(self.ti_froid), "a1_froid_entry"),
+            ("Td — temps dérivé", str(self.td_froid), "a2_froid_entry"),
         ]):
             tk.Label(inner, text=lbl, font=("Arial", 10), bg=CARD, fg=MUTED) \
                 .grid(row=8 + r, column=0, sticky="w", pady=3)
@@ -238,14 +238,36 @@ class InterfaceProto:
                                     highlightbackground=BORDER)
         self.timer_frame.pack(fill="x")
 
-        tk.Label(self.timer_frame, text="\nSignal de stabilité\n",
-                 font=("Arial", 11, "bold"), bg=CARD, fg=TEXT) \
-            .pack(pady=(14, 2))
+        tk.Label(self.timer_frame, text="Signal de stabilité",
+                 font=("Arial", 10, "bold"), bg=CARD, fg=TEXT) \
+            .pack(pady=(4, 1))
+        
         self.label_timer = tk.Label(
-            self.timer_frame, text="En attente d'un signal\n   \n",
-            font=("Arial", 10), bg=CARD, fg=MUTED)
-        self.label_timer.pack()
+            self.timer_frame, text="En attente d'un signal",
+            font=("Arial", 8), bg=CARD, fg=MUTED)
+        self.label_timer.pack(pady=(0, 4))
 
+        # Carte mode manuel
+        section_title(left_col, "Mode manuel - Entrez un PWM")
+        self.pwm_frame = tk.Frame(left_col, bg=CARD, highlightthickness=1,
+                                   highlightbackground=BORDER)
+        self.pwm_frame.pack(fill="x", pady=(0, 4))
+
+        pwm_row = tk.Frame(self.pwm_frame, bg=CARD)
+        pwm_row.pack(fill="x", padx=8, pady=4)
+        
+        self.pwm_entry = tk.Entry(pwm_row, width=7, font=("Courier", 10),
+                         bg=SURFACE, fg=TEXT, relief="flat",
+                         highlightthickness=1, highlightbackground=BORDER,
+                         justify="right")
+        self.pwm_entry.pack(side="left", padx=(0, 4))
+        
+        tk.Button(pwm_row, text="Appliquer le PWM",
+            command=self.appliquer_pwm,
+            font=("Arial", 9), bg=WINE, fg=CARD,
+            relief="flat", cursor="hand2", pady=4,
+            activebackground="#7A1A3D", activeforeground=CARD
+        ).pack(side="left", fill="x", expand=True)
 
         # ── Graphiques ───────────────────────────────────────
         charts_card = tk.Frame(body, bg=CARD, highlightthickness=1,
@@ -371,6 +393,51 @@ class InterfaceProto:
 
         self.ax2.set_ylim(-marge_e, marge_e)
         self.ax2b.set_ylim(-marge_u, marge_u)
+
+    def appliquer_pwm(self):
+        if self.running:
+            messagebox.showerror(
+                "Arrêter le prototype avant d'appliquer le PWM")
+        else:
+            port_auto = self.trouver_port_arduino()
+            self.ser = serial.Serial(port_auto, 9600, timeout=1)
+            time.sleep(2)
+
+            self.running = True
+            self.start_time = time.time()
+            self.timer_start = None
+            self.timer_termine = False
+
+            self.status_label.config(
+                text="● En marche", bg="#EAF3DE", fg="#3B6D11")
+
+            pwm = self.pwm_entry.get()
+            try:
+                pwm = int(pwm)
+            except ValueError:
+                messagebox.showerror(
+                    "Valeur invalide",
+                    f"« {pwm} » n'est pas un nombre valide pour la commande. Sélectionnez un nombre entre -255 et 255.")
+                return
+            if pwm < -255:
+                messagebox.showerror(
+                    "PWM trop bas",
+                    f"La commande ({pwm}) est trop basse. Entrez un nombre entre -255 et 255.")
+                return
+            if pwm > 255:
+                messagebox.showerror(
+                    "PWM trop élevé",
+                    f"La commande ({pwm}) est trop élevée. Entrez un nombre entre -255 et 255.")
+                return
+            
+            try:
+                cmd = (f"CONFIG_MANUELLE:{pwm}\n")
+                self.ser.write(cmd.encode('utf-8'))
+                print(f"Config envoyée : {cmd.strip()}")
+                self.update_data()
+            except Exception as e:
+                messagebox.showerror("Erreur",
+                                    f"Impossible d'envoyer la config : {e}")
 
     def appliquer_config(self):
         self.applied = True
@@ -539,6 +606,7 @@ class InterfaceProto:
                         self.metric_t2.set(f"{t2:.1f} °C")
                         self.metric_t3.set(f"{t3:.1f} °C")
                         self.metric_err.set(f"{e:.1f} °C")
+                        self.metric_u.set(f"{u:.0f}")
 
                         # Axe X
                         xlim = max(current_time, 10) if current_time <= 100 \
@@ -638,10 +706,10 @@ class InterfaceProto:
     def timer(self):
 
         corridor_bas = (self.temperature_voulue
-                        - (self.temperature_voulue
+                        - abs(self.temperature_voulue
                            - self.temperature_initiale) * 0.05)
         corridor_haut = (self.temperature_voulue
-                         + (self.temperature_voulue
+                         + abs(self.temperature_voulue
                             - self.temperature_initiale) * 0.05)
 
         if corridor_bas <= self.t3est_data[-1] <= corridor_haut:
