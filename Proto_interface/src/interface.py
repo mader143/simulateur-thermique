@@ -395,33 +395,49 @@ class InterfaceProto:
         self.ax2b.set_ylim(-marge_u, marge_u)
 
     def appliquer_pwm(self):
-        pwm = self.pwm_entry.get()
-        try:
-            pwm = int(pwm)
-        except ValueError:
+        if self.running:
             messagebox.showerror(
-                "Valeur invalide",
-                f"« {pwm} » n'est pas un nombre valide pour la commande. Sélectionnez un nombre entre -255 et 255.")
-            return
-        if pwm < -255:
-            messagebox.showerror(
-                "PWM trop bas",
-                f"La commande ({pwm}) est trop basse. Entrez un nombre entre -255 et 255.")
-            return
-        if pwm > 255:
-            messagebox.showerror(
-                "PWM trop élevé",
-                f"La commande ({pwm}) est trop élevée. Entrez un nombre entre -255 et 255.")
-            return
-        
-        try:
-            cmd = (f"CONFIG_MANUELLE:{pwm}\n")
-            self.ser.write(cmd.encode('utf-8'))
-            print(f"Config envoyée : {cmd.strip()}")
-            self.update_data()
-        except Exception as e:
-            messagebox.showerror("Erreur",
-                                 f"Impossible d'envoyer la config : {e}")
+                "Arrêter le prototype avant d'appliquer le PWM")
+        else:
+            port_auto = self.trouver_port_arduino()
+            self.ser = serial.Serial(port_auto, 9600, timeout=1)
+            time.sleep(2)
+
+            self.running = True
+            self.start_time = time.time()
+            self.timer_start = None
+            self.timer_termine = False
+
+            self.status_label.config(
+                text="● En marche", bg="#EAF3DE", fg="#3B6D11")
+
+            pwm = self.pwm_entry.get()
+            try:
+                pwm = int(pwm)
+            except ValueError:
+                messagebox.showerror(
+                    "Valeur invalide",
+                    f"« {pwm} » n'est pas un nombre valide pour la commande. Sélectionnez un nombre entre -255 et 255.")
+                return
+            if pwm < -255:
+                messagebox.showerror(
+                    "PWM trop bas",
+                    f"La commande ({pwm}) est trop basse. Entrez un nombre entre -255 et 255.")
+                return
+            if pwm > 255:
+                messagebox.showerror(
+                    "PWM trop élevé",
+                    f"La commande ({pwm}) est trop élevée. Entrez un nombre entre -255 et 255.")
+                return
+            
+            try:
+                cmd = (f"CONFIG_MANUELLE:{pwm}\n")
+                self.ser.write(cmd.encode('utf-8'))
+                print(f"Config envoyée : {cmd.strip()}")
+                self.update_data()
+            except Exception as e:
+                messagebox.showerror("Erreur",
+                                    f"Impossible d'envoyer la config : {e}")
 
     def appliquer_config(self):
         self.applied = True
