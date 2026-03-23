@@ -31,9 +31,9 @@ class InterfaceProto:
         self.applied = False
 
         # pid réchauffement
-        self.kp_chaud = 10.849
-        self.ti_chaud = 271
-        self.td_chaud = 0
+        self.kp_chaud = 9.2
+        self.ti_chaud = 250
+        self.td_chaud = 35
 
         # pid refroidissement
         self.kp_froid = 4.45
@@ -185,9 +185,9 @@ class InterfaceProto:
             .grid(row=2, column=0, columnspan=2, sticky="w", pady=(0, 4))
 
         for r, (lbl, val, attr) in enumerate([
-            ("K  (a0) — gain proportionnel", str(self.kp_chaud), "a0_chaud_entry"),
-            ("Ti (a1) — temps intégral", str(self.ti_chaud), "a1_chaud_entry"),
-            ("Td (a2) — temps dérivé", str(self.td_chaud), "a2_chaud_entry"),
+            ("K — gain proportionnel", str(self.kp_chaud), "a0_chaud_entry"),
+            ("Ti — temps intégral", str(self.ti_chaud), "a1_chaud_entry"),
+            ("Td — temps dérivé", str(self.td_chaud), "a2_chaud_entry"),
         ]):
             tk.Label(inner, text=lbl, font=("Arial", 10), bg=CARD, fg=MUTED) \
                 .grid(row=3 + r, column=0, sticky="w", pady=3)
@@ -207,9 +207,9 @@ class InterfaceProto:
             .grid(row=7, column=0, columnspan=2, sticky="w", pady=(0, 4))
 
         for r, (lbl, val, attr) in enumerate([
-            ("K  (a0) — gain proportionnel", str(self.kp_froid), "a0_froid_entry"),
-            ("Ti (a1) — temps intégral", str(self.ti_froid), "a1_froid_entry"),
-            ("Td (a2) — temps dérivé", str(self.td_froid), "a2_froid_entry"),
+            ("K — gain proportionnel", str(self.kp_froid), "a0_froid_entry"),
+            ("Ti — temps intégral", str(self.ti_froid), "a1_froid_entry"),
+            ("Td — temps dérivé", str(self.td_froid), "a2_froid_entry"),
         ]):
             tk.Label(inner, text=lbl, font=("Arial", 10), bg=CARD, fg=MUTED) \
                 .grid(row=8 + r, column=0, sticky="w", pady=3)
