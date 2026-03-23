@@ -3,6 +3,7 @@
 // ===================== PWM =====================
 const int pwmPin_CHAUD = 5;
 const int pwmPin_FROID = 11;
+int pwm_manuel = 0;
 
 // ===================== PID DISCRET =====================
 float setpoint = 20;
@@ -84,6 +85,12 @@ float mesureTemperature(Thermistance t) {
   return TX - 273.15;
 }
 
+float mesureTemperature1(Thermistance t) {
+  float Vout = (5.0 / 1023.0) * analogRead(t.pin);
+  float TX = 9.1562*Vout + 7.9337;
+  return TX;
+}
+
 
 // =====================================================
 // ENVOI PWM CHAUD / FROID
@@ -113,7 +120,7 @@ void setup() {
 
   delay(2000);
 
-  T1_init = mesureTemperature(therm[0]);
+  T1_init = mesureTemperature1(therm[0]);
   T2_init = mesureTemperature(therm[1]);
   T3_init = mesureTemperature(therm[2]);
 
@@ -136,8 +143,16 @@ void loop() {
     String cmd = Serial.readStringUntil('\n');
     cmd.trim();
 
+    if (cmd.startsWith("CONFIG_MANUELLE:")){
+      String valeurs = cmd.substring(16);
+      pwm_manuel  = valeurs.substring(0).toInt();
+      Serial.print("ON ENVOIE CE PWM :");
+      Serial.println(pwm_manuel);
+    }
+
     if (cmd.startsWith("CONFIG:")) {
       String valeurs = cmd.substring(7);
+      pwm_manuel = 0;
       Serial.println(valeurs);
       int v1 = valeurs.indexOf(',');
       int v2 = valeurs.indexOf(',', v1 + 1);
@@ -152,14 +167,10 @@ void loop() {
       Serial.println(v5);
       Serial.println(v6);
 
-
       // Réinitialisation des valeurs stockées quand on applique une nouvelle consigne
       u_prev = 0.0;
       e[1] = 0.0;
       e[2] = 0.0;
-
-
-
 
       if (v1 > 0 && v2 > v1 + 1 && v3 > v2 + 1) {
         float new_sp = valeurs.substring(0, v1).toFloat();
@@ -200,50 +211,79 @@ void loop() {
 
   if (now - lastPID >= (unsigned long)(T_s * 1000)) {
     lastPID = now;
-
-    float T1 = mesureTemperature(therm[0]);
+    float T1 = mesureTemperature1(therm[0]);
     float T2 = mesureTemperature(therm[1]);
     float T3 = mesureTemperature(therm[2]);
-
-    float dT1 = T1 - T1_init;
-    float dT2 = T2 - T2_init;
-
-    float dT3_estimT1 = G1_b0 * dT1 + G1_b1 * u1_prev - G1_a1 * y1_prev;
-    float T3_estimT1  = T3_init + dT3_estimT1;
-    u1_prev = dT1;
-    y1_prev = dT3_estimT1;
-
-    float dT3_estimT2 = G2_b0 * dT2 + G2_b1 * u2_prev - G2_a1 * y2_prev;
-    float T3_estimT2  = T3_init + dT3_estimT2;
-    u2_prev = dT2;
-    y2_prev = dT3_estimT2;
-
-    float T3_moy = (T3_estimT1 + T3_estimT2) / 2.0;
-
-    float a0 =  K * (1.0 + T_s / Ti + Td / T_s);
-    float a1 =  -K * (1.0 + 2.0 * Td / T_s);
-    float a2 =  K * (Td / T_s);
-    Serial.println(a0);
-    Serial.println(a1);
-    Serial.println(a2);
-
-    e[0] = setpoint - T3_moy;
-
-
-
-    float u = u_prev + a0 * e[0] + a1 * e[1] + a2 * e[2];
-    float u_sat = constrain(u, U_MIN, U_MAX);
-
-
-    envoyerPWM(u_sat);
-
-
-    // On initialise les valeurs pour la prochaine itération
-    u_prev = u;
-    e[2] = e[1];
-    e[1] = e[0];
-
     double t_s = (now - tempsDebut) / 1000.0;
+    float T3_estimT1 = T3;
+    float T3_estimT2 = T3;
+    float T3_moy = T3;
+    float u_sat = 0;
+
+    if (pwm_manuel != 0){
+      envoyerPWM(pwm_manuel);
+      Serial.println("ON EST DANS LA BOUCLE DU PWM MANUEL");
+      Serial.println(pwm_manuel);
+
+
+      if (modeCSV && t_s < DUREE_ENREGISTREMENT) {
+        Serial.print(t_s, 3);
+        Serial.print(","); Serial.print(T1, 2);
+        Serial.print(","); Serial.print(T2, 2);
+        Serial.print(","); Serial.print(T3, 2);
+        Serial.print(","); Serial.print(T3, 2);
+        Serial.print(","); Serial.print(T3, 2);
+        Serial.print(","); Serial.print(T3, 2);
+        Serial.print(","); Serial.print(0, 4);
+        Serial.print(","); Serial.println(pwm_manuel);
+
+
+      } else if (modeCSV) {
+        Serial.println("FIN");
+        modeCSV = false;
+      }
+    }
+    else{
+
+      float dT1 = T1 - T1_init;
+      float dT2 = T2 - T2_init;
+
+      float dT3_estimT1 = G1_b0 * dT1 + G1_b1 * u1_prev - G1_a1 * y1_prev;
+      float T3_estimT1  = T3_init + dT3_estimT1;
+      u1_prev = dT1;
+      y1_prev = dT3_estimT1;
+
+      float dT3_estimT2 = G2_b0 * dT2 + G2_b1 * u2_prev - G2_a1 * y2_prev;
+      float T3_estimT2  = T3_init + dT3_estimT2;
+      u2_prev = dT2;
+      y2_prev = dT3_estimT2;
+
+      float T3_moy = (T3_estimT1 + T3_estimT2) / 2.0;
+
+      float a0 =  K * (1.0 + T_s / Ti + Td / T_s);
+      float a1 =  -K * (1.0 + 2.0 * Td / T_s);
+      float a2 =  K * (Td / T_s);
+      Serial.println(a0);
+      Serial.println(a1);
+      Serial.println(a2);
+
+      e[0] = setpoint - T3_moy;
+
+
+
+      float u = u_prev + a0 * e[0] + a1 * e[1] + a2 * e[2];
+      u_sat = constrain(u, U_MIN, U_MAX);
+
+
+      envoyerPWM(u_sat);
+
+
+      // On initialise les valeurs pour la prochaine itération
+      u_prev = u;
+      e[2] = e[1];
+      e[1] = e[0];
+
+
 
     if (modeCSV && t_s < DUREE_ENREGISTREMENT) {
       Serial.print(t_s, 3);
@@ -259,6 +299,7 @@ void loop() {
     } else if (modeCSV) {
       Serial.println("FIN");
       modeCSV = false;
+      }
     }
   }
 }
