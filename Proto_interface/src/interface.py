@@ -247,13 +247,16 @@ class InterfaceProto:
             font=("Arial", 8), bg=CARD, fg=MUTED)
         self.label_timer.pack(pady=(0, 4))
 
-        # Entry PWM
-        tk.Frame(self.timer_frame, bg=BORDER, height=1) \
-            .grid(row=1, column=0, columnspan=2, sticky="ew", pady=(2, 6))
-        tk.Label(self.timer_frame, text="PWM",
-                 font=("Arial", 10, "bold"), bg=CARD, fg=WINE) \
-            .grid(row=2, column=0, columnspan=2, sticky="w", pady=(0, 4))
-        self.pwm_entry = tk.Entry(self.timer_frame, width=7, font=("Courier", 11),
+        # Carte mode manuel
+        section_title(left_col, "Mode manuel - Entrez un PWM")
+        self.pwm_frame = tk.Frame(left_col, bg=CARD, highlightthickness=1,
+                                   highlightbackground=BORDER)
+        self.pwm_frame.pack(fill="x", pady=(0, 4))
+
+        pwm_row = tk.Frame(self.pwm_frame, bg=CARD)
+        pwm_row.pack(fill="x", padx=8, pady=4)
+        
+        self.pwm_entry = tk.Entry(pwm_row, width=7, font=("Courier", 10),
                          bg=SURFACE, fg=TEXT, relief="flat",
                          highlightthickness=1, highlightbackground=BORDER,
                          justify="right")
