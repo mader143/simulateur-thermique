@@ -238,13 +238,31 @@ class InterfaceProto:
                                     highlightbackground=BORDER)
         self.timer_frame.pack(fill="x")
 
-        tk.Label(self.timer_frame, text="\nSignal de stabilité\n",
+        tk.Label(self.timer_frame, text="Signal de stabilité",
                  font=("Arial", 11, "bold"), bg=CARD, fg=TEXT) \
             .pack(pady=(14, 2))
+        
         self.label_timer = tk.Label(
-            self.timer_frame, text="En attente d'un signal\n   \n",
+            self.timer_frame, text="En attente d'un signal",
             font=("Arial", 10), bg=CARD, fg=MUTED)
         self.label_timer.pack()
+
+        # Entry PWM
+        tk.Frame(self.timer_frame, bg=BORDER, height=1) \
+            .grid(row=1, column=0, columnspan=2, sticky="ew", pady=(2, 6))
+        tk.Label(self.timer_frame, text="PWM",
+                 font=("Arial", 10, "bold"), bg=CARD, fg=WINE) \
+            .grid(row=2, column=0, columnspan=2, sticky="w", pady=(0, 4))
+        self.pwm_entry = tk.Entry(self.timer_frame, width=7, font=("Courier", 11),
+                         bg=SURFACE, fg=TEXT, relief="flat",
+                         highlightthickness=1, highlightbackground=BORDER,
+                         justify="right")
+        tk.Button(self.timer_frame, text="Appliquer PWM",
+            command=self.appliquer_pwm,
+            font=("Arial", 11), bg=WINE, fg=CARD,
+            relief="flat", cursor="hand2", pady=7,
+            activebackground="#7A1A3D", activeforeground=CARD
+        ).grid(row=12, column=0, columnspan=2, sticky="ew", pady=(0, 2))
 
 
         # ── Graphiques ───────────────────────────────────────
@@ -371,6 +389,35 @@ class InterfaceProto:
 
         self.ax2.set_ylim(-marge_e, marge_e)
         self.ax2b.set_ylim(-marge_u, marge_u)
+
+    def appliquer_pwm(self):
+        pwm = self.pwm_entry.get()
+        try:
+            pwm = int(pwm)
+        except ValueError:
+            messagebox.showerror(
+                "Valeur invalide",
+                f"« {pwm} » n'est pas un nombre valide pour la commande. Sélectionnez un nombre entre -255 et 255.")
+            return
+        if pwm < -255:
+            messagebox.showerror(
+                "PWM trop bas",
+                f"La commande ({pwm}) est trop basse. Entrez un nombre entre -255 et 255.")
+            return
+        if pwm > 255:
+            messagebox.showerror(
+                "PWM trop élevé",
+                f"La commande ({pwm}) est trop élevée. Entrez un nombre entre -255 et 255.")
+            return
+        
+        try:
+            cmd = (f"CONFIG_MANUELLE:{pwm}")
+            self.ser.write(cmd.encode('utf-8'))
+            print(f"Config envoyée : {cmd.strip()}")
+            self.update_data()
+        except Exception as e:
+            messagebox.showerror("Erreur",
+                                 f"Impossible d'envoyer la config : {e}")
 
     def appliquer_config(self):
         self.applied = True
