@@ -145,13 +145,13 @@ void loop() {
 
     if (cmd.startsWith("CONFIG_MANUELLE:")){
       String valeurs = cmd.substring(17);
-      pwm_manuel  = stoi(valeurs.substring(0));
+      pwm_manuel  = valeurs.substring(0).toInt();
       Serial.println(pwm_manuel);
     }
 
     if (cmd.startsWith("CONFIG:")) {
       String valeurs = cmd.substring(7);
-      int pwm_manuel = 0;
+      pwm_manuel = 0;
       Serial.println(valeurs);
       int v1 = valeurs.indexOf(',');
       int v2 = valeurs.indexOf(',', v1 + 1);
@@ -211,7 +211,7 @@ void loop() {
   if (now - lastPID >= (unsigned long)(T_s * 1000)) {
     lastPID = now;
 
-    if pwm_manuel != 0{
+    if (pwm_manuel != 0){
       envoyerPWM(pwm_manuel);
       float T1 = mesureTemperature1(therm[0]);
       float T2 = mesureTemperature(therm[1]);
