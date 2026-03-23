@@ -396,8 +396,9 @@ class InterfaceProto:
 
     def appliquer_pwm(self):
         if self.running:
-            messagebox.showerror(
+            messagebox.showerror("Erreur",
                 "Arrêter le prototype avant d'appliquer le PWM")
+            return
         else:
             port_auto = self.trouver_port_arduino()
             self.ser = serial.Serial(port_auto, 9600, timeout=1)
