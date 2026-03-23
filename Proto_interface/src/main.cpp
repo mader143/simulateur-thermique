@@ -85,6 +85,12 @@ float mesureTemperature(Thermistance t) {
   return TX - 273.15;
 }
 
+float mesureTemperature1(Thermistance t) {
+  float Vout = (5.0 / 1023.0) * analogRead(t.pin);
+  float TX = 9.1562*Vout + 7.9337;
+  return TX;
+}
+
 
 // =====================================================
 // ENVOI PWM CHAUD / FROID
@@ -114,7 +120,7 @@ void setup() {
 
   delay(2000);
 
-  T1_init = mesureTemperature(therm[0]);
+  T1_init = mesureTemperature1(therm[0]);
   T2_init = mesureTemperature(therm[1]);
   T3_init = mesureTemperature(therm[2]);
 
@@ -207,7 +213,7 @@ void loop() {
 
     if pwm_manuel != 0{
       envoyerPWM(pwm_manuel);
-      float T1 = mesureTemperature(therm[0]);
+      float T1 = mesureTemperature1(therm[0]);
       float T2 = mesureTemperature(therm[1]);
       float T3 = mesureTemperature(therm[2]);
       double t_s = (now - tempsDebut) / 1000.0;
@@ -230,7 +236,7 @@ void loop() {
     }
     else{
 
-      float T1 = mesureTemperature(therm[0]);
+      float T1 = mesureTemperature1(therm[0]);
       float T2 = mesureTemperature(therm[1]);
       float T3 = mesureTemperature(therm[2]);
 
