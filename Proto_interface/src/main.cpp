@@ -138,8 +138,9 @@ void loop() {
     cmd.trim();
 
     if (cmd.startsWith("CONFIG_MANUELLE:")){
-      String valeurs = cmd.substring(16);
+      String valeurs = cmd.substring(17);
       pwm_manuel  = stoi(valeurs.substring(0));
+      Serial.println(pwm_manuel);
     }
 
     if (cmd.startsWith("CONFIG:")) {
@@ -159,14 +160,10 @@ void loop() {
       Serial.println(v5);
       Serial.println(v6);
 
-
       // Réinitialisation des valeurs stockées quand on applique une nouvelle consigne
       u_prev = 0.0;
       e[1] = 0.0;
       e[2] = 0.0;
-
-
-
 
       if (v1 > 0 && v2 > v1 + 1 && v3 > v2 + 1) {
         float new_sp = valeurs.substring(0, v1).toFloat();
