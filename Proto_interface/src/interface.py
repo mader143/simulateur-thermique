@@ -36,9 +36,9 @@ class InterfaceProto:
         self.td_chaud = 35
 
         # pid refroidissement
-        self.kp_froid = 4.45
-        self.ti_froid = 88.64
-        self.td_froid = 13.04
+        self.kp_froid = 10.5
+        self.ti_froid = 230
+        self.td_froid = 40
 
         self.times = []
         self.t1_data = []
@@ -400,6 +400,7 @@ class InterfaceProto:
                 "Arrêter le prototype avant d'appliquer le PWM")
             return
         else:
+            self.initialiser_graphiques()
             port_auto = self.trouver_port_arduino()
             self.ser = serial.Serial(port_auto, 9600, timeout=1)
             time.sleep(2)
@@ -432,6 +433,7 @@ class InterfaceProto:
                 return
             
             try:
+                print(f'PWM envoyé :{pwm}')
                 cmd = (f"CONFIG_MANUELLE:{pwm}\n")
                 self.ser.write(cmd.encode('utf-8'))
                 print(f"Config envoyée : {cmd.strip()}")

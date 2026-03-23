@@ -144,8 +144,9 @@ void loop() {
     cmd.trim();
 
     if (cmd.startsWith("CONFIG_MANUELLE:")){
-      String valeurs = cmd.substring(17);
+      String valeurs = cmd.substring(16);
       pwm_manuel  = valeurs.substring(0).toInt();
+      Serial.print("ON ENVOIE CE PWM :");
       Serial.println(pwm_manuel);
     }
 
@@ -210,13 +211,20 @@ void loop() {
 
   if (now - lastPID >= (unsigned long)(T_s * 1000)) {
     lastPID = now;
+    float T1 = mesureTemperature1(therm[0]);
+    float T2 = mesureTemperature(therm[1]);
+    float T3 = mesureTemperature(therm[2]);
+    double t_s = (now - tempsDebut) / 1000.0;
+    float T3_estimT1 = T3;
+    float T3_estimT2 = T3;
+    float T3_moy = T3;
+    float u_sat = 0;
 
     if (pwm_manuel != 0){
       envoyerPWM(pwm_manuel);
-      float T1 = mesureTemperature1(therm[0]);
-      float T2 = mesureTemperature(therm[1]);
-      float T3 = mesureTemperature(therm[2]);
-      double t_s = (now - tempsDebut) / 1000.0;
+      Serial.println("ON EST DANS LA BOUCLE DU PWM MANUEL");
+      Serial.println(pwm_manuel);
+
 
       if (modeCSV && t_s < DUREE_ENREGISTREMENT) {
         Serial.print(t_s, 3);
@@ -227,7 +235,8 @@ void loop() {
         Serial.print(","); Serial.print(T3, 2);
         Serial.print(","); Serial.print(T3, 2);
         Serial.print(","); Serial.print(0, 4);
-        Serial.print(","); Serial.println(pwm_manuel, 2);
+        Serial.print(","); Serial.println(pwm_manuel);
+
 
       } else if (modeCSV) {
         Serial.println("FIN");
@@ -235,10 +244,6 @@ void loop() {
       }
     }
     else{
-
-      float T1 = mesureTemperature1(therm[0]);
-      float T2 = mesureTemperature(therm[1]);
-      float T3 = mesureTemperature(therm[2]);
 
       float dT1 = T1 - T1_init;
       float dT2 = T2 - T2_init;
@@ -267,7 +272,7 @@ void loop() {
 
 
       float u = u_prev + a0 * e[0] + a1 * e[1] + a2 * e[2];
-      float u_sat = constrain(u, U_MIN, U_MAX);
+      u_sat = constrain(u, U_MIN, U_MAX);
 
 
       envoyerPWM(u_sat);
@@ -276,9 +281,9 @@ void loop() {
       // On initialise les valeurs pour la prochaine itération
       u_prev = u;
       e[2] = e[1];
-      e[1] = e[0];}
+      e[1] = e[0];
 
-    double t_s = (now - tempsDebut) / 1000.0;
+
 
     if (modeCSV && t_s < DUREE_ENREGISTREMENT) {
       Serial.print(t_s, 3);
@@ -294,6 +299,7 @@ void loop() {
     } else if (modeCSV) {
       Serial.println("FIN");
       modeCSV = false;
+      }
     }
   }
 }
