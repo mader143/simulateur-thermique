@@ -114,7 +114,7 @@ class InterfaceProto:
         # ── Métriques temps réel ──────────────────────────────────────────────
         metrics_row = tk.Frame(outer, bg=BG)
         metrics_row.pack(fill="x", pady=(0, 6))
-        for i in range(4):
+        for i in range(5):
             metrics_row.grid_columnconfigure(i, weight=1, uniform="metric")
 
         metric_defs = [
@@ -122,6 +122,7 @@ class InterfaceProto:
             ("T2 — Thermistance 2", "metric_t2"),
             ("T3 — Estimée", "metric_t3"),
             ("Erreur courante", "metric_err"),
+            ("Commande (PWM)", "metric_u"),
         ]
         for i, (lbl, attr) in enumerate(metric_defs):
             card = tk.Frame(metrics_row, bg=CARD, highlightthickness=1,
@@ -129,12 +130,11 @@ class InterfaceProto:
             card.grid(row=0, column=i, padx=4, sticky="nsew")
             tk.Label(card, text=lbl, font=("Arial", 10), bg=CARD,
                      fg=MUTED).pack(anchor="w", padx=10, pady=(6, 0))
-            var = tk.StringVar(value="— °C")
+            var = tk.StringVar(value="— °C" if "metric_t" in attr or attr == "metric_err" else "—")
             tk.Label(card, textvariable=var,
                      font=("Courier", 16, "bold"), bg=CARD,
                      fg=TEXT).pack(anchor="w", padx=10, pady=(1, 6))
             setattr(self, attr, var)
-
         # ── Corps ─────────────────────────────────────────────────────────────
         body = tk.Frame(outer, bg=BG)
         body.pack(fill="both", expand=True)
@@ -606,6 +606,7 @@ class InterfaceProto:
                         self.metric_t2.set(f"{t2:.1f} °C")
                         self.metric_t3.set(f"{t3:.1f} °C")
                         self.metric_err.set(f"{e:.1f} °C")
+                        self.metric_u.set(f"{u:.0f}")
 
                         # Axe X
                         xlim = max(current_time, 10) if current_time <= 100 \
