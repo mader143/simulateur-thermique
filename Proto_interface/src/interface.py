@@ -239,31 +239,35 @@ class InterfaceProto:
         self.timer_frame.pack(fill="x")
 
         tk.Label(self.timer_frame, text="Signal de stabilité",
-                 font=("Arial", 11, "bold"), bg=CARD, fg=TEXT) \
-            .pack(pady=(14, 2))
+                 font=("Arial", 10, "bold"), bg=CARD, fg=TEXT) \
+            .pack(pady=(4, 1))
         
         self.label_timer = tk.Label(
             self.timer_frame, text="En attente d'un signal",
-            font=("Arial", 10), bg=CARD, fg=MUTED)
-        self.label_timer.pack()
+            font=("Arial", 8), bg=CARD, fg=MUTED)
+        self.label_timer.pack(pady=(0, 4))
 
-        # Entry PWM
-        tk.Frame(self.timer_frame, bg=BORDER, height=1) \
-            .grid(row=1, column=0, columnspan=2, sticky="ew", pady=(2, 6))
-        tk.Label(self.timer_frame, text="PWM",
-                 font=("Arial", 10, "bold"), bg=CARD, fg=WINE) \
-            .grid(row=2, column=0, columnspan=2, sticky="w", pady=(0, 4))
-        self.pwm_entry = tk.Entry(self.timer_frame, width=7, font=("Courier", 11),
+        # Carte mode manuel
+        section_title(left_col, "Mode manuel - Entrez un PWM")
+        self.pwm_frame = tk.Frame(left_col, bg=CARD, highlightthickness=1,
+                                   highlightbackground=BORDER)
+        self.pwm_frame.pack(fill="x", pady=(0, 4))
+
+        pwm_row = tk.Frame(self.pwm_frame, bg=CARD)
+        pwm_row.pack(fill="x", padx=8, pady=4)
+        
+        self.pwm_entry = tk.Entry(pwm_row, width=7, font=("Courier", 10),
                          bg=SURFACE, fg=TEXT, relief="flat",
                          highlightthickness=1, highlightbackground=BORDER,
                          justify="right")
-        tk.Button(self.timer_frame, text="Appliquer PWM",
+        self.pwm_entry.pack(side="left", padx=(0, 4))
+        
+        tk.Button(pwm_row, text="Appliquer le PWM",
             command=self.appliquer_pwm,
-            font=("Arial", 11), bg=WINE, fg=CARD,
-            relief="flat", cursor="hand2", pady=7,
+            font=("Arial", 9), bg=WINE, fg=CARD,
+            relief="flat", cursor="hand2", pady=4,
             activebackground="#7A1A3D", activeforeground=CARD
-        ).grid(row=12, column=0, columnspan=2, sticky="ew", pady=(0, 2))
-
+        ).pack(side="left", fill="x", expand=True)
 
         # ── Graphiques ───────────────────────────────────────
         charts_card = tk.Frame(body, bg=CARD, highlightthickness=1,
@@ -685,10 +689,10 @@ class InterfaceProto:
     def timer(self):
 
         corridor_bas = (self.temperature_voulue
-                        - (self.temperature_voulue
+                        - abs(self.temperature_voulue
                            - self.temperature_initiale) * 0.05)
         corridor_haut = (self.temperature_voulue
-                         + (self.temperature_voulue
+                         + abs(self.temperature_voulue
                             - self.temperature_initiale) * 0.05)
 
         if corridor_bas <= self.t3est_data[-1] <= corridor_haut:
