@@ -238,13 +238,10 @@ class InterfaceProto:
                                     highlightbackground=BORDER)
         self.timer_frame.pack(fill="x")
 
-        tk.Label(self.timer_frame, text="Signal de stabilité",
-                 font=("Arial", 10, "bold"), bg=CARD, fg=TEXT) \
-            .pack(pady=(4, 1))
         
         self.label_timer = tk.Label(
             self.timer_frame, text="En attente d'un signal",
-            font=("Arial", 8), bg=CARD, fg=MUTED)
+            font=("Arial", 13), bg=CARD, fg=MUTED)
         self.label_timer.pack(pady=(0, 4))
 
         # Carte mode manuel

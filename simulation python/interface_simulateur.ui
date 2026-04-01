@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1227</width>
+    <width>1242</width>
     <height>622</height>
    </rect>
   </property>
@@ -67,6 +67,12 @@ font: &quot;Times New Roman&quot;;</string>
              </property>
              <property name="suffix">
               <string> W</string>
+             </property>
+             <property name="minimum">
+              <double>-5.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>5.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -674,7 +680,7 @@ background-color: rgb(254, 234, 255);</string>
            </sizepolicy>
           </property>
           <property name="text">
-           <string> </string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -689,7 +695,7 @@ background-color: rgb(254, 234, 255);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1227</width>
+     <width>1242</width>
      <height>22</height>
     </rect>
    </property>
