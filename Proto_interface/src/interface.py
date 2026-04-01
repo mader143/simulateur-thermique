@@ -419,7 +419,7 @@ class InterfaceProto:
             except ValueError:
                 messagebox.showerror(
                     "Valeur invalide",
-                    f"« {pwm} » n'est pas un nombre valide pour la commande. Sélectionnez un nombre entre -255 et 255.")
+                    f"« {pwm} » n'est pas un nombre valide pour la commande. Sélectionnez un nombre entier entre -255 et 255.")
                 return
             if pwm < -255:
                 messagebox.showerror(
@@ -545,6 +545,8 @@ class InterfaceProto:
         self.t3est_data = []
         self.u_data = []
         self.e_data = []
+        self.t3reel_data = []
+        self.consigne = []
 
         self._setup_axes()
         self.fig.subplots_adjust(
@@ -671,7 +673,7 @@ class InterfaceProto:
             "Thermistance 1 - T1 (°C)": self.t1_data,
             "Thermistance 2 - T2 (°C)": self.t2_data,
             "Thermistance 3 - T3 (°C)": self.t3reel_data,
-            "T4'": '' * len(self.times),
+            "T4'": [''] * len(self.times),
             "Thermistance 3 estimée - T3_moy (°C)": self.t3est_data,    
             "Commande (PWM)": self.u_data,
        
