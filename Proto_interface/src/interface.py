@@ -544,6 +544,9 @@ class InterfaceProto:
         self.e_data = []
         self.t3reel_data = []
         self.consigne = []
+        self.R1 = []
+        self.R2 = []
+        self.R3 = []
 
         self._setup_axes()
         self.fig.subplots_adjust(
@@ -560,8 +563,7 @@ class InterfaceProto:
             text="● Arrêté", bg="#FCEBEB", fg="#A32D2D")
 
         try:
-            cmd = (f"CONFIG:{self.temperature_ambiante},"
-                   f"{self.kp_chaud},{self.ti_chaud},{self.td_chaud}\n")
+            cmd = (f"CONFIG_MANUELLE:{0}\n")
             self.ser.write(cmd.encode('utf-8'))
         except Exception as e:
             messagebox.showerror("Erreur", f"Vérifiez le port USB : {e}")
@@ -578,7 +580,8 @@ class InterfaceProto:
 
                 if line and not line.startswith("temps") and line != "FIN":
                     values = line.split(',')
-                    if len(values) == 9:
+                    print(f'len : {len(values)}')
+                    if len(values) == 12:
 
                         t1 = float(values[1])
                         t2 = float(values[2])
@@ -586,6 +589,9 @@ class InterfaceProto:
                         t3_reel = float(values[3])
                         e = float(values[7])
                         u = float(values[8])
+                        r1 = float(values[9])
+                        r2 = float(values[10])
+                        r3 = float(values[11])
                         current_time = time.time() - self.start_time
 
                         self.times.append(current_time)
@@ -596,6 +602,9 @@ class InterfaceProto:
                         self.e_data.append(e)
                         self.t3reel_data.append(t3_reel)
                         self.consigne.append(self.temperature_voulue)
+                        self.R1.append(r1)
+                        self.R2.append(r2)
+                        self.R3.append(r3)
 
                         self.line.set_data(self.times, self.t1_data)
                         self.line2.set_data(self.times, self.t2_data)
@@ -673,8 +682,9 @@ class InterfaceProto:
             "T4'": [''] * len(self.times),
             "Thermistance 3 estimée - T3_moy (°C)": self.t3est_data,    
             "Commande (PWM)": self.u_data,
-       
-        })
+            "R1": self.R1,
+            "R": self.R2,
+            "R3":self.R3 })
         df.to_csv(chemin, index=False)
         messagebox.showinfo("Succès",
                             f"Données enregistrées dans :\n{chemin}")
