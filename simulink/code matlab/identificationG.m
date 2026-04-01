@@ -2,86 +2,39 @@ opt = tfestOptions;
 opt.InitialCondition = "zero";
 
 % Extraire les données
-t = T1{:,1};  % temps
-y1 = T1{:,2};  % température
+t = out.tout;
+y1 = out.sortie;              % le signal de sortie (adapte le nom si différent)
 y_id1 = y1 - y1(2);  % température relative à T0
-y2 = T1{:,3};
-y_id2 = y2 - y2(2);  
-y3 = T1{:,4}; 
-y_id3 = y3 - y3(2); 
+
 
 
 % Définir l'entrée réelle : échelon de 7.8%
-u = 10 * ones(size(t));  % échelon de 7.8%
+u = 20 * ones(size(t));  % échelon de 7.8%
 
 
 % IDENTIFICATION UT1
 data_id1 = iddata(y_id1, u, 0.5);
 
-np = 1;
+np = 2;
 
-G1 = tfest(data_id1, np, opt); 
+G1 = tfest(data_id1, np, 0, opt); 
 
 disp('G1:');
-tf(G1)
+tf(G1);
 
-% IDENTIFICATION T1T2
-
-data_id2 = iddata(y_id2, y_id1, 0.5);
-
-np = 1;
-
-G2 = tfest(data_id2, np, opt); 
-
-disp('G2:');
-tf(G2)
+step(G1)
 
 
-% IDENTIFICATION T1T3
-data_id3_1 = iddata(y_id3, y_id1, 0.5);
-
-np = 1;
-
-G3_1 = tfest(data_id3_1, np, opt); 
-
-disp('G3_1:');
-tf(G3_1)
 
 
-% IDENTIFICATION T2T3
-data_id3_2 = iddata(y_id3, y_id2, 0.5);
+% Trouver la longueur minimale
+n = min(length(t), length(y));
 
-np = 1;
+% Tronquer les deux au même nombre de lignes
+t_cut = t(1:n);
+y_cut = y(1:n, :);   % garde les 2 colonnes
 
-G3_2 = tfest(data_id3_2, np, opt); 
-
-disp('G3_2:');
-tf(G3_2)
-
-% IDENTIFICATION uT3
-data_id3_u = iddata(y_id3, u, 0.5);
-
-np = 1;
-
-G3_u = tfest(data_id3_u, np, opt); 
-
-disp('G3_u:');
-tf(G3_u)
-
-
-% DISPLAY CONTINUOUS
-
-Gz1 = c2d(G3_1, 0.5, 'tustin');
-disp('Gz1:');
-tf(Gz1)
-
-Gz2 = c2d(G3_2, 0.5, 'tustin');
-disp('Gz2:');
-tf(Gz2)
-
-
-%figure;
-%plot(t, y_id1);hold on
-%plot(t, y_id2);hold on
-%plot(t, y_id3);
-%title("Température des thermistances par rapport au PO");
+% Exporter avec les 2 signaux (consigne + mesure)
+T = table(t_cut, y_cut(:,1), y_cut(:,2), ...
+    'VariableNames', {'time', 'signal1', 'signal2'});
+writetable(T, 'simulation5.csv');
