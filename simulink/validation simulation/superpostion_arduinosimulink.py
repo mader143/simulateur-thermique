@@ -6,8 +6,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # ============ CONFIGURATION ============
-CHEMIN_CSV_ARDUINO   = r'C:\Users\sabri\OneDrive\Desktop\uni\design\simulateur-thermique\asservissement\pid_avec_arduino\pid_avec_nouvelle_ident\consigne28.csv'
-CHEMIN_CSV_SIMULINK  = r'C:\Users\sabri\OneDrive\Desktop\uni\design\simulateur-thermique\simulink\simulation5.csv'
+CHEMIN_CSV_ARDUINO   = r'C:\Users\sabri\OneDrive\Desktop\uni\design\simulateur-thermique\simulink\validation simulation\2330.csv'
+CHEMIN2_CSV_ARDUINO   = r'C:\Users\sabri\OneDrive\Desktop\uni\design\simulateur-thermique\simulink\validation simulation\temps2330.csv'
+CHEMIN_CSV_SIMULINK  = r'C:\Users\sabri\OneDrive\Desktop\uni\design\simulateur-thermique\simulink\validation simulation\donnees2330.csv'
 
 SETPOINT  = 28.0
 T_init    = 23.5
