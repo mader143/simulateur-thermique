@@ -257,7 +257,15 @@ class SimControl(QMainWindow):
 
             self.graphique.thermistance.cla()
             self.graphique.plaque.cla()
+            self.T_plaque_array = []
+            self.simulation.init_simulation()
 
+            dy = self.simulation.dx
+            nx, ny = self.simulation.nx, self.simulation.ny
+            x = np.linspace(0, self.simulation.longueur, nx)
+            y = np.linspace(0, self.simulation.largeur, ny)
+            self.X, self.Y = np.meshgrid(x, y, indexing='ij')
+        
             self.simulation_runner = QTimer()
             self.simulation.init_simulation()
             self.simulation_runner.timeout.connect(self.step_simulation)
@@ -319,8 +327,6 @@ class SimControl(QMainWindow):
         self.graphique.flush_events()
 
 
-        print('plotted')
-
     def update_plaque(self, obj, T, sim_time):
         self.graphique.plaque.cla()
         self.graphique.plaque.set_xlabel('x [m]')
@@ -342,8 +348,6 @@ class SimControl(QMainWindow):
             self.c_bar = self.graphique.figure.colorbar(plaque_data, ax=self.graphique.plaque)
         self.graphique.draw()
         self.graphique.flush_events()
-
-        print('plaque plotted')
 
     def update_status(self, obj, progress):
         self.label_status.setText(f'Statut : {round(progress)} %')
