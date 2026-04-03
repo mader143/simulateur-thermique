@@ -1,6 +1,6 @@
 % Extraire le temps et le signal depuis l'objet SimulationOutput
 t = out.tout;                % le temps
-y = out.test;              % le signal de sortie (adapte le nom si différent)
+y = out.Fichier;              % le signal de sortie (adapte le nom si différent)
 
 
 % Trouver la longueur minimale

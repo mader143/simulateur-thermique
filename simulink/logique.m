@@ -1,22 +1,22 @@
 classdef logique
-
     methods(Static)
-
-        % Following properties of 'maskInitContext' are available to use:
-        %  - BlockHandle 
-        %  - MaskObject 
-        %  - MaskWorkspace: Use get/set APIs to work with mask workspace.
-    function MaskInitialization(maskInitContext)
-        blk = getfullname(maskInitContext.BlockHandle);
-        if strcmp(get_param(blk, 'Enregistrement'), 'on')
-            set_param([blk '/Enregistrement'], 'Value', '1');
-        else
-            set_param([blk '/Enregistrement'], 'Value', '0');
+        function MaskInitialization(maskInitContext)
+            blk = getfullname(maskInitContext.BlockHandle);
+            ws = maskInitContext.MaskWorkspace;
+            enreg = ws.get('Enregistrement');
+            temps = ws.get('Temps');
+            
+            set_param('simulink_1avrilhaha', 'StopTime', num2str(temps));
+            
+            if strcmp(enreg, 'on')
+                ws.set('val_enreg', 1);
+            else
+                ws.set('val_enreg', 0);
+            end
         end
-    end
-        % Use the code browser on the left to add the callbacks.
 
-
-        
+        function Control3(~)
+            sim('simulink_1avrilhaha')
+        end
     end
 end
