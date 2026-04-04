@@ -11,7 +11,7 @@ import numba
 def compute_timestep(T, T_init, alpha_dt_dx2, alpha_dt_dy2, 
                      coeff_conv, coeff_face, P_cell_dt_vol,
                      x0, rx, y0, ry, nx, ny, act_x, act_y, 
-                    perturb_locx, perturb_locy, perturb_W_dt_vol, px, py):
+                    perturb_locx, perturb_locy, perturb_W_dt_vol, px, py, perturb_applied):
     """
     Optimized computation of one timestep using Numba JIT compilation.
     CORRECTED: Proper boundary condition handling without double-counting.
@@ -97,11 +97,12 @@ def compute_timestep(T, T_init, alpha_dt_dx2, alpha_dt_dy2,
             T_new[i, j] += P_cell_dt_vol
 
     # ============================================
-    # STEP 5: Ajout perturbation
+    # STEP 5: Ajout perturbation, si on a dépassé le moment d'application
     # ============================================
-    for i in range(max(0, perturb_locx-px), min(nx, perturb_locx+px+1)):
-        for j in range(max(0, perturb_locy-py), min(ny, perturb_locy+py+1)):
-            T_new[i, j] += perturb_W_dt_vol
+    if perturb_applied:
+        for i in range(max(0, perturb_locx-px), min(nx, perturb_locx+px+1)):
+            for j in range(max(0, perturb_locy-py), min(ny, perturb_locy+py+1)):
+                T_new[i, j] += perturb_W_dt_vol
     
 
     return T_new
@@ -126,6 +127,7 @@ cp = params["cp"]
 h_conv = params["h_conv"]
 dx = params["dx"]
 Pin = params["Pin"]
+t_application = params["t_app"]
 
 # Calculate derived parameters
 alpha = k / (rho * cp)
@@ -176,6 +178,7 @@ py = int((perturb_size/2) / dy)
 p_cells = (2*px + 1) * (2*py + 1)
 perturb_cell = perturb_W / p_cells
 perturb_W_dt_vol = (perturb_cell * dt)/(rho * cp * cell_volume)
+perturb_applied = False
 
 # Storage for thermistor data
 temps = []
@@ -194,13 +197,17 @@ start_time = time.time()
 
 # Main simulation loop - NO PLOTTING
 for t in range(nt):
+
     t_sim = t * dt
+    print(perturb_applied)
+    if t_sim >= t_application:
+        perturb_applied = True
     
     # OPTIMIZED: Single function call (Numba-compiled)
     T = compute_timestep(T, T_init, alpha_dt_dx2, alpha_dt_dy2,
                          coeff_conv, coeff_face, P_cell_dt_vol,
                          x0, rx, y0, ry, nx, ny, act_x, act_y,
-                         perturb_locx, perturb_locy, perturb_W_dt_vol, px, py)
+                         perturb_locx, perturb_locy, perturb_W_dt_vol, px, py, perturb_applied)
     
     # Diagnostics (every 5000 steps to not slow down)
     if t % 5000 == 0 and t > 0:

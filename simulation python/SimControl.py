@@ -242,7 +242,8 @@ class SimControl(QMainWindow):
                   "cp" : self.simulation.cp, "h_conv": self.simulation.h_conv, "dx" : self.simulation.dx,
                   "Pin" : self.simulation.Pin, "perturb_W": self.simulation.perturb_W, 
                   "perturb_x": self.simulation.perturb_x,
-                  "perturb_y": self.simulation.perturb_y}
+                  "perturb_y": self.simulation.perturb_y,
+                  "t_perturb": self.simulation.t_perturb}
 
         with open(json_path, "w") as file:
             json.dump(params, file)
@@ -390,6 +391,7 @@ class SimControl(QMainWindow):
         self.simulation.dx = params["dx"]
         self.simulation.Pin = params["Pin"]
         self.simulation.perturb_W = params["perturb_W"]
+        self.simulation.t_perturb = params["t_perturb"]
 
         dy = self.simulation.dx
         nx, ny = int(self.simulation.longueur / self.simulation.dx), int(self.simulation.largeur / dy)
@@ -412,6 +414,7 @@ class SimControl(QMainWindow):
         self.doubleSpinBox_dx.setValue(self.simulation.dx*1000)
         self.doubleSpinBox_pin.setValue(self.simulation.Pin)
         self.doubleSpinBox_perturb_W.setValue(self.simulation.perturb_W)
+        self.doubleSpinBox_t_perturb.setValue(self.simulation.t_perturb)
 
 
 

@@ -39,6 +39,7 @@ class SimulationThermique(QObject):
         self.perturb_x = 20e-3
         self.perturb_y = 20e-3
         self.perturb_W = 1
+        self.t_perturb = 0
 
 
     @staticmethod
@@ -172,23 +173,29 @@ class SimulationThermique(QObject):
         end = min(self.t_actuel + batch_size, self.nt)
 
         for t in range(self.t_actuel, end):
+
+            temps_physique = t * self.dt
+        
+            p_active_dt_vol = self.perturb_W_dt_vol if temps_physique >= self.t_perturb else 0.0
+
             self.T = self.compute_timestep_ultra(
                 self.T, self.T_init, self.alpha_dt_dx2, self.alpha_dt_dy2,
                 self.coeff_conv, self.coeff_face_2, self.P_cell_dt_vol,
                 self.x0, self.rx, self.y0, self.ry, self.nx, self.ny, self.act_x, self.act_y, 
-                self.perturb_locx, self.perturb_locy, self.perturb_W_dt_vol, self.px, self.py
+                self.perturb_locx, self.perturb_locy, 
+                p_active_dt_vol,
+                self.px, self.py
             )
-            self.temps.append(t * self.dt)
+            
+            self.temps.append(temps_physique)
             self.T1.append(self.T[self.therm1_locx, self.therm1_locy] - 273)
             self.T2.append(self.T[self.therm2_locx, self.therm2_locy] - 273)
             self.T3.append(self.T[self.therm3_locx, self.therm3_locy] - 273)
 
         self.t_actuel = end
 
-        # Émettre les signaux pour update les graphiques
         self.therm_1.emit('Thermistance', self.temps, self.T1, self.T2, self.T3)
         self.plaque.emit('T plaque', self.T, self.temps[-1])
         self.progress.emit('progrès', self.t_actuel/self.nt*100 )
 
         return self.t_actuel >= self.nt
-
