@@ -130,6 +130,10 @@ class SimControl(QMainWindow):
             lambda: setattr(self.simulation, 'perturb_W', self.doubleSpinBox_perturb_W.value()))
         self.doubleSpinBox_t_perturb.valueChanged.connect(
             lambda: setattr(self.simulation, 't_perturb', self.doubleSpinBox_t_perturb.value()))
+        self.doubleSpinBox_t_start_act.valueChanged.connect(
+            lambda: setattr(self.simulation, 't_start_act', self.doubleSpinBox_t_start_act.value()))
+        self.doubleSpinBox_t_stop_act.valueChanged.connect(
+            lambda: setattr(self.simulation, 't_stop_act', self.doubleSpinBox_t_stop_act.value()))
 
         # Lancer la simulation thermique
         self.pushButton_start.clicked.connect(self.commencer_simulation)
@@ -245,7 +249,9 @@ class SimControl(QMainWindow):
                   "Pin" : self.simulation.Pin, "perturb_W": self.simulation.perturb_W, 
                   "perturb_x": self.simulation.perturb_x,
                   "perturb_y": self.simulation.perturb_y,
-                  "t_perturb": self.simulation.t_perturb}
+                  "t_perturb": self.simulation.t_perturb,
+                  "t_start_act": self.simulation.t_start_act,
+                  "t_stop_act": self.simulation.t_stop_act}
 
         with open(json_path, "w") as file:
             json.dump(params, file)
@@ -394,6 +400,8 @@ class SimControl(QMainWindow):
         self.simulation.Pin = params["Pin"]
         self.simulation.perturb_W = params["perturb_W"]
         self.simulation.t_perturb = params["t_perturb"]
+        self.simulation.t_start_act = params["t_start_act"]
+        self.simulation.t_stop_act = params["t_stop_act"]
 
         dy = self.simulation.dx
         nx, ny = int(self.simulation.longueur / self.simulation.dx), int(self.simulation.largeur / dy)
@@ -417,6 +425,8 @@ class SimControl(QMainWindow):
         self.doubleSpinBox_pin.setValue(self.simulation.Pin)
         self.doubleSpinBox_perturb_W.setValue(self.simulation.perturb_W)
         self.doubleSpinBox_t_perturb.setValue(self.simulation.t_perturb)
+        self.doubleSpinBox_t_start_act.setValue(self.simulation.t_start_act)
+        self.doubleSpinBox_t_stop_act.setValue(self.simulation.t_stop_act)
 
 
 

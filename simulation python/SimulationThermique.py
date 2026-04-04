@@ -36,6 +36,9 @@ class SimulationThermique(QObject):
         self.act_x_m = self.therm1_x
         self.act_y_m = self.therm1_y
 
+        self.t_start_act = 0
+        self.t_stop_act = None
+
         self.perturb_x = 20e-3
         self.perturb_y = 20e-3
         self.perturb_W = 1
@@ -177,10 +180,11 @@ class SimulationThermique(QObject):
             temps_physique = t * self.dt
         
             p_active_dt_vol = self.perturb_W_dt_vol if temps_physique >= self.t_perturb else 0.0
+            p_act_dt_vol = self.P_cell_dt_vol if temps_physique >= self.t_start_act and temps_physique <= self.t_stop_act else 0.0
 
             self.T = self.compute_timestep_ultra(
                 self.T, self.T_init, self.alpha_dt_dx2, self.alpha_dt_dy2,
-                self.coeff_conv, self.coeff_face_2, self.P_cell_dt_vol,
+                self.coeff_conv, self.coeff_face_2, p_act_dt_vol,
                 self.x0, self.rx, self.y0, self.ry, self.nx, self.ny, self.act_x, self.act_y, 
                 self.perturb_locx, self.perturb_locy, 
                 p_active_dt_vol,

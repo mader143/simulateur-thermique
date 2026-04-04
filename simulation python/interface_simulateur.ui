@@ -324,6 +324,48 @@ background-color: rgb(254, 234, 255);</string>
              </property>
             </widget>
            </item>
+           <item row="14" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Temps d'allumage de l'actionneur</string>
+             </property>
+            </widget>
+           </item>
+           <item row="14" column="1">
+            <widget class="QDoubleSpinBox" name="doubleSpinBox_t_start_act">
+             <property name="styleSheet">
+              <string notr="true">
+background-color: rgb(254, 234, 255);</string>
+             </property>
+             <property name="suffix">
+              <string> s</string>
+             </property>
+             <property name="maximum">
+              <double>100000.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="15" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Temps de fermeture de l'actionneur</string>
+             </property>
+            </widget>
+           </item>
+           <item row="15" column="1">
+            <widget class="QDoubleSpinBox" name="doubleSpinBox_t_stop_act">
+             <property name="styleSheet">
+              <string notr="true">
+background-color: rgb(254, 234, 255);</string>
+             </property>
+             <property name="suffix">
+              <string> s</string>
+             </property>
+             <property name="maximum">
+              <double>100000.000000000000000</double>
+             </property>
+            </widget>
+           </item>
            <item row="12" column="0">
             <spacer name="verticalSpacer">
              <property name="orientation">
