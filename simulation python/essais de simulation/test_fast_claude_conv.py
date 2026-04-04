@@ -10,7 +10,8 @@ import numba
 @numba.jit(nopython=True)
 def compute_timestep(T, T_init, alpha_dt_dx2, alpha_dt_dy2, 
                      coeff_conv, coeff_face, P_cell_dt_vol,
-                     x0, rx, y0, ry, nx, ny, act_x, act_y):
+                     x0, rx, y0, ry, nx, ny, act_x, act_y, 
+                    perturb_locx, perturb_locy, perturb_W_dt_vol, px, py):
     """
     Optimized computation of one timestep using Numba JIT compilation.
     CORRECTED: Proper boundary condition handling without double-counting.
@@ -94,7 +95,15 @@ def compute_timestep(T, T_init, alpha_dt_dx2, alpha_dt_dy2,
     for i in range(max(0, act_x-rx), min(nx, act_x+rx+1)):
         for j in range(max(0, act_y-ry), min(ny, act_y+ry+1)):
             T_new[i, j] += P_cell_dt_vol
+
+    # ============================================
+    # STEP 5: Ajout perturbation
+    # ============================================
+    for i in range(max(0, perturb_locx-px), min(nx, perturb_locx+px+1)):
+        for j in range(max(0, perturb_locy-py), min(ny, perturb_locy+py+1)):
+            T_new[i, j] += perturb_W_dt_vol
     
+
     return T_new
 
 
@@ -155,6 +164,19 @@ nb_cells = (2*rx + 1) * (2*ry + 1)
 P_cell = Pin / nb_cells
 P_cell_dt_vol = (P_cell * dt) / (rho * cp * cell_volume)
 
+# Perturbation
+perturb_size = 5e-3
+perturb_W = 0.01
+perturb_x = 20e-3
+perturb_y = 20e-3
+perturb_locx = int(perturb_x/dx)
+perturb_locy = int(perturb_y/dy)
+px = int((perturb_size/2) / dx)
+py = int((perturb_size/2) / dy)
+p_cells = (2*px + 1) * (2*py + 1)
+perturb_cell = perturb_W / p_cells
+perturb_W_dt_vol = (perturb_cell * dt)/(rho * cp * cell_volume)
+
 # Storage for thermistor data
 temps = []
 T1, T2, T3 = [], [], []
@@ -177,7 +199,8 @@ for t in range(nt):
     # OPTIMIZED: Single function call (Numba-compiled)
     T = compute_timestep(T, T_init, alpha_dt_dx2, alpha_dt_dy2,
                          coeff_conv, coeff_face, P_cell_dt_vol,
-                         x0, rx, y0, ry, nx, ny, act_x, act_y)
+                         x0, rx, y0, ry, nx, ny, act_x, act_y,
+                         perturb_locx, perturb_locy, perturb_W_dt_vol, px, py)
     
     # Diagnostics (every 5000 steps to not slow down)
     if t % 5000 == 0 and t > 0:
