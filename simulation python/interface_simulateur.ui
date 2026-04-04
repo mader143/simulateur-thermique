@@ -341,7 +341,7 @@ background-color: rgb(254, 234, 255);</string>
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>103</height>
+            <height>150</height>
            </size>
           </property>
           <property name="font">
@@ -351,7 +351,7 @@ background-color: rgb(254, 234, 255);</string>
            </font>
           </property>
           <property name="title">
-           <string>Positions des thermistances                         X                                                 Y</string>
+           <string>Positions des thermistances et de l'actuateur             X                                                 Y</string>
           </property>
           <layout class="QGridLayout" name="gridLayout">
            <item row="2" column="0">
@@ -390,7 +390,7 @@ background-color: rgb(254, 234, 255);</string>
            <item row="0" column="0">
             <widget class="QLabel" name="label_2">
              <property name="text">
-              <string>Thermistance 1 et actuateur</string>
+              <string>Thermistance 1</string>
              </property>
             </widget>
            </item>
@@ -442,6 +442,39 @@ background-color: rgb(254, 234, 255);</string>
            </item>
            <item row="2" column="2">
             <widget class="QDoubleSpinBox" name="doubleSpinBox_therm3_y">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(254, 234, 255);</string>
+             </property>
+             <property name="suffix">
+              <string> mm</string>
+             </property>
+             <property name="maximum">
+              <double>10000.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_actuator">
+             <property name="text">
+              <string>Position de l'actuateur</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QDoubleSpinBox" name="doubleSpinBox_act_x_m">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(254, 234, 255);</string>
+             </property>
+             <property name="suffix">
+              <string> mm</string>
+             </property>
+             <property name="maximum">
+              <double>10000.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QDoubleSpinBox" name="doubleSpinBox_act_y_m">
              <property name="styleSheet">
               <string notr="true">background-color: rgb(254, 234, 255);</string>
              </property>
@@ -553,7 +586,7 @@ background-color: rgb(254, 234, 255);</string>
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>24</height>
+              <height>20</height>
              </size>
             </property>
             <property name="text">

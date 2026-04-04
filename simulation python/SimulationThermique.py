@@ -33,12 +33,15 @@ class SimulationThermique(QObject):
         self.therm3_x = 104.99e-3
         self.therm3_y = 0.030785
 
+        self.act_x_m = self.therm1_x
+        self.act_y_m = self.therm1_y
+
 
     @staticmethod
     @numba.jit(nopython=True)
     def compute_timestep_ultra(T, T_init, alpha_dt_dx2, alpha_dt_dy2,
                                coeff_conv, coeff_face_2, P_cell_dt_vol,
-                               x0, rx, y0, ry, nx, ny):
+                               x0, rx, y0, ry, nx, ny, act_x, act_y):
         """
         Calcul du nouvel array de température à chaque pas de temps à l'aide de l'équation différentielle discrétisée
         Retourne : Nouvel array de température
@@ -95,8 +98,8 @@ class SimulationThermique(QObject):
             T_new[i, ny - 1] += coeff_conv * T_diff[i, ny - 1]
 
         # Puissance ajoutée aux cellules de l'actuateur
-        for i in range(max(0, x0 - rx), min(nx, x0 + rx + 1)):
-            for j in range(max(0, y0 - ry), min(ny, y0 + ry + 1)):
+        for i in range(max(0, act_x - rx), min(nx, act_x + rx + 1)):
+            for j in range(max(0, act_y - ry), min(ny, act_y + ry + 1)):
                 T_new[i, j] += P_cell_dt_vol
 
         return T_new
@@ -137,6 +140,8 @@ class SimulationThermique(QObject):
         self.x0 = self.therm1_locx
         self.y0 = self.therm1_locy
         self.rx, self.ry = rx, ry
+        self.act_x = int(self.act_x_m / self.dx)
+        self.act_y = int(self.act_y_m / dy)
 
         self.temps = []
         self.T1, self.T2, self.T3 = [], [], []
@@ -150,7 +155,7 @@ class SimulationThermique(QObject):
             self.T = self.compute_timestep_ultra(
                 self.T, self.T_init, self.alpha_dt_dx2, self.alpha_dt_dy2,
                 self.coeff_conv, self.coeff_face_2, self.P_cell_dt_vol,
-                self.x0, self.rx, self.y0, self.ry, self.nx, self.ny
+                self.x0, self.rx, self.y0, self.ry, self.nx, self.ny, self.act_x, self.act_y
             )
             self.temps.append(t * self.dt)
             self.T1.append(self.T[self.therm1_locx, self.therm1_locy] - 273)

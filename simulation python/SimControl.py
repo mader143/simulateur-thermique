@@ -73,6 +73,8 @@ class SimControl(QMainWindow):
         self.doubleSpinBox_therm2_y.setValue(self.simulation.therm2_y * 1000)
         self.doubleSpinBox_therm3_x.setValue(self.simulation.therm3_x * 1000)
         self.doubleSpinBox_therm3_y.setValue(self.simulation.therm3_y * 1000)
+        self.doubleSpinBox_act_x_m.setValue(self.simulation.act_x_m * 1000)
+        self.doubleSpinBox_act_y_m.setValue(self.simulation.act_y_m * 1000)
 
         # Changer les positions des thermistances si les valeurs changent
         self.doubleSpinBox_therm1_x.valueChanged.connect(
@@ -87,6 +89,10 @@ class SimControl(QMainWindow):
             lambda: setattr(self.simulation, 'therm3_x', self.doubleSpinBox_therm3_x.value() / 1000))
         self.doubleSpinBox_therm3_y.valueChanged.connect(
             lambda: setattr(self.simulation, 'therm3_y', self.doubleSpinBox_therm3_y.value() / 1000))
+        self.doubleSpinBox_act_x_m.valueChanged.connect(
+            lambda: setattr(self.simulation, 'act_x_m', self.doubleSpinBox_act_x_m.value() / 1000))
+        self.doubleSpinBox_act_y_m.valueChanged.connect(
+            lambda: setattr(self.simulation, 'act_y_m', self.doubleSpinBox_act_y_m.value() / 1000))
 
         # Pour charger les paramètres depuis le fichier json
         self.pushButton_load_json.clicked.connect(self.load_json)

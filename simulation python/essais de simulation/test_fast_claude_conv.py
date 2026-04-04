@@ -10,7 +10,7 @@ import numba
 @numba.jit(nopython=True)
 def compute_timestep(T, T_init, alpha_dt_dx2, alpha_dt_dy2, 
                      coeff_conv, coeff_face, P_cell_dt_vol,
-                     x0, rx, y0, ry, nx, ny):
+                     x0, rx, y0, ry, nx, ny, act_x, act_y):
     """
     Optimized computation of one timestep using Numba JIT compilation.
     CORRECTED: Proper boundary condition handling without double-counting.
@@ -91,8 +91,8 @@ def compute_timestep(T, T_init, alpha_dt_dx2, alpha_dt_dy2,
     # ============================================
     # STEP 4: Add heat source
     # ============================================
-    for i in range(max(0, x0-rx), min(nx, x0+rx+1)):
-        for j in range(max(0, y0-ry), min(ny, y0+ry+1)):
+    for i in range(max(0, act_x-rx), min(nx, act_x+rx+1)):
+        for j in range(max(0, act_y-ry), min(ny, act_y+ry+1)):
             T_new[i, j] += P_cell_dt_vol
     
     return T_new
@@ -135,22 +135,25 @@ coeff_face = h_conv * dt / (rho * cp * epaisseur)
 # Initialize temperature field
 T = np.full((nx, ny), T_init, dtype=float)
 
-# Heat source setup
-act_size = 20e-3
-rx = int((act_size/2) / dx)
-ry = int((act_size/2) / dy)
-
-cell_volume = dx * dy * epaisseur
-nb_cells = (2*rx + 1) * (2*ry + 1)
-P_cell = Pin / nb_cells
-P_cell_dt_vol = (P_cell * dt) / (rho * cp * cell_volume)
-
 # Thermistor locations
 therm1_locx, therm1_locy = int(14.87e-3/dx), int((largeur/2)/dx)
 therm2_locx, therm2_locy = int(59.35e-3/dx), int((largeur/2)/dx)
 therm3_locx, therm3_locy = int(104.99e-3/dx), int((largeur/2)/dx)
 
 x0, y0 = therm1_locx, therm1_locy
+
+# Heat source setup
+act_size = 20e-3
+rx = int((act_size/2) / dx)
+ry = int((act_size/2) / dy)
+act_pos = (0.06, 0.03)
+act_x = int(act_pos[0] / dx)
+act_y = int(act_pos[1] / dy)
+
+cell_volume = dx * dy * epaisseur
+nb_cells = (2*rx + 1) * (2*ry + 1)
+P_cell = Pin / nb_cells
+P_cell_dt_vol = (P_cell * dt) / (rho * cp * cell_volume)
 
 # Storage for thermistor data
 temps = []
@@ -174,7 +177,7 @@ for t in range(nt):
     # OPTIMIZED: Single function call (Numba-compiled)
     T = compute_timestep(T, T_init, alpha_dt_dx2, alpha_dt_dy2,
                          coeff_conv, coeff_face, P_cell_dt_vol,
-                         x0, rx, y0, ry, nx, ny)
+                         x0, rx, y0, ry, nx, ny, act_x, act_y)
     
     # Diagnostics (every 5000 steps to not slow down)
     if t % 5000 == 0 and t > 0:
