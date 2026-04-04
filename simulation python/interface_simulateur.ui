@@ -283,7 +283,7 @@ background-color: rgb(254, 234, 255);</string>
             </widget>
            </item>
            <item row="12" column="0">
-            <widget class="QLabel" name="label_3">
+            <widget class="QLabel" name="label_16">
              <property name="text">
               <string>Puissance de la perturbation</string>
              </property>
@@ -304,7 +304,7 @@ background-color: rgb(254, 234, 255);</string>
             </widget>
            </item>
            <item row="13" column="0">
-            <widget class="QLabel" name="label_3">
+            <widget class="QLabel" name="label_17">
              <property name="text">
               <string>Temps d'application de la perturbation</string>
              </property>
@@ -325,7 +325,7 @@ background-color: rgb(254, 234, 255);</string>
             </widget>
            </item>
            <item row="14" column="0">
-            <widget class="QLabel" name="label_3">
+            <widget class="QLabel" name="18">
              <property name="text">
               <string>Temps d'allumage de l'actionneur</string>
              </property>
@@ -346,7 +346,7 @@ background-color: rgb(254, 234, 255);</string>
             </widget>
            </item>
            <item row="15" column="0">
-            <widget class="QLabel" name="label_3">
+            <widget class="QLabel" name="label_19">
              <property name="text">
               <string>Temps de fermeture de l'actionneur</string>
              </property>

@@ -134,6 +134,9 @@ class SimControl(QMainWindow):
             lambda: setattr(self.simulation, 't_start_act', self.doubleSpinBox_t_start_act.value()))
         self.doubleSpinBox_t_stop_act.valueChanged.connect(
             lambda: setattr(self.simulation, 't_stop_act', self.doubleSpinBox_t_stop_act.value()))
+        
+        self.doubleSpinBox_perturb_W.setMinimum(-1000.0)
+        self.doubleSpinBox_perturb_W.setMaximum(1000.0)
 
         # Lancer la simulation thermique
         self.pushButton_start.clicked.connect(self.commencer_simulation)
