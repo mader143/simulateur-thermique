@@ -128,6 +128,8 @@ class SimControl(QMainWindow):
             lambda: setattr(self.simulation, 'Pin', self.doubleSpinBox_pin.value()))
         self.doubleSpinBox_perturb_W.valueChanged.connect(
             lambda: setattr(self.simulation, 'perturb_W', self.doubleSpinBox_perturb_W.value()))
+        self.doubleSpinBox_t_perturb.valueChanged.connect(
+            lambda: setattr(self.simulation, 't_perturb', self.doubleSpinBox_t_perturb.value()))
 
         # Lancer la simulation thermique
         self.pushButton_start.clicked.connect(self.commencer_simulation)
