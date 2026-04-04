@@ -166,7 +166,7 @@ P_cell_dt_vol = (P_cell * dt) / (rho * cp * cell_volume)
 
 # Perturbation
 perturb_size = 5e-3
-perturb_W = 0.01
+perturb_W = 1
 perturb_x = 20e-3
 perturb_y = 20e-3
 perturb_locx = int(perturb_x/dx)

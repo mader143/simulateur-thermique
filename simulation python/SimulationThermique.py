@@ -36,12 +36,17 @@ class SimulationThermique(QObject):
         self.act_x_m = self.therm1_x
         self.act_y_m = self.therm1_y
 
+        self.perturb_x = 20e-3
+        self.perturb_y = 20e-3
+        self.perturb_W = 1
+
 
     @staticmethod
     @numba.jit(nopython=True)
     def compute_timestep_ultra(T, T_init, alpha_dt_dx2, alpha_dt_dy2,
                                coeff_conv, coeff_face_2, P_cell_dt_vol,
-                               x0, rx, y0, ry, nx, ny, act_x, act_y):
+                               x0, rx, y0, ry, nx, ny, act_x, act_y, 
+                    perturb_locx, perturb_locy, perturb_W_dt_vol, px, py):
         """
         Calcul du nouvel array de température à chaque pas de temps à l'aide de l'équation différentielle discrétisée
         Retourne : Nouvel array de température
@@ -102,6 +107,11 @@ class SimulationThermique(QObject):
             for j in range(max(0, act_y - ry), min(ny, act_y + ry + 1)):
                 T_new[i, j] += P_cell_dt_vol
 
+        # Ajout de la perturbation
+        for i in range(max(0, perturb_locx-px), min(nx, perturb_locx+px+1)):
+            for j in range(max(0, perturb_locy-py), min(ny, perturb_locy+py+1)):
+                T_new[i, j] += perturb_W_dt_vol
+
         return T_new
 
     def init_simulation(self):
@@ -130,6 +140,16 @@ class SimulationThermique(QObject):
         P_cell = self.Pin / nb_cells
         self.P_cell_dt_vol = (P_cell * self.dt) / (self.rho * self.cp * cell_volume)
 
+        # Perturbation
+        self.perturb_size = 5e-3
+        self.perturb_locx = int(self.perturb_x/self.dx)
+        self.perturb_locy = int(self.perturb_y/dy)
+        self.px = int((self.perturb_size/2) / self.dx)
+        self.py = int((self.perturb_size/2) / dy)
+        self.p_cells = (2*self.px + 1) * (2*self.py + 1)
+        self.perturb_cell = self.perturb_W / self.p_cells
+        self.perturb_W_dt_vol = (self.perturb_cell * self.dt)/(self.rho * self.cp * cell_volume)
+
         self.therm1_locx = int(self.therm1_x / self.dx)
         self.therm1_locy = int(self.therm1_y / self.dx)
         self.therm2_locx = int(self.therm2_x / self.dx)
@@ -155,7 +175,8 @@ class SimulationThermique(QObject):
             self.T = self.compute_timestep_ultra(
                 self.T, self.T_init, self.alpha_dt_dx2, self.alpha_dt_dy2,
                 self.coeff_conv, self.coeff_face_2, self.P_cell_dt_vol,
-                self.x0, self.rx, self.y0, self.ry, self.nx, self.ny, self.act_x, self.act_y
+                self.x0, self.rx, self.y0, self.ry, self.nx, self.ny, self.act_x, self.act_y, 
+                self.perturb_locx, self.perturb_locy, self.perturb_W_dt_vol, self.px, self.py
             )
             self.temps.append(t * self.dt)
             self.T1.append(self.T[self.therm1_locx, self.therm1_locy] - 273)

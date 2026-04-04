@@ -75,6 +75,8 @@ class SimControl(QMainWindow):
         self.doubleSpinBox_therm3_y.setValue(self.simulation.therm3_y * 1000)
         self.doubleSpinBox_act_x_m.setValue(self.simulation.act_x_m * 1000)
         self.doubleSpinBox_act_y_m.setValue(self.simulation.act_y_m * 1000)
+        self.doubleSpinBox_perturb_x.setValue(self.simulation.perturb_x * 1000)
+        self.doubleSpinBox_perturb_y.setValue(self.simulation.perturb_y * 1000)
 
         # Changer les positions des thermistances si les valeurs changent
         self.doubleSpinBox_therm1_x.valueChanged.connect(
@@ -93,6 +95,10 @@ class SimControl(QMainWindow):
             lambda: setattr(self.simulation, 'act_x_m', self.doubleSpinBox_act_x_m.value() / 1000))
         self.doubleSpinBox_act_y_m.valueChanged.connect(
             lambda: setattr(self.simulation, 'act_y_m', self.doubleSpinBox_act_y_m.value() / 1000))
+        self.doubleSpinBox_perturb_x.valueChanged.connect(
+            lambda: setattr(self.simulation, 'perturb_x', self.doubleSpinBox_perturb_x.value() / 1000))
+        self.doubleSpinBox_perturb_y.valueChanged.connect(
+            lambda: setattr(self.simulation, 'perturb_y', self.doubleSpinBox_perturb_y.value() / 1000))
 
         # Pour charger les paramètres depuis le fichier json
         self.pushButton_load_json.clicked.connect(self.load_json)
@@ -120,6 +126,8 @@ class SimControl(QMainWindow):
             lambda: setattr(self.simulation, 'dx', self.doubleSpinBox_dx.value() / 1000))
         self.doubleSpinBox_pin.valueChanged.connect(
             lambda: setattr(self.simulation, 'Pin', self.doubleSpinBox_pin.value()))
+        self.doubleSpinBox_perturb_W.valueChanged.connect(
+            lambda: setattr(self.simulation, 'perturb_W', self.doubleSpinBox_perturb_W.value()))
 
         # Lancer la simulation thermique
         self.pushButton_start.clicked.connect(self.commencer_simulation)
@@ -232,7 +240,9 @@ class SimControl(QMainWindow):
                   "epaisseur": self.simulation.epaisseur, "T_init": self.simulation.T_init - 273.15,
                   "t_simulation": self.simulation.t_simulation, "k" : self.simulation.k, "rho" : self.simulation.rho,
                   "cp" : self.simulation.cp, "h_conv": self.simulation.h_conv, "dx" : self.simulation.dx,
-                  "Pin" : self.simulation.Pin}
+                  "Pin" : self.simulation.Pin, "perturb_W": self.simulation.perturb_W, 
+                  "perturb_x": self.simulation.perturb_x,
+                  "perturb_y": self.simulation.perturb_y}
 
         with open(json_path, "w") as file:
             json.dump(params, file)
@@ -379,6 +389,7 @@ class SimControl(QMainWindow):
         self.simulation.h_conv = params["h_conv"]
         self.simulation.dx = params["dx"]
         self.simulation.Pin = params["Pin"]
+        self.simulation.perturb_W = params["perturb_W"]
 
         dy = self.simulation.dx
         nx, ny = int(self.simulation.longueur / self.simulation.dx), int(self.simulation.largeur / dy)
@@ -400,6 +411,7 @@ class SimControl(QMainWindow):
         self.doubleSpinBox_h.setValue(self.simulation.h_conv)
         self.doubleSpinBox_dx.setValue(self.simulation.dx*1000)
         self.doubleSpinBox_pin.setValue(self.simulation.Pin)
+        self.doubleSpinBox_perturb_W.setValue(self.simulation.perturb_W)
 
 
 
