@@ -34,59 +34,58 @@ class SimulationThermique(QObject):
         self.therm3_y = 0.030785
 
 
-
-    # ULTRA-OPTIMIZED VERSION - Vectorized operations where possible
     @staticmethod
     @numba.jit(nopython=True)
     def compute_timestep_ultra(T, T_init, alpha_dt_dx2, alpha_dt_dy2,
                                coeff_conv, coeff_face_2, P_cell_dt_vol,
                                x0, rx, y0, ry, nx, ny):
         """
-        Ultra-optimized with vectorized boundary operations.
+        Calcul du nouvel array de température à chaque pas de temps à l'aide de l'équation différentielle discrétisée
+        Retourne : Nouvel array de température
 
         """
 
         T_new = T.copy()
 
 
-        # Diffusion - interior points
+        # Conduction pour les cellules du centre
         for i in range(1, nx - 1):
             for j in range(1, ny - 1):
                 laplacian_x = (T[i + 1, j] - 2 * T[i, j] + T[i - 1, j]) * alpha_dt_dx2
                 laplacian_y = (T[i, j + 1] - 2 * T[i, j] + T[i, j - 1]) * alpha_dt_dy2
                 T_new[i, j] += laplacian_x + laplacian_y
 
-        # Boundary diffusion - edges
+        # Conduction pour les 4 bords
         for j in range(1, ny - 1):
-            # x=0 edge
+            # Conduction pour le bord à x=0
             T_new[0, j] += alpha_dt_dx2 * (T[1, j] - T[0, j]) + \
                            alpha_dt_dy2 * (T[0, j + 1] - 2 * T[0, j] + T[0, j - 1])
-            # x=nx-1 edge
+            # Conduction pour le bord à x=-1
             T_new[nx - 1, j] += alpha_dt_dx2 * (T[nx - 2, j] - T[nx - 1, j]) + \
                                 alpha_dt_dy2 * (T[nx - 1, j + 1] - 2 * T[nx - 1, j] + T[nx - 1, j - 1])
 
         for i in range(1, nx - 1):
-            # y=0 edge
+            # Conduction pour le bord à y=0
             T_new[i, 0] += alpha_dt_dx2 * (T[i + 1, 0] - 2 * T[i, 0] + T[i - 1, 0]) + \
                            alpha_dt_dy2 * (T[i, 1] - T[i, 0])
-            # y=ny-1 edge
+            # Conduction pour le bord à y=-1
             T_new[i, ny - 1] += alpha_dt_dx2 * (T[i + 1, ny - 1] - 2 * T[i, ny - 1] + T[i - 1, ny - 1]) + \
                                 alpha_dt_dy2 * (T[i, ny - 2] - T[i, ny - 1])
 
-        # Corners
+        # Conduction pour les coins
         T_new[0, 0] += alpha_dt_dx2 * (T[1, 0] - T[0, 0]) + alpha_dt_dy2 * (T[0, 1] - T[0, 0])
         T_new[0, ny - 1] += alpha_dt_dx2 * (T[1, ny - 1] - T[0, ny - 1]) + alpha_dt_dy2 * (T[0, ny - 2] - T[0, ny - 1])
         T_new[nx - 1, 0] += alpha_dt_dx2 * (T[nx - 2, 0] - T[nx - 1, 0]) + alpha_dt_dy2 * (T[nx - 1, 1] - T[nx - 1, 0])
         T_new[nx - 1, ny - 1] += alpha_dt_dx2 * (T[nx - 2, ny - 1] - T[nx - 1, ny - 1]) + alpha_dt_dy2 * (
                     T[nx - 1, ny - 2] - T[nx - 1, ny - 1])
 
-        # Face convection (ALL cells) - vectorized calculation
+        # Convection de face appliquée à toutes les cellules
         T_diff = T_init - T
         for i in range(nx):
             for j in range(ny):
                 T_new[i, j] += coeff_face_2 * T_diff[i, j]
 
-        # Lateral edge convection
+        # Convection latérale appliquée aux bords et aux coins
         for j in range(ny):
             T_new[0, j] += coeff_conv * T_diff[0, j]
             T_new[nx - 1, j] += coeff_conv * T_diff[nx - 1, j]
@@ -95,7 +94,7 @@ class SimulationThermique(QObject):
             T_new[i, 0] += coeff_conv * T_diff[i, 0]
             T_new[i, ny - 1] += coeff_conv * T_diff[i, ny - 1]
 
-        # Heat source
+        # Puissance ajoutée aux cellules de l'actuateur
         for i in range(max(0, x0 - rx), min(nx, x0 + rx + 1)):
             for j in range(max(0, y0 - ry), min(ny, y0 + ry + 1)):
                 T_new[i, j] += P_cell_dt_vol
@@ -103,6 +102,7 @@ class SimulationThermique(QObject):
         return T_new
 
     def init_simulation(self):
+        """Initialise la simulation."""
         self.alpha = self.k / (self.rho * self.cp)
         dy = self.dx
         self.dt = self.dx ** 2 / (4 * self.alpha)
