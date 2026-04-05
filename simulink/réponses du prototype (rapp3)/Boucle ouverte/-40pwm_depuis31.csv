@@ -1,4 +1,4 @@
-Temps (s),Consigne (ï¿½ï,Erreur (ï¿½ï,Thermistance 1 - T1 (ï¿½ï,Thermistance 2 - T2 (ï¿½ï,Thermistance 3 - T3 (ï¿½ï,T4',Thermistance 3 estimï¿½ï¿½e - T3_moy (,Commande (PWM)
+Temps (s),Consigne (Â°C),Erreur (Â°C),Thermistance 1 - T1 (Â°C),Thermistance 2 - T2 (Â°C),Thermistance 3 - T3 (Â°C),T4',Thermistance 3 estimÃ©e - T3_moy (Â°C),Commande (PWM)
 1.419390678,30,0,30,30.76,31.07,,31.07,-40
 1.782710791,30,0,29.95,30.72,31.07,,31.07,-40
 2.187305212,30,0,29.91,30.69,31.04,,31.04,-40
