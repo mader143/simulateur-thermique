@@ -225,7 +225,6 @@ void loop() {
 
     if (pwm_manuel != 0){
       envoyerPWM(pwm_manuel);
-      Serial.println("ON EST DANS LA BOUCLE DU PWM MANUEL");
       Serial.println(pwm_manuel);
 
 

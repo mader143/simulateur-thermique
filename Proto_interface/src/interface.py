@@ -544,9 +544,12 @@ class InterfaceProto:
         self.e_data = []
         self.t3reel_data = []
         self.consigne = []
-        self.R1 = []
-        self.R2 = []
-        self.R3 = []
+        self.VT1 = []
+        self.VT2 = []
+        self.VT3 = []
+        #self.R1 = []
+        #self.R2 = []
+        #self.R3 = []
 
         self._setup_axes()
         self.fig.subplots_adjust(
@@ -589,9 +592,12 @@ class InterfaceProto:
                         t3_reel = float(values[3])
                         e = float(values[7])
                         u = float(values[8])
-                        r1 = float(values[9])
-                        r2 = float(values[10])
-                        r3 = float(values[11])
+                        vt1 = float(values[9])
+                        vt2 = float(values[10])
+                        vt3 = float(values[11])
+                        #r1 = float(values[12])
+                        #r2 = float(values[13])
+                        #r3 = float(values[14])
                         current_time = time.time() - self.start_time
 
                         self.times.append(current_time)
@@ -602,9 +608,12 @@ class InterfaceProto:
                         self.e_data.append(e)
                         self.t3reel_data.append(t3_reel)
                         self.consigne.append(self.temperature_voulue)
-                        self.R1.append(r1)
-                        self.R2.append(r2)
-                        self.R3.append(r3)
+                        #self.R1.append(r1)
+                        #self.R2.append(r2)
+                        #self.R3.append(r3)
+                        self.VT1.append(vt1)
+                        self.VT2.append(vt2)    
+                        self.VT3.append(vt3)
 
                         self.line.set_data(self.times, self.t1_data)
                         self.line2.set_data(self.times, self.t2_data)
@@ -682,12 +691,13 @@ class InterfaceProto:
             "T4'": [''] * len(self.times),
             "Thermistance 3 estimée - T3_moy (°C)": self.t3est_data,    
             "Commande (PWM)": self.u_data,
-            "R1": self.R1,
-            "R": self.R2,
-            "R3":self.R3,
-            "V1":,
-            "V2":,
-            "V3":})
+            "Voltage T1 (V)": self.VT1,
+            "Voltage T2 (V)": self.VT2,
+            "Voltage T3 (V)": self.VT3
+            #"R1": self.R1,
+            #"R2": self.R2,
+            #"R3":self.R3
+        })
         df.to_csv(chemin, index=False)
         messagebox.showinfo("Succès",
                             f"Données enregistrées dans :\n{chemin}")
