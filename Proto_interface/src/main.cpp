@@ -223,7 +223,7 @@ void loop() {
     float Vout2 = (5.0 / 1023.0) * analogRead(therm[1].pin);
     float Vout3 = (5.0 / 1023.0) * analogRead(therm[2].pin);
 
-    if (pwm_manuel != 0){
+    if (pwm_manuel != -1){
       envoyerPWM(pwm_manuel);
       Serial.println(pwm_manuel);
 
