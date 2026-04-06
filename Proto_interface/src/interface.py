@@ -580,6 +580,7 @@ class InterfaceProto:
 
                 if line and not line.startswith("temps") and line != "FIN":
                     values = line.split(',')
+                    print(f'len : {len(values)}')
                     if len(values) == 12:
 
                         t1 = float(values[1])
@@ -682,8 +683,11 @@ class InterfaceProto:
             "Thermistance 3 estimée - T3_moy (°C)": self.t3est_data,    
             "Commande (PWM)": self.u_data,
             "R1": self.R1,
-            "R2": self.R2,
-            "R3":self.R3 })
+            "R": self.R2,
+            "R3":self.R3,
+            "V1":,
+            "V2":,
+            "V3":})
         df.to_csv(chemin, index=False)
         messagebox.showinfo("Succès",
                             f"Données enregistrées dans :\n{chemin}")

@@ -219,6 +219,9 @@ void loop() {
     float T3_estimT2 = T3;
     float T3_moy = T3;
     float u_sat = 0;
+    float Vout1 = (5.0 / 1023.0) * analogRead(therm[0].pin);
+    float Vout2 = (5.0 / 1023.0) * analogRead(therm[1].pin);
+    float Vout3 = (5.0 / 1023.0) * analogRead(therm[2].pin);
 
     if (pwm_manuel != 0){
       envoyerPWM(pwm_manuel);
@@ -235,7 +238,10 @@ void loop() {
         Serial.print(","); Serial.print(T3, 2);
         Serial.print(","); Serial.print(T3, 2);
         Serial.print(","); Serial.print(0, 4);
-        Serial.print(","); Serial.println(pwm_manuel);
+        Serial.print(","); Serial.print(pwm_manuel);
+        Serial.print(","); Serial.print(Vout1, 2);
+        Serial.print(","); Serial.print(Vout2, 2);
+        Serial.print(","); Serial.println(Vout3, 2);
 
 
       } else if (modeCSV) {
