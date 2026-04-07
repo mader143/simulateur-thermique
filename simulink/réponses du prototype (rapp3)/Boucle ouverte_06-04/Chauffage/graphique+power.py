@@ -12,7 +12,7 @@ thermistance = 1
 
 # Loader le fichier désiré
 base_dir = os.path.dirname(os.path.abspath(__file__))
-file_name = "30pwm_depuis32.csv"
+file_name = "20pwm_depuis29.csv"
 csv_path = os.path.join(base_dir, file_name)
 
 # Modifier les paramètres pour qu'ils match avec les données expérimentales --------------------------------------

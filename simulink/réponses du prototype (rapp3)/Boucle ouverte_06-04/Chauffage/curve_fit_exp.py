@@ -16,16 +16,16 @@ data = pd.DataFrame({
 X = data[['duty','temp']].values
 y = data['puissance'].values
 
-# --- Modèle quadratique ---
-def model_quadratique(X, a, b, c, d, e, f):
+# --- Modèle exponentiel ---
+def model_expo(X, a, b, c, d):
     duty, temp = X[:,0], X[:,1]
-    return a*duty**2 + b*temp**2 + c*duty*temp + d*duty + e*temp + f
+    return a * np.exp(b * duty) + c * temp + d
 
 # --- Fit ---
-popt, _ = curve_fit(model_quadratique, X, y, maxfev=10000)
-a, b, c, d, e, f = popt
+popt, _ = curve_fit(model_expo, X, y, maxfev=10000)
+a, b, c, d = popt
 
-y_pred = model_quadratique(X, *popt)
+y_pred = model_expo(X, *popt)
 
 r2 = 1 - np.sum((y - y_pred)**2) / np.sum((y - np.mean(y))**2)
 
@@ -38,8 +38,8 @@ for train_idx, test_idx in loo.split(X):
     X_train, X_test = X[train_idx], X[test_idx]
     y_train, y_test = y[train_idx], y[test_idx]
 
-    popt_cv, _ = curve_fit(model_quadratique, X_train, y_train, maxfev=10000)
-    pred = model_quadratique(X_test, *popt_cv)
+    popt_cv, _ = curve_fit(model_expo, X_train, y_train, maxfev=10000)
+    pred = model_expo(X_test, *popt_cv)
 
     y_true_cv.append(y_test[0])
     y_pred_cv.append(pred[0])
@@ -61,7 +61,7 @@ duty_range = np.linspace(data['duty'].min()*0.95, data['duty'].max()*1.05, 60)
 temp_range = np.linspace(data['temp'].min()*0.95, data['temp'].max()*1.05, 60)
 DC, TEMP = np.meshgrid(duty_range, temp_range)
 X_grid = np.column_stack([DC.ravel(), TEMP.ravel()])
-Z = model_quadratique(X_grid, *popt).reshape(DC.shape)
+Z = model_expo(X_grid, *popt).reshape(DC.shape)
 
 # --- Graphique 3D ---
 fig = plt.figure(figsize=(13, 8))
@@ -74,7 +74,7 @@ ax.scatter(data['duty'], data['temp'], data['puissance'],
            color='red', s=60, zorder=5, label='Mesures', depthshade=False)
 
 for _, row in data.iterrows():
-    p_fit = model_quadratique(np.array([[row['duty'], row['temp']]]), *popt)[0]
+    p_fit = model_expo(np.array([[row['duty'], row['temp']]]), *popt)[0]
     ax.plot([row['duty'], row['duty']],
             [row['temp'], row['temp']],
             [row['puissance'], p_fit],
@@ -83,18 +83,16 @@ for _, row in data.iterrows():
 ax.set_xlabel("Duty Cycle (%)", labelpad=10)
 ax.set_ylabel("Température initiale (°C)", labelpad=10)
 ax.set_zlabel("Puissance", labelpad=10)
-ax.set_title("Fit quadratique — Puissance vs DC et Température", fontsize=13, pad=20)
+ax.set_title("Fit exponentiel — Puissance vs DC et Température", fontsize=13, pad=20)
 ax.legend(loc='upper left')
 
 # --- Texte affiché ---
 texte = (
     f"$R^2 = {r2:.4f}$\n"
     f"$R^2_{{CV}} = {r2_cv:.4f}$\n\n"
-    f"$P = {a:.4f}\\cdot DC^2 {signe(b)} {abs(b):.4f}\\cdot T^2 "
-    f"{signe(c)} {abs(c):.4f}\\cdot DC\\cdot T$\n"
-    f"$\\quad {signe(d)} {abs(d):.4f}\\cdot DC "
-    f"{signe(e)} {abs(e):.4f}\\cdot T "
-    f"{signe(f)} {abs(f):.4f}$"
+    f"$P = {a:.4f}\\cdot e^{{{b:.4f}\\cdot DC}} "
+    f"{signe(c)} {abs(c):.4f}\\cdot T "
+    f"{signe(d)} {abs(d):.4f}$"
 )
 
 fig.text(
@@ -105,5 +103,4 @@ fig.text(
 )
 
 plt.tight_layout()
-plt.savefig("curve_fit_3d.png", dpi=150, bbox_inches='tight')
 plt.show()
