@@ -3,22 +3,24 @@ opt.InitialCondition = "zero";
 
 % Extraire les données
 %t = out.tout;
-V1 = pwm20_29_tension(:,1);    
+V1 = pwm20_16_tension(:,1);    
 V_id1 = V1 - V1(1); 
-V2 = pwm20_29_tension(:,2); 
+V2 = pwm20_16_tension(:,2); 
 V_id2 = V2 - V2(1); 
-V3 = pwm20_29_tension(:,3);             
+V3 = pwm20_16_tension(:,3);             
 V_id3 = V3 - V3(1); 
 
 disp(size(V_id1));
 
-
+T0 = 16;
 % Définir l'entrée réelle : échelon de 7.8%
 u = (20/255) * 100 * ones(size(V1));  % en duty cycle
+p = 11.380*exp(0.0186*u)-0.1467*T0-8.0154;
+disp(p);
 
 
 % IDENTIFICATION
-data_id1 = iddata(V_id1, u, 0.5);     
+data_id1 = iddata(V_id1, p, 0.5);     
 
 np = 1;
 
