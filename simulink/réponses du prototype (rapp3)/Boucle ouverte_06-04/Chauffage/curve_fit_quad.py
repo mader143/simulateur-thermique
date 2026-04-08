@@ -105,5 +105,5 @@ fig.text(
 )
 
 plt.tight_layout()
-plt.savefig("curve_fit_3d.png", dpi=150, bbox_inches='tight')
+#plt.savefig("curve_fit_3d.png", dpi=150, bbox_inches='tight')
 plt.show()

@@ -57,7 +57,7 @@ y_pred_cv = np.array(y_pred_cv)
 
 r2_cv = 1 - np.sum((y_true_cv - y_pred_cv)**2) / np.sum((y_true_cv - np.mean(y_true_cv))**2)
 
-print(f"R² (fit) = {r2:.4f}")
+print(f"R² (régression) = {r2:.4f}")
 print(f"R² (validation croisée) = {r2_cv:.4f}")
 
 # --- Formule ---
@@ -113,5 +113,5 @@ fig.text(
 )
 
 plt.tight_layout()
-plt.savefig("curve_fit_3d.png", dpi=150, bbox_inches='tight')
+#plt.savefig("curve_fit_3d.png", dpi=150, bbox_inches='tight')
 plt.show()
