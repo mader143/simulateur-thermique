@@ -17,7 +17,7 @@ csv_path = os.path.join(base_dir, file_name)
 
 # Modifier les paramètres pour qu'ils match avec les données expérimentales --------------------------------------
 t_simulation = 799.900
-essais_puissance = [1.35, 1.36, 1.37, 1.38, 1.39, 1.4]
+essais_puissance = []
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 longueur = 117.28e-3

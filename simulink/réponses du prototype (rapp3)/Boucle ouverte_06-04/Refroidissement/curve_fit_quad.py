@@ -91,7 +91,7 @@ for _, row in data.iterrows():
 ax.set_xlabel("Duty Cycle (%)", labelpad=10)
 ax.set_ylabel("Température initiale (°C)", labelpad=10)
 ax.set_zlabel("Puissance", labelpad=10)
-ax.set_title("Fit quadratique — Puissance vs DC et Température", fontsize=13, pad=20)
+#ax.set_title("Régression quadratique — Puissance vs DC et Température", fontsize=13, pad=20)
 ax.legend(loc='upper left')
 
 # --- Texte affiché ---
@@ -105,12 +105,11 @@ texte = (
     f"{signe(f)} {abs(f):.4f}$"
 )
 
-fig.text(
-    0.01, 0.02, texte,
-    fontsize=10,
-    verticalalignment='bottom',
-    bbox=dict(boxstyle='round', facecolor='white', alpha=0.85)
-)
+#fig.text(
+ #   0.01, 0.02, texte,
+  #  fontsize=10,
+   # verticalalignment='bottom',
+    #bbox=dict(boxstyle='round', facecolor='white', alpha=0.85))
 
 plt.tight_layout()
 #plt.savefig("curve_fit_3d.png", dpi=150, bbox_inches='tight')
