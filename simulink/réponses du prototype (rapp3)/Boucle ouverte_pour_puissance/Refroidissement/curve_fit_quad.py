@@ -110,6 +110,7 @@ texte = (
   #  fontsize=10,
    # verticalalignment='bottom',
     #bbox=dict(boxstyle='round', facecolor='white', alpha=0.85))
+print(texte)
 
 plt.tight_layout()
 #plt.savefig("curve_fit_3d.png", dpi=150, bbox_inches='tight')

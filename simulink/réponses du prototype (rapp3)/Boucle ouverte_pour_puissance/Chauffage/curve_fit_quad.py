@@ -96,7 +96,7 @@ texte = (
     f"{signe(e)} {abs(e):.4f}\\cdot T "
     f"{signe(f)} {abs(f):.4f}$"
 )
-
+print(texte)
 #fig.text(
  #   0.01, 0.02, texte,
   #  fontsize=10,
