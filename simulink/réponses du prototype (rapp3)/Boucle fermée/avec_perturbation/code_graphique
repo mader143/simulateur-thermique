@@ -3,9 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
-sheet_name = "37_22_sans_perturb"
+sheet_name = "37_22_perturb"
 
-excel_path = os.path.join(base_dir, "Boucle_fermee_sans_perturb.xlsx")
+excel_path = os.path.join(base_dir, "Boucle_fermee_perturb.xlsx")
 csv_path = os.path.join(base_dir, f"{sheet_name}.csv")
 
 df_excel = pd.read_excel(excel_path, sheet_name=sheet_name, header=None)
