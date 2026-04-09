@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
-sheet_name = "10pwm_depuis23"
+sheet_name = "-40pwm_depuis31"
 
 excel_path = os.path.join(base_dir, "Boucle_ouverte.xlsx")
 csv_path = os.path.join(base_dir, f"{sheet_name}.csv")
@@ -12,6 +12,10 @@ df_excel = pd.read_excel(excel_path, sheet_name=sheet_name, header=None)
 df_excel.columns = ["Temps", "Thermistance 1", "Thermistance 2", "Thermistance 3"]
 
 df_csv = pd.read_csv(csv_path)
+
+# 🔴 Filtre temps ≤ 600 s
+df_excel = df_excel[df_excel["Temps"] <= 600]
+df_csv = df_csv[df_csv["Temps (s)"] <= 600]
 
 plt.figure()
 
@@ -25,7 +29,6 @@ plt.plot(df_csv["Temps (s)"], df_csv["Thermistance 3 - T3 (°C)"], '--', label="
 
 plt.xlabel("Temps")
 plt.ylabel("Température (°C)")
-#plt.title(f"Comparaison Simulink vs Prototype - {sheet_name}")
 plt.legend()
 plt.grid()
 
