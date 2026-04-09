@@ -180,7 +180,8 @@ class SimControl(QMainWindow):
             )
             return False
 
-        filepath = self.folder + '/' + self.filename
+        filepath = os.path.join(self.folder, self.filename)
+
         try:
             if self.checkBox_figures.isChecked():
                 self.graphique.figure.savefig(f'{filepath}_figures.png')
