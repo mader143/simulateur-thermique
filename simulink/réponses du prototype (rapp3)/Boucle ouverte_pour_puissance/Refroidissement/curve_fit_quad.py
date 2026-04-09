@@ -6,11 +6,19 @@ from sklearn.model_selection import LeaveOneOut
 
 # --- Données ---
 data = pd.DataFrame({
-    'duty':     [3.921568627,3.921568627,3.921568627,3.921568627,
-                 7.843137255,7.843137255,7.843137255,7.843137255,
-                 11.76470588,11.76470588, 11.76470588],
-    'temp':     [22.8,18,19.5,25,16.4,16.6,19.5,29,15.7,28, 32.4],
-    'puissance':[0.89,1.6,1.37,0.56,2.74,2.73,2.3,0.91,3.85,2.06, 1.39]
+    'duty':     [-3.921568627,-3.921568627,-3.921568627,-3.921568627,
+                 -7.843137255,-7.843137255,-7.843137255,-7.843137255,
+                 -11.76470588,-11.76470588, -11.76470588, -11.76470588],
+    'temp': [
+        22, 24.6, 25.8, 28.8,
+        18.2, 22.6, 26.9, 35.1,
+        20.7, 21.8, 33, 36.7
+    ],
+    'puissance': [
+        -0.58, -0.95, -1.12, -1.57,
+        -0.59, -1.25, -1.88, -3.08,
+        -1.4, -1.57, -3.22, -3.77
+    ]
 })
 
 X = data[['duty','temp']].values
@@ -49,7 +57,7 @@ y_pred_cv = np.array(y_pred_cv)
 
 r2_cv = 1 - np.sum((y_true_cv - y_pred_cv)**2) / np.sum((y_true_cv - np.mean(y_true_cv))**2)
 
-print(f"R² (fit) = {r2:.4f}")
+print(f"R² (régression) = {r2:.4f}")
 print(f"R² (validation croisée) = {r2_cv:.4f}")
 
 # --- Formule ---
@@ -68,7 +76,7 @@ fig = plt.figure(figsize=(13, 8))
 ax = fig.add_subplot(111, projection='3d')
 
 surf = ax.plot_surface(DC, TEMP, Z, cmap='viridis', alpha=0.75, edgecolor='none')
-fig.colorbar(surf, ax=ax, shrink=0.5, aspect=10, label='Puissance (fit)')
+fig.colorbar(surf, ax=ax, shrink=0.5, aspect=10, label='Puissance')
 
 ax.scatter(data['duty'], data['temp'], data['puissance'],
            color='red', s=60, zorder=5, label='Mesures', depthshade=False)
@@ -97,11 +105,11 @@ texte = (
     f"{signe(f)} {abs(f):.4f}$"
 )
 
-fig.text(
-    0.01, 0.02, texte,
-    fontsize=10,
-    verticalalignment='bottom',
-    bbox=dict(boxstyle='round', facecolor='white', alpha=0.85))
+#fig.text(
+ #   0.01, 0.02, texte,
+  #  fontsize=10,
+   # verticalalignment='bottom',
+    #bbox=dict(boxstyle='round', facecolor='white', alpha=0.85))
 
 plt.tight_layout()
 #plt.savefig("curve_fit_3d.png", dpi=150, bbox_inches='tight')
