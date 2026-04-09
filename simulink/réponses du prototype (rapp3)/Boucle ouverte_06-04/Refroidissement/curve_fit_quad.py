@@ -105,11 +105,11 @@ texte = (
     f"{signe(f)} {abs(f):.4f}$"
 )
 
-#fig.text(
- #   0.01, 0.02, texte,
-  #  fontsize=10,
-   # verticalalignment='bottom',
-    #bbox=dict(boxstyle='round', facecolor='white', alpha=0.85))
+fig.text(
+    0.01, 0.02, texte,
+    fontsize=10,
+    verticalalignment='bottom',
+    bbox=dict(boxstyle='round', facecolor='white', alpha=0.85))
 
 plt.tight_layout()
 #plt.savefig("curve_fit_3d.png", dpi=150, bbox_inches='tight')
