@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
-sheet_name = "40pwm_depuis16"
+sheet_name = "20pwm_depuis24"
 
 excel_path = os.path.join(base_dir, "Boucle_ouverte.xlsx")
 csv_path = os.path.join(base_dir, f"{sheet_name}.csv")
