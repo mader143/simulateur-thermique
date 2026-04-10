@@ -68,7 +68,7 @@ fig = plt.figure(figsize=(13, 8))
 ax = fig.add_subplot(111, projection='3d')
 
 surf = ax.plot_surface(DC, TEMP, Z, cmap='viridis', alpha=0.75, edgecolor='none')
-fig.colorbar(surf, ax=ax, shrink=0.5, aspect=10, label='Puissance (fit)')
+fig.colorbar(surf, ax=ax, shrink=0.5, aspect=10, label='Puissance')
 
 ax.scatter(data['duty'], data['temp'], data['puissance'],
            color='red', s=60, zorder=5, label='Mesures', depthshade=False)
@@ -96,12 +96,12 @@ texte = (
     f"{signe(e)} {abs(e):.4f}\\cdot T "
     f"{signe(f)} {abs(f):.4f}$"
 )
-
-fig.text(
-    0.01, 0.02, texte,
-    fontsize=10,
-    verticalalignment='bottom',
-    bbox=dict(boxstyle='round', facecolor='white', alpha=0.85))
+print(texte)
+#fig.text(
+ #   0.01, 0.02, texte,
+  #  fontsize=10,
+   # verticalalignment='bottom',
+    #bbox=dict(boxstyle='round', facecolor='white', alpha=0.85))
 
 plt.tight_layout()
 #plt.savefig("curve_fit_3d.png", dpi=150, bbox_inches='tight')
