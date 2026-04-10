@@ -26,8 +26,8 @@ for sheet_name in sheet_names:
     df_csv = pd.read_csv(csv_path)
 
     # --- Filtre temps ≤ 600 s ---
-    df_excel = df_excel[df_excel["Temps"] <= 600]
-    df_csv = df_csv[df_csv["Temps (s)"] <= 600]
+    df_excel = df_excel[df_excel["Temps"] <= 400]
+    df_csv = df_csv[df_csv["Temps (s)"] <= 400]
 
     # --- Plot ---
     plt.figure()
@@ -44,7 +44,7 @@ for sheet_name in sheet_names:
 
     plt.xlabel("Temps (s)")
     plt.ylabel("Température (°C)")
-    plt.title(sheet_name)
+#   plt.title(sheet_name)
     plt.legend()
     plt.grid()
 
