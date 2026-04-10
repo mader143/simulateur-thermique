@@ -20,7 +20,7 @@ for sheet_name in sheet_names:
     plt.plot(df_excel["Temps"], df_excel["Thermistance 2"], '--', label="Simulateur - T2", color='blue', alpha=0.7)
     plt.plot(df_excel["Temps"], df_excel["Thermistance 3"], '--', label="Simulateur - T3", color='green', alpha=0.7)
 
-    plt.title(sheet_name)
+    #plt.title(sheet_name)
     plt.xlabel("Temps (s)")
     plt.ylabel("Température (°C)")
     plt.legend()
