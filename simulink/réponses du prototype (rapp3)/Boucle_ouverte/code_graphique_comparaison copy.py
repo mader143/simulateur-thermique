@@ -44,12 +44,12 @@ for sheet_name in sheet_names:
 
     plt.xlabel("Temps (s)")
     plt.ylabel("Température (°C)")
-    plt.title(sheet_name)
+    #plt.title(sheet_name)
     plt.legend()
     plt.grid()
 
     # --- Sauvegarde ---
-    fig_path = os.path.join(base_dir, f"{sheet_name}_bf.png")
+    fig_path = os.path.join(base_dir, f"{sheet_name}_bo.png")
     plt.savefig(fig_path, dpi=300, bbox_inches='tight')
 
     plt.close()  # évite d’empiler les figures
