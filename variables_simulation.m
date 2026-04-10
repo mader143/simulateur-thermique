@@ -50,6 +50,6 @@ Tic = 250;
 Tdc = 35;
 
 %froid
-Kf = 9.2;
-Tif = 250;
-Tdf = 35;
+Kf = 10.5;
+Tif = 230;
+Tdf = 40;
