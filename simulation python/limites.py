@@ -413,13 +413,15 @@ class SimControl(QMainWindow):
         self.doubleSpinBox_t_start_act.setValue(self.simulation.t_start_act)
         self.doubleSpinBox_t_stop_act.setValue(self.simulation.t_stop_act)
 
-
+        setattr(self.simulation, 'therm1_x', self.simulation.longueur / 2)
+        setattr(self.simulation, 'therm2_x', self.simulation.longueur / 2)
+        setattr(self.simulation, 'therm3_x', self.simulation.longueur / 2)
         setattr(self.simulation, 'therm1_y', self.simulation.largeur / 2)
         setattr(self.simulation, 'therm2_y', self.simulation.largeur / 2)
         setattr(self.simulation, 'therm3_y', self.simulation.largeur / 2)
-
+        setattr(self.simulation, 'act_x_m', self.simulation.longueur / 2)
         setattr(self.simulation, 'act_y_m', self.simulation.largeur / 2)
-
+        setattr(self.simulation, 'perturb_x', self.simulation.longueur / 2)
         setattr(self.simulation, 'act_x_m', self.simulation.largeur / 2)
 
         # self.doubleSpinBox_therm1_x.setValue(self.simulation.therm1_x * 1000)
