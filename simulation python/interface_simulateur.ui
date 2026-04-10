@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1242</width>
+    <width>1311</width>
     <height>622</height>
    </rect>
   </property>
@@ -98,8 +98,11 @@ font: &quot;Times New Roman&quot;;</string>
              <property name="suffix">
               <string> mm</string>
              </property>
+             <property name="minimum">
+              <double>1.000000000000000</double>
+             </property>
              <property name="maximum">
-              <double>10000.000000000000000</double>
+              <double>5.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -176,6 +179,9 @@ font: &quot;Times New Roman&quot;;</string>
              <property name="suffix">
               <string> kg/m³</string>
              </property>
+             <property name="minimum">
+              <double>800.000000000000000</double>
+             </property>
              <property name="maximum">
               <double>100000.000000000000000</double>
              </property>
@@ -189,8 +195,11 @@ font: &quot;Times New Roman&quot;;</string>
              <property name="suffix">
               <string> mm</string>
              </property>
+             <property name="minimum">
+              <double>10.000000000000000</double>
+             </property>
              <property name="maximum">
-              <double>100000.000000000000000</double>
+              <double>150.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -203,7 +212,7 @@ font: &quot;Times New Roman&quot;;</string>
               <string> W/m.K</string>
              </property>
              <property name="maximum">
-              <double>100000.000000000000000</double>
+              <double>225.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -232,6 +241,9 @@ font: &quot;Times New Roman&quot;;</string>
              <property name="suffix">
               <string> J/kg.K</string>
              </property>
+             <property name="minimum">
+              <double>2500.000000000000000</double>
+             </property>
              <property name="maximum">
               <double>100000.000000000000000</double>
              </property>
@@ -245,6 +257,9 @@ font: &quot;Times New Roman&quot;;</string>
              <property name="suffix">
               <string> mm</string>
              </property>
+             <property name="minimum">
+              <double>1.000000000000000</double>
+             </property>
             </widget>
            </item>
            <item row="11" column="0">
@@ -257,7 +272,7 @@ font: &quot;Times New Roman&quot;;</string>
            <item row="10" column="0">
             <widget class="QLabel" name="label_12">
              <property name="text">
-              <string>Élément discret (dx)</string>
+              <string>Élément discret (dx/dy)</string>
              </property>
             </widget>
            </item>
@@ -277,8 +292,11 @@ background-color: rgb(254, 234, 255);</string>
              <property name="suffix">
               <string> mm</string>
              </property>
+             <property name="minimum">
+              <double>10.000000000000000</double>
+             </property>
              <property name="maximum">
-              <double>100000.000000000000000</double>
+              <double>175.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -298,8 +316,11 @@ background-color: rgb(254, 234, 255);</string>
              <property name="suffix">
               <string> W</string>
              </property>
+             <property name="minimum">
+              <double>-5.000000000000000</double>
+             </property>
              <property name="maximum">
-              <double>100000.000000000000000</double>
+              <double>5.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -845,7 +866,7 @@ background-color: rgb(254, 234, 255);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1242</width>
+     <width>1311</width>
      <height>22</height>
     </rect>
    </property>

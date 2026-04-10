@@ -6,9 +6,9 @@ from sklearn.model_selection import LeaveOneOut
 
 # --- Données ---
 data = pd.DataFrame({
-    'duty':     [3.921568627,3.921568627,3.921568627,3.921568627,
-                 7.843137255,7.843137255,7.843137255,7.843137255,
-                 11.76470588,11.76470588, 11.76470588, 11.76470588],
+    'duty':     [-3.921568627,-3.921568627,-3.921568627,-3.921568627,
+                 -7.843137255,-7.843137255,-7.843137255,-7.843137255,
+                 -11.76470588,-11.76470588, -11.76470588, -11.76470588],
     'temp': [
         22, 24.6, 25.8, 28.8,
         18.2, 22.6, 26.9, 35.1,
@@ -105,11 +105,11 @@ texte = (
     f"{signe(f)} {abs(f):.4f}$"
 )
 
-#fig.text(
- #   0.01, 0.02, texte,
-  #  fontsize=10,
-   # verticalalignment='bottom',
-    #bbox=dict(boxstyle='round', facecolor='white', alpha=0.85))
+fig.text(
+   0.01, 0.02, texte,
+   fontsize=10,
+   verticalalignment='bottom',
+    bbox=dict(boxstyle='round', facecolor='white', alpha=0.85))
 
 plt.tight_layout()
 #plt.savefig("curve_fit_3d.png", dpi=150, bbox_inches='tight')

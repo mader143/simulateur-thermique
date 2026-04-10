@@ -106,14 +106,17 @@ class SimControl(QMainWindow):
         # Pour changer les paramètres de la simulation depuis les boutons
         self.doubleSpinBox_longueur.valueChanged.connect(
             lambda : setattr(self.simulation, 'longueur', self.doubleSpinBox_longueur.value()/1000))
+        self.doubleSpinBox_longueur.valueChanged.connect(self.update_max_min)
         self.doubleSpinBox_largeur.valueChanged.connect(
             lambda: setattr(self.simulation, 'largeur', self.doubleSpinBox_largeur.value() / 1000))
+        self.doubleSpinBox_largeur.valueChanged.connect(self.update_max_min)
         self.doubleSpinBox_epaisseur.valueChanged.connect(
             lambda: setattr(self.simulation, 'epaisseur', self.doubleSpinBox_epaisseur.value() / 1000))
         self.doubleSpinBox_ti.valueChanged.connect(
             lambda: setattr(self.simulation, 'T_init', self.doubleSpinBox_ti.value() + 273.15))
         self.spinBox_temps.valueChanged.connect(
             lambda: setattr(self.simulation, 't_simulation', int(self.spinBox_temps.value())))
+        self.spinBox_temps.valueChanged.connect(self.update_max_min)
         self.doubleSpinBox_k.valueChanged.connect(
             lambda: setattr(self.simulation, 'k', self.doubleSpinBox_k.value()))
         self.doubleSpinBox_p.valueChanged.connect(
@@ -135,8 +138,7 @@ class SimControl(QMainWindow):
         self.doubleSpinBox_t_stop_act.valueChanged.connect(
             lambda: setattr(self.simulation, 't_stop_act', self.doubleSpinBox_t_stop_act.value()))
         
-        self.doubleSpinBox_perturb_W.setMinimum(-1000.0)
-        self.doubleSpinBox_perturb_W.setMaximum(1000.0)
+
 
         # Lancer la simulation thermique
         self.pushButton_start.clicked.connect(self.commencer_simulation)
@@ -155,6 +157,22 @@ class SimControl(QMainWindow):
 
 
 
+
+    def update_max_min(self):
+        self.doubleSpinBox_dx.setMaximum(min(self.doubleSpinBox_longueur.value(), self.doubleSpinBox_largeur.value()))
+        self.doubleSpinBox_t_perturb.setMaximum(self.spinBox_temps.value())
+        self.doubleSpinBox_t_start_act.setMaximum(self.spinBox_temps.value())
+        self.doubleSpinBox_t_stop_act.setMaximum(self.spinBox_temps.value())
+        self.doubleSpinBox_therm1_x.setMaximum(self.doubleSpinBox_longueur.value())
+        self.doubleSpinBox_therm1_y.setMaximum(self.doubleSpinBox_largeur.value())
+        self.doubleSpinBox_therm2_x.setMaximum(self.doubleSpinBox_longueur.value())
+        self.doubleSpinBox_therm2_y.setMaximum(self.doubleSpinBox_largeur.value())
+        self.doubleSpinBox_therm3_x.setMaximum(self.doubleSpinBox_longueur.value())
+        self.doubleSpinBox_therm3_y.setMaximum(self.doubleSpinBox_largeur.value())
+        self.doubleSpinBox_act_x_m.setMaximum(self.doubleSpinBox_longueur.value())
+        self.doubleSpinBox_act_y_m.setMaximum(self.doubleSpinBox_largeur.value())
+        self.doubleSpinBox_perturb_x.setMaximum(self.doubleSpinBox_longueur.value())
+        self.doubleSpinBox_perturb_y.setMaximum(self.doubleSpinBox_largeur.value())
 
 
 
@@ -430,6 +448,32 @@ class SimControl(QMainWindow):
         self.doubleSpinBox_t_perturb.setValue(self.simulation.t_perturb)
         self.doubleSpinBox_t_start_act.setValue(self.simulation.t_start_act)
         self.doubleSpinBox_t_stop_act.setValue(self.simulation.t_stop_act)
+
+        setattr(self.simulation, 'therm1_x', self.simulation.longueur / 2)
+        setattr(self.simulation, 'therm2_x', self.simulation.longueur / 2)
+        setattr(self.simulation, 'therm3_x', self.simulation.longueur / 2)
+        setattr(self.simulation, 'therm1_y', self.simulation.largeur / 2)
+        setattr(self.simulation, 'therm2_y', self.simulation.largeur / 2)
+        setattr(self.simulation, 'therm3_y', self.simulation.largeur / 2)
+        setattr(self.simulation, 'act_x_m', self.simulation.longueur / 2)
+        setattr(self.simulation, 'act_y_m', self.simulation.largeur / 2)
+        setattr(self.simulation, 'perturb_x', self.simulation.longueur / 2)
+        setattr(self.simulation, 'act_x_m', self.simulation.largeur / 2)
+
+
+        #self.doubleSpinBox_therm1_x.setValue(self.simulation.therm1_x * 1000)
+        self.doubleSpinBox_therm1_y.setValue(self.simulation.therm1_y * 1000)
+        #self.doubleSpinBox_therm2_x.setValue(self.simulation.therm2_x * 1000)
+        self.doubleSpinBox_therm2_y.setValue(self.simulation.therm2_y * 1000)
+        #self.doubleSpinBox_therm3_x.setValue(self.simulation.therm3_x * 1000)
+        self.doubleSpinBox_therm3_y.setValue(self.simulation.therm3_y * 1000)
+        #self.doubleSpinBox_act_x_m.setValue(self.simulation.act_x_m * 1000)
+        self.doubleSpinBox_act_y_m.setValue(self.simulation.act_y_m * 1000)
+        #self.doubleSpinBox_perturb_x.setValue(self.simulation.perturb_x * 1000)
+        self.doubleSpinBox_perturb_y.setValue(self.simulation.perturb_y * 1000)
+
+
+
 
 
 
