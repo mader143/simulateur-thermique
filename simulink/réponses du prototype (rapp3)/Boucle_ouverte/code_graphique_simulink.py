@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
-excel_path = os.path.join(base_dir, "Boucle_ouverte.xlsx")
+excel_path = os.path.join(base_dir, "Boucle_ouvertee.xlsx")
 
 xl = pd.ExcelFile(excel_path)
 sheet_names = xl.sheet_names
